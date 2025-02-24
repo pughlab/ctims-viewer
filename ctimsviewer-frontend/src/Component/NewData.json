@@ -1,0 +1,144 @@
+{
+    "trial_id": "NCT03918278",
+    "phase": "PHASE1",
+    "short_title": "A Study of MK-0482 as Monotherapy and in Combination With Pembrolizumab (MK-3475) in Participants With Advanced Solid Tumors (MK-0482-001)",
+    "long_title": "A Phase 1b, Open-Label, Dose Escalation Study to Evaluate the Safety, Tolerability, Pharmacokinetics and Pharmacodynamics of MK-0482 as Monotherapy and in Combination With Pembrolizumab in Participants With Advanced/Metastatic Solid Tumors.",
+    "principal_investigator": "Medical Director",
+    "protocol_no": "0482-001",
+    "nct_purpose": "This is a 2 part study. Part 1 is a dose escalation to determine the safety and tolerability and to establish a preliminary recommended Phase 2 dose (RP2D) dose of MK-0482 administered as monotherapy and in combination with pembrolizumab (MK-3475) in participants with advanced solid tumors for which there is no available therapy which may convey clinical benefit. Part 2 is expansion cohort to determine safety and tolerability of MK-0482 in combination with pembrolizumab with and without chemotherapy in participants with advanced tumor specific cohorts.",
+    "status": "ACTIVE_NOT_RECRUITING",
+    "age_group": [
+        "ADULT",
+        "OLDER_ADULT"
+    ],
+    "sponsor_name": "Merck Sharp & Dohme LLC",
+    "treatment_list": {
+        "step": [
+            {
+                "arm": [
+                    {
+                        "arm_code": "Part 1: MK-0482 Monotherapy",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants receive escalating doses of MK-0482 via intravenous (IV) infusion on Day 1 of each 21-day cycle (Q3W) for up to 35 administrations (up to approximately 2 years)."
+                            }
+                        ],
+                        "arm_description": "Participants receive escalating doses of MK-0482 via intravenous (IV) infusion on Day 1 of each 21-day cycle (Q3W) for up to 35 administrations (up to approximately 2 years)."
+                    },
+                    {
+                        "arm_code": "Part 1: MK-0482 + Pembrolizumab Combination Therapy",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants receive escalating doses of MK-0482 via IV infusion + pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) for up to 35 administrations (up to approximately 2 years)."
+                            },
+                            {
+                                "level_code": "pembrolizumab",
+                                "level_description": "Participants receive escalating doses of MK-0482 via IV infusion + pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) for up to 35 administrations (up to approximately 2 years)."
+                            }
+                        ],
+                        "arm_description": "Participants receive escalating doses of MK-0482 via IV infusion + pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) for up to 35 administrations (up to approximately 2 years)."
+                    },
+                    {
+                        "arm_code": "Part 2: Cohort A",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants with metastatic triple negative breast cancer (TNBC) first line treatment (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) and paclitaxel 90 mg/m\\^2 via IV infusion until PD or discontinuation."
+                            },
+                            {
+                                "level_code": "pembrolizumab",
+                                "level_description": "Participants with metastatic triple negative breast cancer (TNBC) first line treatment (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) and paclitaxel 90 mg/m\\^2 via IV infusion until PD or discontinuation."
+                            },
+                            {
+                                "level_code": "Paclitaxel",
+                                "level_description": "Participants with metastatic triple negative breast cancer (TNBC) first line treatment (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) and paclitaxel 90 mg/m\\^2 via IV infusion until PD or discontinuation."
+                            }
+                        ],
+                        "arm_description": "Participants with metastatic triple negative breast cancer (TNBC) first line treatment (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) and paclitaxel 90 mg/m\\^2 via IV infusion until PD or discontinuation."
+                    },
+                    {
+                        "arm_code": "Part 2: Cohort B",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants with recurrent non-operable glioblastoma (GBM) current treatment of second line (2L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years)."
+                            },
+                            {
+                                "level_code": "pembrolizumab",
+                                "level_description": "Participants with recurrent non-operable glioblastoma (GBM) current treatment of second line (2L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years)."
+                            }
+                        ],
+                        "arm_description": "Participants with recurrent non-operable glioblastoma (GBM) current treatment of second line (2L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years)."
+                    },
+                    {
+                        "arm_code": "Part 2: Cohort C",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants with metastatic pancreatic ductal adenocarcinoma (PDAC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years), Nab-Paclitaxel 125 mg/m\\^2 via IV infusion and gemcitabine 1000 mg/m\\^2 via IV infusion until PD or unacceptable toxicity that requires discontinuation."
+                            },
+                            {
+                                "level_code": "pembrolizumab",
+                                "level_description": "Participants with metastatic pancreatic ductal adenocarcinoma (PDAC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years), Nab-Paclitaxel 125 mg/m\\^2 via IV infusion and gemcitabine 1000 mg/m\\^2 via IV infusion until PD or unacceptable toxicity that requires discontinuation."
+                            },
+                            {
+                                "level_code": "Nab-paclitaxel",
+                                "level_description": "Participants with metastatic pancreatic ductal adenocarcinoma (PDAC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years), Nab-Paclitaxel 125 mg/m\\^2 via IV infusion and gemcitabine 1000 mg/m\\^2 via IV infusion until PD or unacceptable toxicity that requires discontinuation."
+                            },
+                            {
+                                "level_code": "Gemcitabine",
+                                "level_description": "Participants with metastatic pancreatic ductal adenocarcinoma (PDAC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years), Nab-Paclitaxel 125 mg/m\\^2 via IV infusion and gemcitabine 1000 mg/m\\^2 via IV infusion until PD or unacceptable toxicity that requires discontinuation."
+                            }
+                        ],
+                        "arm_description": "Participants with metastatic pancreatic ductal adenocarcinoma (PDAC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years), Nab-Paclitaxel 125 mg/m\\^2 via IV infusion and gemcitabine 1000 mg/m\\^2 via IV infusion until PD or unacceptable toxicity that requires discontinuation."
+                    },
+                    {
+                        "arm_code": "Part 2: Cohort D",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants with metastatic soft tissue sarcoma (STS) (2L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years)."
+                            },
+                            {
+                                "level_code": "pembrolizumab",
+                                "level_description": "Participants with metastatic soft tissue sarcoma (STS) (2L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years)."
+                            }
+                        ],
+                        "arm_description": "Participants with metastatic soft tissue sarcoma (STS) (2L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years)."
+                    },
+                    {
+                        "arm_code": "Part 2: Cohort E",
+                        "type": "EXPERIMENTAL",
+                        "dose_level": [
+                            {
+                                "level_code": "MK-0482",
+                                "level_description": "Participants with metastatic non-squamous non-small cell lung carcinoma (NSCLC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion plus Pemetrexed 500 mg/m\\^2 via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) plus carboplatin with desired dose of area under the curve (AUC) 5 and pemetrexed 500 mg/m\\^2, both administered via IV infusion, followed by maintenance therapy with pemetrexed 500 mg/m\\^2 via IV infusion for up to a total of 35 administrations (up to approximately 2 years)."
+                            },
+                            {
+                                "level_code": "pembrolizumab",
+                                "level_description": "Participants with metastatic non-squamous non-small cell lung carcinoma (NSCLC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion plus Pemetrexed 500 mg/m\\^2 via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) plus carboplatin with desired dose of area under the curve (AUC) 5 and pemetrexed 500 mg/m\\^2, both administered via IV infusion, followed by maintenance therapy with pemetrexed 500 mg/m\\^2 via IV infusion for up to a total of 35 administrations (up to approximately 2 years)."
+                            },
+                            {
+                                "level_code": "Carboplatin",
+                                "level_description": "Participants with metastatic non-squamous non-small cell lung carcinoma (NSCLC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion plus Pemetrexed 500 mg/m\\^2 via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) plus carboplatin with desired dose of area under the curve (AUC) 5 and pemetrexed 500 mg/m\\^2, both administered via IV infusion, followed by maintenance therapy with pemetrexed 500 mg/m\\^2 via IV infusion for up to a total of 35 administrations (up to approximately 2 years)."
+                            },
+                            {
+                                "level_code": "Pemetrexed",
+                                "level_description": "Participants with metastatic non-squamous non-small cell lung carcinoma (NSCLC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion plus Pemetrexed 500 mg/m\\^2 via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) plus carboplatin with desired dose of area under the curve (AUC) 5 and pemetrexed 500 mg/m\\^2, both administered via IV infusion, followed by maintenance therapy with pemetrexed 500 mg/m\\^2 via IV infusion for up to a total of 35 administrations (up to approximately 2 years)."
+                            }
+                        ],
+                        "arm_description": "Participants with metastatic non-squamous non-small cell lung carcinoma (NSCLC) (1L) receive MK-0482 via IV infusion plus pembrolizumab 200 mg via IV infusion plus Pemetrexed 500 mg/m\\^2 via IV infusion on Day 1 of each 21-day cycle (Q3W) up to 35 administrations (up to approximately 2 years) plus carboplatin with desired dose of area under the curve (AUC) 5 and pemetrexed 500 mg/m\\^2, both administered via IV infusion, followed by maintenance therapy with pemetrexed 500 mg/m\\^2 via IV infusion for up to a total of 35 administrations (up to approximately 2 years)."
+                    }
+                ]
+            }
+        ]
+    }
+}

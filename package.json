@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  },
+  "dependencies": {
+    "react-multiselect-checkbox": "^2.9.0",
+    "reactjs-popup": "^2.0.6",
+    "primereact": "latest"
+  }
+}

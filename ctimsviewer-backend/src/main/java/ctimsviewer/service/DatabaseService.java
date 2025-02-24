@@ -1,0 +1,59 @@
+package ctimsviewer.service;
+import ctimsviewer.ChartsTable;
+import ctimsviewer.ClinicalData;
+import ctimsviewer.TrialDataDTO;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.multipart.MultipartFile;
+
+
+
+public interface DatabaseService{
+
+    void init();
+
+    void save(MultipartFile file, String time, String userId);
+
+    void saveClinicalData(MultipartFile file, String time, String userId);
+
+    byte[] getData(String tableName,  String userId);
+
+    byte[] getDataUsingRepo(String tableName , String userId);
+
+    byte[] getDataUsingFilter(String TrialCreationDates, String StudyIds,String userId);
+
+    String getCreateChart(String userId, String chartType, String[] ArmTypes);
+
+    String getFilterChart(String userId, String chartType, String[] ArmTypes, String TrialCreationDates, String StudyIds);
+
+    String getTrialArmIDs(String userId);
+
+    String getTrialIDs(String userId);
+
+    public String getFilteredTrialArmIDs(String userId, String TrialCreationDates);
+
+    String getStudyIDs(String userId);
+
+    public String getFilteredStudyIDs(String userId, String TrialCreationDates);
+
+    public List<ClinicalData> viewTrialData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);
+
+    public List<Map<String, String>> reactPlotlyData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);
+
+    public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String TrialCreationDates, String StudyIds);
+
+    List<ChartsTable> getGroupTrials(String userId);
+
+    List<ChartsTable> getPatientMatch(String patientid, String userId);
+
+    public void deleteTrial(String userId, String trialDate);
+
+    public String getTrialFromMatchminer(String userId);
+
+    public String getTrialDataFromMatchminer(String userId, String trialInternalId);
+    
+    String getUserName();
+
+
+}

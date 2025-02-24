@@ -1,0 +1,450 @@
+.textHeading{
+
+    font-size: xx-large;
+    color:black;
+    text-align: center;
+    font-weight: bold;
+    
+}
+
+
+.subButton{
+    width: 7%;
+    display: flex;
+    justify-content: center;
+    margin-left: 40%;
+}
+
+.deleteButton {
+  margin-right: 85%; /* Adjust the value as needed */
+}
+
+.custom-spinner {
+    height: 1rem; /* Adjust the height as needed */
+  }
+
+.headerStyles{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    height: 8rem;
+    align-items: flex-start;
+    padding: 2rem 0 0 5rem;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.5);
+    
+}
+
+.headerLogout{
+    position: absolute;
+    top: 5rem;
+    right: 10px ;
+    width:10%;
+    height: 3rem;
+    border-radius: 0.5rem;
+}
+
+.headerLogout:hover{
+    position: absolute;
+    top: 5rem;
+    right: 10px ;
+    width:7%;
+    height: 2rem;
+    background-color: gray;
+    border-radius: 0.5rem;
+}
+
+
+.left-navigator {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 300px; /* Adjust the width as needed */
+    background-color: #f0f0f0;
+    border-right: 1px solid #ccc;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    z-index: 1000; /* Ensure the navigation is on top of other elements */
+  }
+  
+  .left-navigator.open {
+    width: 300px;
+  }
+  
+  .left-navigator.closed {
+    width: 30px;
+  }
+  
+  .toggle-button {
+    cursor: pointer;
+    padding: 10px;
+    text-align: center;
+    transition: width 0.3s ease;
+  }
+  
+  .chat-history {
+    padding: 10px;
+  }
+  
+  .message {
+    background-color: #f1f0f0;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    flex-direction: row;
+  }
+  
+  .message.left {
+    margin-right: auto;
+  }
+  
+
+  .userContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    margin-bottom: 8px;
+    margin-right: 2rem;
+
+    .userImage {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #F1F1F1;
+      display: flex; /* or inline-flex */
+      align-items: center;
+      justify-content: center;
+
+      span {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 21px;
+        text-align: center;
+        color: #6D7175;
+      }
+    }
+
+    .userName {
+      font-family: 'Inter', sans-serif;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 16px;
+      margin-right: 8px;
+    }
+
+    i {
+      cursor: pointer;
+      margin-left: 10.97px;
+    }
+  }
+
+.menu {
+    margin-top: 10px;
+  }
+
+  
+
+.createCtmlButton {
+    background: #2E72D2;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    margin-left: 12px;
+    border-radius: 5px;
+    color: white;
+    height: 2.5rem;
+  }
+
+  .createCtmlButton_new {
+    background: #2E72D2;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 25px;
+    margin-left: 5rem;
+    border-radius: 5px;
+    color: white;
+  }
+
+.createCtmlButton:disabled {
+    background-color: grey;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    margin-left: 12px;
+    border-radius: 5px;
+    color: white;
+}
+
+  .buttonsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+  }
+
+  .importButton {
+    border: none;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    color: grey;
+    font-weight: bold;
+    font-size: medium;
+}
+
+.navHeader {
+  display: flex;
+  border-bottom: 2px solid #dcd7d7;
+
+}
+
+.navHeader h3 {
+  margin: 0;
+  padding: 10px;
+}
+
+.navHeader h3.selected {
+  border-bottom: 2px solid #000; /* Line beneath selected item */
+}
+
+.navHeader h3 a {
+  text-decoration: none;
+  color: inherit; /* Inherit color from the parent */
+  display: block;
+  width: 100%;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-color: #150101;
+  padding: 1rem;
+}
+
+.left {
+  border: 0px solid #ccc; /* External border line */
+  padding: 10px;
+}
+
+.dropdown-container {
+  display: flex;
+  flex-direction: row;
+  width: 50%; /* Ensure the dropdown container takes full width */
+  justify-content: space-around;
+}
+
+.indi-dropdown-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem; /* Space between dropdowns */
+}
+
+.dropdown-label {
+  margin-bottom: 0.5rem; /* Space between label and input */
+  font-weight: bold;
+  font-size: 1rem; /* Adjust font size as needed */
+}
+
+.fixed-width-select {
+  width: 100%; /* Ensures the dropdowns/multi-selects take consistent width */
+}
+
+
+.fixed-width-label {
+  width: 150px; /* Set a fixed width for the labels to align components */
+  text-align: left;
+  padding-top: 1rem;
+}
+
+.fixed-width-select {
+  width: 100%; /* Full width for dropdowns */
+  min-width: 100px; /* Optional: minimum width */
+  max-width: 150px; /* Optional: maximum width */
+  height: 3.5rem;
+  border-color: #0b0202;
+}
+
+.ButtonContainer{
+    display: flex;
+    flex-direction: row; /* Arrange items in a column */
+    padding-top: 5px;
+}
+
+.ImportButtonContainer{
+  display: flex;
+  flex-direction: row; /* Arrange items in a column */
+  justify-content: right; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  height: 100%; /* Adjust as necessary */
+  padding-top: 30px;
+  margin-right: 3rem;
+}
+
+
+.underline {
+  text-decoration: underline;
+  font-style: italic;
+  color:  #2E72D2;
+}
+
+
+.custom-option {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  
+}
+
+.custom-dropdown-item {
+  display: flex;
+  align-items: center;
+  margin: 5px 0; /* Add some spacing between each item */
+}
+
+.custom-radio {
+  margin-right: 8px;
+  cursor: pointer;
+  appearance: none; /* Hide default radio button */
+  border-radius: 50%; /* Make it circular */
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc; /* Default border */
+  outline: none;
+  transition: background-color 0.3s, border-color 0.3s;
+  position: relative;
+}
+
+/* Style the circle inside the radio button */
+.custom-radio::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: transparent;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.3s;
+}
+
+/* When checked, change the background and border color */
+.custom-radio:checked {
+  border-color: #007bff; /* Change this color for the border when selected */
+}
+
+/* Change the color of the inner circle when checked */
+.custom-radio:checked::before {
+  background-color: #007bff; /* Change this color for the inner circle */
+}
+
+
+.home-images{
+  display: flex;
+  flex-direction: column;
+}
+
+
+.individual-images{
+  height: 25rem;
+  width: 25rem;
+  padding: 2rem;
+
+
+}
+
+.images-div{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.image-name{
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.tab-buttons {
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 2px solid #ddd; 
+  margin-bottom: 20px; 
+}
+
+
+.tab-buttons button {
+  background-color: transparent;
+  border: none;
+  padding: 12px 25px; 
+  cursor: pointer;
+  font-size: 16px;
+  color: #555; 
+  border-radius: 4px; 
+  transition: all 0.3s ease;
+  margin-right: 10px;
+  text-transform: capitalize;
+}
+
+
+.tab-buttons button:hover {
+  background-color: rgba(65, 130, 171, 0.1); 
+  color: #4182ab; 
+}
+
+
+.tab-buttons button.active {
+  font-weight: bold;
+  color: #4182ab; 
+  border-bottom: 3px solid #329adb;
+  background-color: rgba(65, 130, 171, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.plot-container {
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  margin-top: 20px;
+}
+
+.right {
+  border: 1px solid #dee2e6; /* Subtle border color for a professional look */
+  padding: 20px; /* Increased padding for better spacing */
+  background-color: #f9fafb; /* Light gray background for a clean look */
+  border-radius: 8px; /* Rounded corners for a modern feel */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin: 20px; /* Space around the component */
+  max-width: 1200px; /* Restrict max width for better layout on large screens */
+  width: 100%; /* Ensure responsiveness */
+}
+
+.right > * {
+  margin-bottom: 20px; /* Add spacing between child elements */
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+  .right {
+    padding: 15px; /* Reduce padding for smaller screens */
+    margin: 10px; /* Adjust margin for compact layout */
+  }
+}
+
+
