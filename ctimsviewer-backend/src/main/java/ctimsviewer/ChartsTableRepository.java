@@ -12,13 +12,12 @@ import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.List;
-
 import ctimsviewer.ChartsTable;
 import ctimsviewer.ClinicalData;
 import ctimsviewer.TrialDataDTO;
 import ctimsviewer.TrialGroup;
+
+import java.util.List;
 
 /*
 public interface ChartsTableRepository extends JpaRepository<ChartsTable, Long> {
@@ -113,6 +112,9 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
 
     @Query("SELECT * FROM CTIMSCHARTS")
     List<ChartsTable> groupTrials();
+
+    @Query("SELECT TRIALCREATED FROM CTIMSCHARTS where TRIALID = :trialid AND TRIALMATCHDATE= :trialcreated")
+    List<ChartsTable> getTrialCreatedDate(@Param("trialcreated") String trialcreated, @Param("trialid") String trialid);
 
 
     @Query("SELECT * FROM CTIMSCHARTS WHERE PATIENTID = :argument")

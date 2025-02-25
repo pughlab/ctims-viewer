@@ -42,7 +42,7 @@ interface ChartData {
 
   const chartComponents: Record<string, React.FC<{ data: any[], study_id: any }>> = {
     bar: BarChart,
-    HeatPlot: HeatmapChart,
+    HeatMap: HeatmapChart,
     ReverseBarChart: ReverseBarChart,
     TopBarChart: TopBarChart,
   };
@@ -112,7 +112,7 @@ const UploadCsv = (props: any) => {
     const [selectedTab, setSelectedTab] = useState('table');
 
     const items =[
-        "HeatPlot",
+        "HeatMap",
         "TopBarChart",
         "ReverseBarChart",
         "BarChart"
@@ -174,7 +174,7 @@ const UploadCsv = (props: any) => {
           setCharts(groupTrialsResponse as ChartData[]);
           console.log("groupTrialsResponse", groupTrialsResponse);
         }
-      }, [groupTrialsResponse]);
+      }, [groupTrialsResponse,selectedTab]);
     
 
     const transformedTrialOptions = charts.map((trial: any) => ({
@@ -827,6 +827,11 @@ const UploadCsv = (props: any) => {
 
     return (
         <>
+            {reactPlotlyChartLoading && (
+                <div className="page-overlay">
+                    <ProgressSpinner style={{ width: '50px', height: '50px' }} />
+                </div>
+            )}
             <div>
                 <h3>CTIMS Viewer can be used to generate Charts for analysis of trial matches using Charts component. It generates the Heatmap, Bar Chart, and Vertical Bar Chart.</h3>
             </div>
@@ -843,7 +848,7 @@ const UploadCsv = (props: any) => {
                     onClick={() => setSelectedTab('charts')} 
                     className={selectedTab === 'charts' ? 'active' : ''}
                 >
-                    Generate Plots
+                    Generate Charts
                 </button>
             </div>
             <br />
@@ -869,7 +874,7 @@ const UploadCsv = (props: any) => {
                                             value={selectedItem} 
                                             onChange={(e) => setSelectedItem(e.value)} 
                                             options={items} 
-                                            itemTemplate={customOptionTemplate}
+                                            //itemTemplate={customOptionTemplate}
                                             placeholder="Plot Type" 
                                             className="fixed-width-select" 
                                         />
@@ -881,10 +886,11 @@ const UploadCsv = (props: any) => {
                                                 <label htmlFor="trialIdsMultiSelect" className="dropdown-label">Trial Id's</label>
                                                 <MultiSelect
                                                     id="trialIdsMultiSelect"
-                                                    className="fixed-width-select"
+                                                    className="fixed-width-select w-full md:w-20rem"
                                                     options={transformedTrialOptions}
                                                     value={selectedTrials}
                                                     placeholder="Trial Id's"
+                                                    filter
                                                     onChange={(e) => handleTrialsChange(e.value)}
                                                 />
                                             </>
@@ -897,10 +903,11 @@ const UploadCsv = (props: any) => {
                                                 <label htmlFor="trialArmIdsMultiSelect" className="dropdown-label">Trial Arm Id's</label>
                                                 <MultiSelect
                                                     id="trialArmIdsMultiSelect"
-                                                    className="fixed-width-select"
+                                                    className="fixed-width-select w-full md:w-20rem"
                                                     options={trialArmData}
                                                     value={selectedOptions}
                                                     placeholder="Trial Arm Id's"
+                                                    filter
                                                     onChange={(e) => handleChange(e.value)}
                                                 />
                                             </>
@@ -913,10 +920,11 @@ const UploadCsv = (props: any) => {
                                                 <label htmlFor="studyIdsMultiSelect" className="dropdown-label">Study Id's</label>
                                                 <MultiSelect
                                                     id="studyIdsMultiSelect"
-                                                    className="fixed-width-select"
+                                                    className="fixed-width-select w-full md:w-20rem"
                                                     options={studyData}
                                                     value={selectedStudy}
                                                     placeholder="Study Id's"
+                                                    filter
                                                     onChange={(e) => handleStudyChange(e.value)}
                                                 />
                                             </>
@@ -945,15 +953,15 @@ const UploadCsv = (props: any) => {
             {uploadMessage && <p>{uploadMessage}</p> && selectedTab === 'table'}
             <br />
             {(loading || folderLoading || filesLoading || csvLoading || sendLoading || csvChartLoading) && 
-                <div className="flex justify-content-center">
+                <div className="page-overlay">
                     <ProgressSpinner className="custom-spinner" />
                 </div>
             }
             <br />
             { selectedTab === 'table' && <div className="container" >
-                <div className="right">
+                {!sendLoading && <div  className="right">
                     {!sendLoading && <RightComponent accessToken={props.accessToken} onCheckboxChange={handleCheckboxChange} />}
-                </div>
+                </div>}
             </div>}
             {createStatus && (!((createStatus as String).startsWith("Success")) ? 
                 <iframe srcDoc={`<h3>${createStatus}</h3>`} width="400" height="300"></iframe> : 

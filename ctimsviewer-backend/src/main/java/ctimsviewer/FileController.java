@@ -1,7 +1,6 @@
 package ctimsviewer;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import ctimsviewer.service.FilesStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import ctimsviewer.service.FilesStorageService;
 
 import javax.servlet.http.HttpSession;
 import java.io.FileNotFoundException;

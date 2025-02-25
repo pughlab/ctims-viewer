@@ -5,9 +5,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import ctimsviewer.service.DatabaseService;
-import ctimsviewer.ChartsTableRepository;
-import ctimsviewer.ChartsTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,11 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
-
+import ctimsviewer.ChartsTable;
+import ctimsviewer.ChartsTableRepository;
 import ctimsviewer.ClinicalData;
 import ctimsviewer.TrialDataDTO;
 import ctimsviewer.TrialGroup;
+import ctimsviewer.service.DatabaseService;
+
+import javax.servlet.http.HttpSession;
+
 import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -291,10 +292,10 @@ public class DatabaseController {
     }
 
 
-    @GetMapping("/FetchTrialIdsFromMatchminer")
-    public ResponseEntity<String> getTrialFromMatchminer(HttpSession session){
+    @GetMapping("/FectchTrialIdsFromMatachminer")
+    public ResponseEntity<String> getTrialFromMatachminer(HttpSession session){
         String userId = getUserIdFromSession(session);
-        String bytes = dataService.getTrialFromMatchminer(userId);
+        String bytes = dataService.getTrialFromMatachminer(userId);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
@@ -302,11 +303,11 @@ public class DatabaseController {
         }
     }
 
-    @GetMapping("/FetchTrialDataFromMatchminer/{trialInternalId}")
-    public ResponseEntity<String> getTrialDataFromMatchminer(HttpSession session, @PathVariable String trialInternalId){
+    @GetMapping("/FectchTrialDataFromMatachminer/{trialInternalId}/{trialId}/{dataUpdated}")
+    public ResponseEntity<String> getTrialDataFromMatachminer(HttpSession session, @PathVariable String trialInternalId, @PathVariable String trialId, @PathVariable String dataUpdated){
         System.out.printf("trialInternalId %s", trialInternalId);
         String userId = getUserIdFromSession(session);
-        String bytes = dataService.getTrialDataFromMatchminer(userId, trialInternalId);
+        String bytes = dataService.getTrialDataFromMatachminer(userId, trialInternalId, trialId, dataUpdated);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {

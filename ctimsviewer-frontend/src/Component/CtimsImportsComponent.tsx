@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useAxios from "../service/useAxios";
+import newData from "./NewData.json";
 import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
 

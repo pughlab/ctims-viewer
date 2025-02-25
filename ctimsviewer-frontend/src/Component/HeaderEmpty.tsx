@@ -8,7 +8,7 @@ function Header() {
     return( 
     <>
     <div className="headerStyles">
-        <h1 style={{ height: "6rem", margin: "10px auto", display: "block", textAlign: "center", fontSize: "4rem", color: "whitesmoke" }}>ctimsviewer</h1>
+        <h1 style={{ height: "6rem", margin: "10px auto", display: "block", textAlign: "center", fontSize: "4rem", color: "whitesmoke" }}>cbpOrganizer</h1>
     </div>
     </>
     ); 

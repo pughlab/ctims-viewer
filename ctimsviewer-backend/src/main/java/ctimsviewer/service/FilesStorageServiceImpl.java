@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService{
 
-    private final Path root = Paths.get("ctimsFiles");
+    private final Path root = Paths.get("cbpFiles");
     private final String validationResultFileName = "validated_study.html";
     private final String csvFileName ="clinical.csv";
 
@@ -158,7 +158,7 @@ public class FilesStorageServiceImpl implements FilesStorageService{
 
     @Override
     public List<byte[]> getPlots(String userId) {
-        File imageFile = new File("ctimsFiles/user-local/results/heatmap.png");
+        File imageFile = new File("cbpFiles/user-local/results/heatmap.png");
         if (!imageFile.exists() || imageFile.isDirectory()) {
             System.out.printf("Cannot read .png file");
             return null;
@@ -238,7 +238,7 @@ public String getCreateCsv(String userId, String folderName) {
     try {
         // Command to execute the Python script
         String pythonCommand = "python3";
-        String pythonScriptPath = "ctimsFiles/user-local/trial-match-utils/src/tools/prepare_clinical_data.py";
+        String pythonScriptPath = "cbpFiles/user-local/trial-match-utils/src/tools/prepare_clinical_data.py";
 
        // String pythonScriptPath = "src/main/resources/sample.txt";
         ///src/main/resources/trail-match-utils/src/tools/prepare_clinical_data.py
@@ -248,7 +248,7 @@ public String getCreateCsv(String userId, String folderName) {
 
         //String filePath = System.getProperty("user.dir")+ "\\src\\main\\resources\\trial-match-utils\\src\\tools\\prepare_clinical_data.py";
         
-        String filePath = System.getProperty("user.dir")+ "/ctimsFiles";
+        String filePath = System.getProperty("user.dir")+ "/cbpFiles";
         
         //
         // Create a File object
@@ -277,8 +277,8 @@ public String getCreateCsv(String userId, String folderName) {
         File outFileHtml = new File(userDir.toFile(), csvFileName);
 
 
-        System.out.printf("Files in ctimsFiles/user-local/ directory: %s",folderName );
-        try (Stream<Path> paths = Files.walk(Paths.get("ctimsFiles/user-local/tmb_mskcc_2018"))) {
+        System.out.printf("Files in cbpFiles/user-local/ directory: %s",folderName );
+        try (Stream<Path> paths = Files.walk(Paths.get("cbpFiles/user-local/tmb_mskcc_2018"))) {
             paths.filter(Files::isRegularFile)
                 .forEach(System.out::println);
         }
@@ -300,10 +300,10 @@ public String getCreateCsv(String userId, String folderName) {
 
         // Arguments for the Python script
         String[] arguments = {
-            "-s", "ctimsFiles/user-local/"+folderName+"/data_clinical_sample.txt",
-            "-p", "ctimsFiles/user-local/"+folderName+"/data_clinical_patient.txt",
-            "-st", "ctimsFiles/user-local/"+folderName+"/meta_study.txt",
-            "-o", "ctimsFiles/user-local/"+folderName+"/clinical.csv"
+            "-s", "cbpFiles/user-local/"+folderName+"/data_clinical_sample.txt",
+            "-p", "cbpFiles/user-local/"+folderName+"/data_clinical_patient.txt",
+            "-st", "cbpFiles/user-local/"+folderName+"/meta_study.txt",
+            "-o", "cbpFiles/user-local/"+folderName+"/clinical.csv"
         };
 
         // Command and arguments
@@ -343,7 +343,7 @@ public String getCreateCsv(String userId, String folderName) {
 
 
 
-            File csvFile = new File("ctimsFiles/user-local/"+folderName+"/clinical.csv");
+            File csvFile = new File("cbpFiles/user-local/"+folderName+"/clinical.csv");
             long fileSize = csvFile.length(); 
             System.out.printf("Clinical.csv File size before operation"+Long.toString(fileSize));
 
@@ -375,7 +375,7 @@ public String getCreateCsv(String userId, String folderName) {
 
         if (exitCode == 0) {
             
-              File csvFile2 = new File("ctimsFiles/user-local/"+folderName+"/clinical.csv");
+              File csvFile2 = new File("cbpFiles/user-local/"+folderName+"/clinical.csv");
             fileSize = csvFile2.length(); // Size in bytes
             //System.out.printf("Python script executed successfully. Size of CSV File: %d", fileSize);
             //System.out.println(String.format("Python script executed successfully. Size of CSV File: %d", fileSize));
@@ -427,8 +427,8 @@ public String getCreateChart(String userId, String chartType, String selectedFil
              .forEach(System.out::println);
     }
 */
-    System.out.println("Files in ctimsFiles/user-local/ directory:");
-    try (Stream<Path> paths = Files.walk(Paths.get("ctimsFiles/user-local"))) {
+    System.out.println("Files in cbpFiles/user-local/ directory:");
+    try (Stream<Path> paths = Files.walk(Paths.get("cbpFiles/user-local"))) {
         paths.filter(Files::isRegularFile)
              .forEach(System.out::println);
     }
@@ -442,7 +442,7 @@ public String getCreateChart(String userId, String chartType, String selectedFil
     }
 
     // Path to the input CSV file
-    String csvFilePath = "ctimsFiles/user-local/"+selectedFile;
+    String csvFilePath = "cbpFiles/user-local/"+selectedFile;
 
     // Check if the input CSV file exists
     File csvFile = new File(csvFilePath);
@@ -452,7 +452,7 @@ public String getCreateChart(String userId, String chartType, String selectedFil
     }
 
         // Create the results folder if it doesn't exist
-    File resultsFolder = new File("ctimsFiles/user-local/results");
+    File resultsFolder = new File("cbpFiles/user-local/results");
     if (!resultsFolder.exists()) {
         if (!resultsFolder.mkdirs()) {
             return "Error: Failed to create results folder.";
@@ -465,7 +465,7 @@ public String getCreateChart(String userId, String chartType, String selectedFil
         pythonCommand,
         scriptFile.toString(),
         csvFilePath,
-        "ctimsFiles/user-local/results/heatmap.png" 
+        "cbpFiles/user-local/results/heatmap.png" 
     };
     ProcessBuilder pb = new ProcessBuilder(command);
     Process process = pb.start();
@@ -523,12 +523,12 @@ public String getCtimsImports(String userId, String nctId) {
     Path configFile = importerDir.resolve(configFileName);
     copyScriptsToTempDir(importerDir);
 
-    System.out.println("Files in ctimsFiles/user-local/ directory:");
-    try (Stream<Path> paths = Files.walk(Paths.get("ctimsFiles/"))) {
+    System.out.println("Files in cbpFiles/user-local/ directory:");
+    try (Stream<Path> paths = Files.walk(Paths.get("cbpFiles/"))) {
         paths.filter(Files::isRegularFile)
              .forEach(System.out::println);
     }
-    File resultsFolder = new File("ctimsFiles/user-local/results");
+    File resultsFolder = new File("cbpFiles/user-local/results");
     if (!resultsFolder.exists()) {
         if (!resultsFolder.mkdirs()) {
             return "Error: Failed to create results folder.";
@@ -540,7 +540,7 @@ public String getCtimsImports(String userId, String nctId) {
         scriptFile.toString(),
         nctId,
         configFile.toString(),
-        "ctimsFiles/user-local/results/" 
+        "cbpFiles/user-local/results/" 
     };
     ProcessBuilder pb = new ProcessBuilder(command);
     Process process = pb.start();
@@ -549,7 +549,7 @@ public String getCtimsImports(String userId, String nctId) {
 
     if (exitCode == 0) {
         System.out.println("Python script executed successfully.");
-        Path yamlFilePath = Paths.get("ctimsFiles/user-local/results", nctId + ".json");
+        Path yamlFilePath = Paths.get("cbpFiles/user-local/results", nctId + ".json");
         if (Files.exists(yamlFilePath)) {
             retRes = new String(Files.readAllBytes(yamlFilePath));
         } else {
@@ -582,6 +582,21 @@ public String getCtimsImports(String userId, String nctId) {
     private String[] listValidatorFileNames() {
         // todo: traverse the directory and get all the file names
         String[] fileNames = {"__init__.py",
+                "allowed_data_types.txt",
+                "cbioportal_common.py",
+                "cbioportalImporter.py",
+                "chromosome_sizes.json",
+                "cropped_validation_report_template.html.jinja",
+                "data_cna_pd_annotations.txt",
+                "importOncokbDiscreteCNA.py",
+                "importOncokbMutation.py",
+                "libImportOncokb.py",
+                "metaImport.py",
+                "updateOncokbAnnotations.py",
+                "validateData.py",
+                "validateStudies.py",
+                "prepare_clinical_data.py",
+                "validation_report_template.html.jinja",
                 "HeatPlot.py",
                 "ReverseBarChart.py",
                 "TopBarChart.py",
@@ -683,7 +698,7 @@ public String getCtimsImports(String userId, String nctId) {
        // String filePath = determineFilePath(userId, folderName);
 
     try {
-        File file = new File("ctimsFiles/user-local/"+fileName+"/clinical.csv");
+        File file = new File("cbpFiles/user-local/"+fileName+"/clinical.csv");
 
         if (file.exists()) {
             byte[] bytes = Files.readAllBytes(file.toPath());
@@ -707,7 +722,7 @@ public String getCtimsImports(String userId, String nctId) {
        // String filePath = determineFilePath(userId, folderName);
 
     try {
-        File file = new File("ctimsFiles/user-local/results/heatmap.png");
+        File file = new File("cbpFiles/user-local/results/heatmap.png");
 
         if (file.exists()) {
             byte[] bytes = Files.readAllBytes(file.toPath());
@@ -727,7 +742,7 @@ public String getCtimsImports(String userId, String nctId) {
     @Override
     public byte[] downloadCtimsImports(String nctId, String userId) {
     try {
-        File file = new File("ctimsFiles/user-local/results/"+nctId+".json");
+        File file = new File("cbpFiles/user-local/results/"+nctId+".json");
 
         if (file.exists()) {
             byte[] bytes = Files.readAllBytes(file.toPath());

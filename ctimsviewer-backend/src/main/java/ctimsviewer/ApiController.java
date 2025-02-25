@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/check")
 public class ApiController {
 
-	@PreAuthorize("hasRole('ctimsuser')")
-	@GetMapping(path = "/ctimsuser")
+	@PreAuthorize("hasRole('cbpuser')")
+	@GetMapping(path = "/cbpuser")
 	public String users() {
-		return "You have ctims user privilages";
+		return "You have cbp user privilages";
 	}
 }

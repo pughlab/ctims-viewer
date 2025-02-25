@@ -2,7 +2,7 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ctimsviewer-frontend
+      context: ctimscharts-frontend
       dockerfile: Dockerfile
     ports:
       - "3030:3030"
@@ -13,7 +13,7 @@ services:
       
   backend:
     build:
-      context: ctimsviewer-backend
+      context: ctimscharts-backend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -31,14 +31,55 @@ services:
       MYSQL_USER: ctimsviewer
       MYSQL_PASSWORD: ctimsviewer
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - my-network
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+      POSTGRES_DB: keycloak
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - my-network
+  
+  keycloak:
+    build:
+      context: ./keycloak 
+      dockerfile: Dockerfile  
+    image: quay.io/keycloak/keycloak:18.0
+    ports:
+      - "6060:6000"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_PROFILE: dev
+      KEYCLOAK_HTTP_CORS: "true"
+      KEYCLOAK_CORS_ALLOWED_ORIGINS: "*"
+      KEYCLOAK_CORS_ALLOW_METHODS: "GET,POST,PUT,DELETE,OPTIONS"
+      KEYCLOAK_CORS_ALLOW_HEADERS: "Authorization,Content-Type"
+      KEYCLOAK_CORS_EXPOSE_HEADERS: "Authorization"
+    networks:
+      - my-network
+    depends_on:
+      - postgres
+    command: start-dev --http-port=6000 --http-host=0.0.0.0
+
 
 networks:
   my-network:
 
 volumes:
   mysql_data:
+  postgres_data:

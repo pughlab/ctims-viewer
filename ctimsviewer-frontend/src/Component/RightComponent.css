@@ -3,6 +3,7 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   margin-bottom: 20px;
+  margin: 0 auto; /* Center the table horizontally */
   font-family: Arial, sans-serif;
   font-size: 14px;
   color: #333;
@@ -11,6 +12,7 @@ table {
   border-radius: 8px;
   overflow: hidden;
 }
+
 
 thead {
   background: linear-gradient(90deg, #6a11cb, #2575fc);

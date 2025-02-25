@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS build
+FROM arm64v8/node:18-alpine AS build
 WORKDIR /app
 
 # Copy package.json and yarn.lock to the container

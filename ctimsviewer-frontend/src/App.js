@@ -9,6 +9,7 @@ import Clinical from "./pages/Clinical";
 import Login from "./pages/Login";
 import Sample from "./Component/Sample";
 import Home from "./Component/HomeMain";
+import Matchminer from './pages/Matchminer';
 
 
 
@@ -26,7 +27,8 @@ function App(props) {
         <React.Suspense >
             <Routes>
                 <Route  path="/" name="Home Page" element={<Home />}/>
-                {hasChartsRole && (<Route  path="/main" name="Main Page" element={<Main accessToken={props.accessToken} />} />)}
+                {hasChartsRole && (<Route  path="/charts" name="Main Page" element={<Main accessToken={props.accessToken} />} />)}
+                {hasChartsRole && (<Route  path="/matchminer" name="Matchminer" element={<Matchminer accessToken={props.accessToken} />} />)}
                 {hasClinicalRole && (<Route  path="/clinical" name="Main Page" element={<Clinical accessToken={props.accessToken} />} />)}
                 {hasFetcherRole && (<Route path="/sample" name="SamplePage"  element={<Sample accessToken={props.accessToken}/>} />)}
             </Routes>
