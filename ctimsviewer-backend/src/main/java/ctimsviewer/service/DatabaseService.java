@@ -49,9 +49,15 @@ public interface DatabaseService{
 
     public void deleteTrial(String userId, String trialDate);
 
-    public String getTrialFromMatchminer(String userId);
+    public String getTrialFromMatchEngine(String userId);
 
-    public String getTrialDataFromMatchminer(String userId, String trialInternalId);
+    void saveJsonData(List<Map<String, Object>> records, String time);
+
+    public String formatDate(String dateString);
+
+    void saveClinicalJsonData(List<Map<String, Object>> records, String time);
+
+    public String getTrialDataFromMatchEngine(String userId, String trialInternalId, String trialId, String dataUpdated);
     
     String getUserName();
 

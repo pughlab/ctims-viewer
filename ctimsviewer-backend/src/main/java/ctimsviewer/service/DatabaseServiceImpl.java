@@ -69,6 +69,14 @@ import org.springframework.stereotype.Component;
 
 import com.jayway.jsonpath.JsonPath;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.apache.commons.codec.net.URLCodec;
+import org.apache.commons.codec.EncoderException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 @Service
 public class DatabaseServiceImpl implements DatabaseService{
@@ -590,8 +598,8 @@ public class DatabaseServiceImpl implements DatabaseService{
         String[] command = {
             pythonCommand,
             scriptFile.toString(),
-            "ctimsFiles/user-local/inputcsvfile.csv",
-            "ctimsFiles/user-local/results/heatmap.png",
+            "cbpFiles/user-local/inputcsvfile.csv",
+            "cbpFiles/user-local/results/heatmap.png",
             result
         };
         System.out.printf("command1234 %s", command[4]);
@@ -671,21 +679,90 @@ public class DatabaseServiceImpl implements DatabaseService{
     private RestTemplate restTemplate;
 
     @Override
-    public String getTrialFromMatchminer(String userId){
-        String url = MM_API_URL+"/ctims_trial_summary_with_nctid";
-        Map<String, Object> requestBody = Map.of("key", "value");
+    public String getTrialFromMatchEngine(String userId) {
+    String url = MM_API_URL + "/ctims_trial_summary_with_nctid";
+    Map<String, Object> requestBody = new HashMap<>();
+    requestBody.put("key", "value");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer "+ MM_API_TOKEN);
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("Authorization", "Bearer " + MM_API_TOKEN);
+    HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-        System.out.printf("Data %s",ResponseEntity.ok(response.getBody()).toString());
         try {
-        // Extract 'values' field from the response JSON
-        List<Object> values = JsonPath.read(response.getBody(), "$.values");
-        return values.toString();
+            // Make API request
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+            // Extract 'values' field from the response JSON
+            List<Object> values = JsonPath.read(response.getBody(), "$.values");
+            for (Object value : values) {
+                String trial_id = JsonPath.read(value, "$.trial_id");
+                String updatedValue = JsonPath.read(value, "$._updated");
+                String updatedFormatted = updatedValue != null ? formatDate(updatedValue) : null;
+            }
+            // Return the extracted values as a string
+            return values.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error extracting values.";
+        }
+    }
+
+    public String formatDate(String dateString) {
+        try {
+            // Parse the date string in UTC
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+            inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = inputFormat.parse(dateString);
+            // Format the date with the desired locale
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.US);
+            outputFormat.setTimeZone(TimeZone.getDefault()); // Use system default or specify a time zone
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public String getTrialDataFromMatchEngine(String userId, String trialInternalId, String trialId, String dataUpdated){
+        System.out.printf("trialInternalId2 %s", trialInternalId);
+        String whereClause = "{\"trial_internal_id\":\"" + trialInternalId + "\", \"is_disabled\": false}";
+        // Use URLCodec to encode the JSON string
+        URLCodec codec = new URLCodec();
+        String encodedWhereClause = null;
+        try {
+            // Encode the whereClause with URLCodec
+            encodedWhereClause = codec.encode(whereClause);
+        } catch (EncoderException e) {
+            e.printStackTrace();
+            return "Error encoding the URL parameter.";
+        }
+        // Construct the URL with the encoded 'where' parameter
+        String url = MM_API_URL + "/ctims_trial_match?where=" + encodedWhereClause;
+        System.out.printf("URL: %s\n", url);
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer " + MM_API_TOKEN)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String responseBody = response.body().string();
+
+            // Extract 'values' field from the response JSON
+            List<Map<String, Object>> values = JsonPath.read(responseBody, "$._items");
+            for (Map<String, Object> value : values) {
+            String trialName = (String) value.get("short_title");
+            value.put("trialId", trialId);
+            value.put("matchDate", dataUpdated);
+            value.put("trialName", trialName);
+            }
+            LocalDateTime time = LocalDateTime.now();
+            String Time = time.toString();
+            saveJsonData(values, Time); 
+            saveClinicalJsonData(values, Time);  
+            return values.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "Error extracting values.";
@@ -693,32 +770,86 @@ public class DatabaseServiceImpl implements DatabaseService{
     }
 
     @Override
-    public String getTrialDataFromMatchminer(String userId, String trialInternalId){
-        System.out.printf("trialInternalId2 %s", trialInternalId);
-        String url = UriComponentsBuilder.fromHttpUrl(MM_API_URL + "/ctims_trial_match")
-                                    //.queryParam("where", "{\"trial_internal_id\":\"" + trialInternalId + "\", \"is_disabled\": false}")
-                                    .toUriString();
-
-        System.out.printf("URL: %s\n", url);
-        Map<String, Object> requestBody = Map.of("key", "value");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer "+ MM_API_TOKEN);
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-        System.out.printf("Data %s",ResponseEntity.ok(response.getBody()).toString());
+    public void saveJsonData(List<Map<String, Object>> records, String time) {
         try {
-        // Extract 'values' field from the response JSON
-        List<Object> values = JsonPath.read(response.getBody(), "$.values");
-        return values.toString();
+            Set<String> uniquePatientIds = new HashSet<>();
+            Set<String> uniqueTrialArmIds = new HashSet<>();
+            Set<String> uniqueStudyIds = new HashSet<>();
+            String trialId = "";
+            String trialMatchDate = "";
+            String trialName = "";
+            for (Map<String, Object> record : records) {
+                trialId = (String) record.get("trialId");
+                trialMatchDate = (String) record.get("matchDate");
+                trialName = (String) record.get("trialName");
+                String patientId = (String) record.get("patient_id");
+                String trialArmId = trialId + "_"+ (trialName != null && !trialName.isEmpty() ? trialName : " ") + "_Arm" + 
+                                    (Integer.parseInt((String) record.get("trial_arm_number")) + 1);
+                String studyId = (String) record.get("study_id");
+                
+                uniquePatientIds.add(patientId);
+                uniqueTrialArmIds.add(trialArmId);
+                uniqueStudyIds.add(studyId);
+            }
+            int uniquePatientCount = uniquePatientIds.size();
+            int uniqueTrialArmCount = uniqueTrialArmIds.size();
+            int uniqueStudyCount = uniqueStudyIds.size();
+            String trialCreated = time;
+            String username = getUserName();
+            int uniqueArms = uniqueTrialArmCount;
+            int uniquePatients = uniquePatientCount;
+            int uniqueStudies = uniqueStudyCount;
+            chartsTableRepository.insertChart(trialCreated, username, uniqueArms, uniquePatients, trialId, trialMatchDate, uniqueStudyCount, trialName);
         } catch (Exception e) {
-            e.printStackTrace();
-            return "Error extracting values.";
+            throw new RuntimeException("Failed to parse records: " + e.getMessage());
         }
     }
 
+    @Override
+    public void saveClinicalJsonData(List<Map<String, Object>> records, String time) {
+        try {
+            for (Map<String, Object> record : records) {
+                String trialId = (String) record.get("trialId");
+                String trialName = (String) record.get("trialName");
+                String trialMatchDate = (String) record.get("matchDate");
+                String trialArmId = trialId + "_"+ (trialName != null && !trialName.isEmpty() ? trialName : " ") + "_Arm" + 
+                                    (Integer.parseInt((String) record.get("trial_arm_number")) + 1);
+                String armCode = (String) record.get("trial_curation_level_status");  // Assuming arm code is trial curation level status
+                String studyId = (String) record.get("study_id");
+                String patientId = (String) record.get("patient_id");
+                String sampleId = (String) record.get("sample_id");
+                String vitalStatus = (String) record.get("vital_status");
+                String gender = (String) record.get("gender");
+                String age = String.valueOf(record.get("age"));
+                String diagnosis = (String) record.get("oncotree_primary_diagnosis_name");
+                String HER2Status = (String) record.get("her2_status");
+                String ERStatus = (String) record.get("er_status");
+                String PRStatus = (String) record.get("pr_status");
+                String genomicAlteration = (String) record.get("genomic_alteration"); // This key may need to be adjusted
+                String hugoSymbol = (String) record.get("hugo_symbol"); // Assuming it's part of the map
+                String mutationEffect = (String) record.get("mutation_effect"); // Assuming it's part of the map
+                String trueVariantClassification = (String) record.get("true_variant_classification");
+                String variantCategory = (String) record.get("variant_category");
+                String leftPartnerGene = (String) record.get("left_partner_gene");
+                String rightPartnerGene = (String) record.get("right_partner_gene");
+                String CNVCall = (String) record.get("cnv_call");
+                String MSStatus = (String) record.get("ms_status");
+                String trialCreated = time;
+                String combinedData = (String) record.get("patient_match_values");
+                String oncotreePrimaryDiagnosisMatchOnly = (String) record.get("oncotree_primary_diagnosis_match_value");
+
+                chartsTableRepository.insertClinicalData(
+                    trialId, trialName, trialMatchDate, trialArmId, armCode, studyId, 
+                    patientId, sampleId, vitalStatus, gender, age, diagnosis, HER2Status, 
+                    ERStatus, PRStatus, genomicAlteration, hugoSymbol, mutationEffect, 
+                    trueVariantClassification, variantCategory, leftPartnerGene, 
+                    rightPartnerGene, CNVCall, MSStatus, trialCreated, combinedData, oncotreePrimaryDiagnosisMatchOnly
+                );
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse records: " + e.getMessage());
+        }
+    }
 
 
     @Override

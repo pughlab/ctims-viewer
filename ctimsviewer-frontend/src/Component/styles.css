@@ -204,24 +204,49 @@
 
 .navHeader {
   display: flex;
-  border-bottom: 2px solid #dcd7d7;
-
+  justify-content: left;
+  align-items: center;
+  border-bottom: 2px solid #e0e0e0;
+  background-color: #ffffff; 
+  padding: 12px 24px; 
+  border-radius: 4px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navHeader h3 {
   margin: 0;
-  padding: 10px;
-}
-
-.navHeader h3.selected {
-  border-bottom: 2px solid #000; /* Line beneath selected item */
+  padding: 8px 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 4px; 
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-bottom 0.2s ease-in-out;
 }
 
 .navHeader h3 a {
   text-decoration: none;
-  color: inherit; /* Inherit color from the parent */
+  color: #555; 
   display: block;
   width: 100%;
+}
+
+.navHeader h3.selected a {
+  color: #4182ab;
+  border-radius: 4px; 
+}
+
+
+.navHeader h3.selected {
+  border-bottom: 3px solid #4182ab; 
+  color: #4182ab; 
+  border-radius: 4px; 
+  background-color: #e6ebf0;;
+}
+
+.navHeader h3:hover {
+  background-color: #eef5ff; 
+  color: #8db8e2;
+  cursor: pointer;
+  border-bottom: 3px solid #8db8e2;
 }
 
 
@@ -430,7 +455,7 @@
   background-color: #f9fafb; /* Light gray background for a clean look */
   border-radius: 8px; /* Rounded corners for a modern feel */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  margin: 20px; /* Space around the component */
+  margin: 20px  auto; /* Space around the component */
   max-width: 1200px; /* Restrict max width for better layout on large screens */
   width: 100%; /* Ensure responsiveness */
 }
@@ -445,6 +470,34 @@
     padding: 15px; /* Reduce padding for smaller screens */
     margin: 10px; /* Adjust margin for compact layout */
   }
+}
+
+
+.fetch-button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fetch-button:hover {
+  background-color: #0056b3;
+}
+
+
+.page-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
 

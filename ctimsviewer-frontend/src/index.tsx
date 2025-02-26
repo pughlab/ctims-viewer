@@ -38,11 +38,12 @@ console.log('Keycloak object:', keycloak);
 
 //          <App  accessToken={check}/>
 const AppWithKeycloak: React.FC = () => {
+    const client: any= process.env.REACT_APP_KEYCLOAK_CLIENT;
     const { initialized, keycloak } = useKeycloak();
     const userName = keycloak?.idTokenParsed?.name;
     var check = keycloak.token;
     const resourceAccess = keycloak.tokenParsed?.resource_access;
-    const ctimsRoles = resourceAccess?.ctims?.roles || [];
+    const ctimsRoles = resourceAccess?.[client]?.roles || [];
     console.log("Content in keycloak", ctimsRoles);
     useEffect(() => {
       if (initialized && keycloak.authenticated) {
