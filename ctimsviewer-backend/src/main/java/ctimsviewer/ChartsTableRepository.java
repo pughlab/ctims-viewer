@@ -114,6 +114,9 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Query("SELECT * FROM CTIMSCHARTS")
     List<ChartsTable> groupTrials();
 
+    @Query("SELECT TRIALCREATED FROM CTIMSCHARTS where TRIALID = :trialid AND TRIALMATCHDATE= :trialcreated")
+    List<ChartsTable> getTrialCreatedDate(@Param("trialcreated") String trialcreated, @Param("trialid") String trialid);
+
 
     @Query("SELECT * FROM CTIMSCHARTS WHERE PATIENTID = :argument")
     List<ChartsTable> getPatientsData(@Param("argument") String argument);

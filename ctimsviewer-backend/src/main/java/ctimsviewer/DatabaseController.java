@@ -291,10 +291,10 @@ public class DatabaseController {
     }
 
 
-    @GetMapping("/FetchTrialIdsFromMatchminer")
-    public ResponseEntity<String> getTrialFromMatchminer(HttpSession session){
+    @GetMapping("/FetchTrialIdsFromMatchEngine")
+    public ResponseEntity<String> getTrialFromMatchEngine(HttpSession session){
         String userId = getUserIdFromSession(session);
-        String bytes = dataService.getTrialFromMatchminer(userId);
+        String bytes = dataService.getTrialFromMatchEngine(userId);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
@@ -302,11 +302,11 @@ public class DatabaseController {
         }
     }
 
-    @GetMapping("/FetchTrialDataFromMatchminer/{trialInternalId}")
-    public ResponseEntity<String> getTrialDataFromMatchminer(HttpSession session, @PathVariable String trialInternalId){
+    @GetMapping("/FetchTrialDataFromMatchEngine/{trialInternalId}/{trialId}/{dataUpdated}")
+    public ResponseEntity<String> getTrialDataFromMatchEngine(HttpSession session, @PathVariable String trialInternalId, @PathVariable String trialId, @PathVariable String dataUpdated){
         System.out.printf("trialInternalId %s", trialInternalId);
         String userId = getUserIdFromSession(session);
-        String bytes = dataService.getTrialDataFromMatchminer(userId, trialInternalId);
+        String bytes = dataService.getTrialDataFromMatchEngine(userId, trialInternalId, trialId, dataUpdated);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {

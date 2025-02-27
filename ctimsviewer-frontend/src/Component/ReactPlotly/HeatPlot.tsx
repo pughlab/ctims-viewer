@@ -44,37 +44,38 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
 
   const heatmapMatrixWithColors = useMemo(() => {
     return trialArmNames.map((trialArm) =>
-      patientIdsAsStrings.map((patientId, index) => {
+      patientIdsAsStrings.map((patientId) => {
         if (
           data.some(
             (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
           )
         ) {
-          return index % 2 === 0 ? 1 : 2; // Assign values based on index
+          return 2; // Assign a single color value for all matches
         }
         return 0; // No match
       })
     );
   }, [data, trialArmNames, patientIdsAsStrings]);
+  
 
   const sortedHeatmapWithColors = useMemo(() => {
     if (isSorted) {
       const { trialArms, patients } = sortedData;
       return trialArms.map((trialArm) =>
-        patients.map((patientId, index) => {
+        patients.map((patientId) => {
           if (
             data.some(
               (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
             )
           ) {
-            return index % 2 === 0 ? 1 : 2; // Assign values based on index
+            return 2; // Assign a single color value for all matches
           }
           return 0;
         })
       );
     }
     return heatmapMatrixWithColors;
-  }, [sortedData, isSorted, data, heatmapMatrixWithColors]);
+  }, [sortedData, isSorted, data, heatmapMatrixWithColors]); 
 
   const sortData = () => {
     const sortedTrialArms = [...trialArmNames].sort(
@@ -117,6 +118,14 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
   const rowHeight = 25;
   const chartHeight = rowHeight * trialArmNames.length;
 
+  const columnHeight = 8;
+  let chartColumnHeight ={}
+  if(patientIds.length>75){
+    chartColumnHeight  = 1000;
+  }
+  else{
+    chartColumnHeight = columnHeight * patientIds.length;
+  }
   return (
     <div>
       <div style={{ marginBottom: "10px", display: "flex", justifyContent: "left", gap: "20px" }}>
@@ -170,7 +179,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
             showgrid: false,
           },
           height: 200 + chartHeight,
-          width: 1200,
+          width: 200 + Number(chartColumnHeight),
           autosize: false,
           plot_bgcolor: "white",
           paper_bgcolor: "white",

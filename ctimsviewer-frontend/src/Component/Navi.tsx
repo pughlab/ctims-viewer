@@ -16,8 +16,11 @@ function Navi(props: any) {
                 <h3 className={location.pathname === "/" ? "selected" : ""}>
                     <Link to="/" >Home Page</Link>
                 </h3>
-                {hasChartsRole && (<h3 className={location.pathname === "/main" ? "selected" : ""}>
-                    <Link to="/main" >CTIMS Viewer Charts</Link>
+                {hasChartsRole && (<h3 className={location.pathname === "/charts" ? "selected" : ""}>
+                    <Link to="/charts" >CTIMS Viewer Charts</Link>
+                </h3>)}
+                {hasChartsRole && (<h3 className={location.pathname === "/matchengine" ? "selected" : ""}>
+                    <Link to="/matchengine" >CTIMS Match Engine</Link>
                 </h3>)}
                 {hasClinicalRole && (<h3 className={location.pathname === "/clinical" ? "selected" : ""}>
                     <Link to="/clinical" >CTIMS Clinical</Link>
