@@ -116,7 +116,7 @@ public class DatabaseServiceImpl implements DatabaseService{
         Files.createDirectories(importerDir);
 
         Path scriptFile = importerDir.resolve(fileName);
-        try (InputStream is = getClass().getResourceAsStream("/importer/" + fileName)) {
+        try (InputStream is = getClass().getResourceAsStream("/Scripts/" + fileName)) {
             Files.copy(is, scriptFile, StandardCopyOption.REPLACE_EXISTING);
         }
     }
@@ -124,7 +124,7 @@ public class DatabaseServiceImpl implements DatabaseService{
     private String[] listValidatorFileNames() {
         // todo: traverse the directory and get all the file names
         String[] fileNames = {"__init__.py",
-                "HeatPlot.py",
+                "HeatMap.py",
                 "ReverseBarChart.py",
                 "TopBarChart.py",
                 "BarChart.py",
@@ -253,16 +253,18 @@ public class DatabaseServiceImpl implements DatabaseService{
     @Override
     public List<Map<String, String>> reactPlotlyData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene){
 
-        System.out.printf("Check2");
+
         List<ClinicalData> results = chartsTableRepository.reactPlotlyDataFilter(trialCreated, trialId, trialName, StudyID, patientId, SampleID, hugoSymbol, gene);
         //System.out.println("Results before converting to string: " + results);
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
             String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
-            String[] parts = data.split(",", 2); // Split into two parts
+            String[] parts = data.split(",", 4); // Split into two parts
             Map<String, String> map = new HashMap<>();
             map.put("trialarmid", parts[0]);
             map.put("patient_id", parts[1]);
+            map.put("studyid", parts[2]);
+            map.put("combineddata", parts[3]);
             convertedResults.add(map);
         }
 
@@ -284,10 +286,12 @@ public class DatabaseServiceImpl implements DatabaseService{
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
             String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
-            String[] parts = data.split(",", 2); // Split into two parts
+            String[] parts = data.split(",", 4); // Split into two parts
             Map<String, String> map = new HashMap<>();
             map.put("trialarmid", parts[0]);
             map.put("patient_id", parts[1]);
+            map.put("studyid", parts[2]);
+            map.put("combineddata", parts[3]);
             convertedResults.add(map);
         }
         System.out.printf("Date%s", convertedResults.toString());
@@ -440,7 +444,7 @@ public class DatabaseServiceImpl implements DatabaseService{
         Path tempDir = Files.createTempDirectory("python-script");
 
         // Extract the script to the temporary directory
-        Path importerDir = tempDir.resolve("importer");
+        Path importerDir = tempDir.resolve("Scripts");
         Path scriptFile = importerDir.resolve(scriptName);
         copyScriptsToTempDir(importerDir);
     /*
@@ -554,7 +558,7 @@ public class DatabaseServiceImpl implements DatabaseService{
         Path tempDir = Files.createTempDirectory("python-script");
 
         // Extract the script to the temporary directory
-        Path importerDir = tempDir.resolve("importer");
+        Path importerDir = tempDir.resolve("Scripts");
         Path scriptFile = importerDir.resolve(scriptName);
         copyScriptsToTempDir(importerDir);
     /*
@@ -738,7 +742,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             return "Error encoding the URL parameter.";
         }
         // Construct the URL with the encoded 'where' parameter
-        String url = MM_API_URL + "/ctims_trial_match?where=" + encodedWhereClause;
+        String url = MM_API_URL + "/ctims_viewer_trial_match?where=" + encodedWhereClause;
         System.out.printf("URL: %s\n", url);
 
         OkHttpClient client = new OkHttpClient();
@@ -753,7 +757,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             // Extract 'values' field from the response JSON
             List<Map<String, Object>> values = JsonPath.read(responseBody, "$._items");
             for (Map<String, Object> value : values) {
-            String trialName = (String) value.get("short_title");
+            String trialName = (String) value.get("nickname");
             value.put("trialId", trialId);
             value.put("matchDate", dataUpdated);
             value.put("trialName", trialName);
@@ -761,7 +765,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             LocalDateTime time = LocalDateTime.now();
             String Time = time.toString();
             saveJsonData(values, Time); 
-            saveClinicalJsonData(values, Time);  
+            saveResultsJsonData(values, Time);  
             return values.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -777,13 +781,13 @@ public class DatabaseServiceImpl implements DatabaseService{
             Set<String> uniqueStudyIds = new HashSet<>();
             String trialId = "";
             String trialMatchDate = "";
-            String trialName = "";
+            String nickName = "";
             for (Map<String, Object> record : records) {
                 trialId = (String) record.get("trialId");
                 trialMatchDate = (String) record.get("matchDate");
-                trialName = (String) record.get("trialName");
+                nickName = (String) record.get("nickname");
                 String patientId = (String) record.get("patient_id");
-                String trialArmId = trialId + "_"+ (trialName != null && !trialName.isEmpty() ? trialName : " ") + "_Arm" + 
+                String trialArmId = trialId + "_"+ (nickName != null && !nickName.isEmpty() ? nickName : " ") + "_Arm" + 
                                     (Integer.parseInt((String) record.get("trial_arm_number")) + 1);
                 String studyId = (String) record.get("study_id");
                 
@@ -799,20 +803,20 @@ public class DatabaseServiceImpl implements DatabaseService{
             int uniqueArms = uniqueTrialArmCount;
             int uniquePatients = uniquePatientCount;
             int uniqueStudies = uniqueStudyCount;
-            chartsTableRepository.insertChart(trialCreated, username, uniqueArms, uniquePatients, trialId, trialMatchDate, uniqueStudyCount, trialName);
+            chartsTableRepository.insertChart(trialCreated, username, uniqueArms, uniquePatients, trialId, trialMatchDate, uniqueStudyCount, nickName);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse records: " + e.getMessage());
         }
     }
 
     @Override
-    public void saveClinicalJsonData(List<Map<String, Object>> records, String time) {
+    public void saveResultsJsonData(List<Map<String, Object>> records, String time) {
         try {
             for (Map<String, Object> record : records) {
                 String trialId = (String) record.get("trialId");
-                String trialName = (String) record.get("trialName");
+                String nickname = (String) record.get("nickname");
                 String trialMatchDate = (String) record.get("matchDate");
-                String trialArmId = trialId + "_"+ (trialName != null && !trialName.isEmpty() ? trialName : " ") + "_Arm" + 
+                String trialArmId = trialId + "_"+ (nickname != null && !nickname.isEmpty() ? nickname : " ") + "_Arm" + 
                                     (Integer.parseInt((String) record.get("trial_arm_number")) + 1);
                 String armCode = (String) record.get("trial_curation_level_status");  // Assuming arm code is trial curation level status
                 String studyId = (String) record.get("study_id");
@@ -839,7 +843,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 String oncotreePrimaryDiagnosisMatchOnly = (String) record.get("oncotree_primary_diagnosis_match_value");
 
                 chartsTableRepository.insertClinicalData(
-                    trialId, trialName, trialMatchDate, trialArmId, armCode, studyId, 
+                    trialId, nickname, trialMatchDate, trialArmId, armCode, studyId, 
                     patientId, sampleId, vitalStatus, gender, age, diagnosis, HER2Status, 
                     ERStatus, PRStatus, genomicAlteration, hugoSymbol, mutationEffect, 
                     trueVariantClassification, variantCategory, leftPartnerGene, 

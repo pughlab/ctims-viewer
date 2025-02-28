@@ -31,6 +31,8 @@ const RightComponent = (props: any) => {
   const [selectedTrials, setSelectedTrials] = useState<string[]>([]); // State to track selected trials
   const [trial, setTrial] = useState("");
   const [selectAll, setSelectAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Default items per page
 
   useEffect(() => {
     handleChartValidate();
@@ -145,42 +147,91 @@ const RightComponent = (props: any) => {
     );
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCharts = charts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(charts.length / itemsPerPage);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+  const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
   return (
     <div>
       {groupTrialsError && <div>Error: Unable to fetch the Trials</div>}
       {charts.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Trial ID</th>
-              <th>Trial Name</th>
-              <th>Trial Match Date</th>
-              <th>Trial Uploaded On</th>
-              <th>Unique Arms</th>
-              <th>Unique Patients</th>
-              <th>Unique Studies</th>
-              <th>Uploaded User Name</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {charts.map((chart, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{chart.trialid}</td>
-                <td>{chart.trialname}</td>
-                <td>{chart.trialmatchdate}</td>
-                <td>{formatDate(chart.trialcreated)}</td>
-                <td>{chart.uniquearms}</td>
-                <td>{chart.uniquepatients}</td>
-                <td>{chart.uniquestudyid}</td>
-                <td>{chart.username}</td>
-                <td><button  className="deleteButton" onClick={() => handleDelete(chart.trialcreated) }><MdDelete /></button></td>
+        <>
+          {/* Records per page dropdown */}
+          <div className="pagination-controls">
+            <label>
+              Records per page:
+              <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+              <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Table */}
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Trial ID</th>
+                <th>Trial Name</th>
+                <th>Trial Match Date</th>
+                <th>Trial Uploaded On</th>
+                <th>Unique Arms</th>
+                <th>Unique Patients</th>
+                <th>Unique Studies</th>
+                <th>Uploaded User Name</th>
+                <th>Delete</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentCharts.map((chart, index) => (
+                <tr key={index}>
+                  <td>{indexOfFirstItem + index + 1}</td>
+                  <td>{chart.trialid}</td>
+                  <td>{chart.trialname}</td>
+                  <td>{chart.trialmatchdate}</td>
+                  <td>{formatDate(chart.trialcreated)}</td>
+                  <td>{chart.uniquearms}</td>
+                  <td>{chart.uniquepatients}</td>
+                  <td>{chart.uniquestudyid}</td>
+                  <td>{chart.username}</td>
+                  <td>
+                    <button className="deleteButton" onClick={() => handleDelete(chart.trialcreated)}>
+                      <MdDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

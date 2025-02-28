@@ -7,8 +7,9 @@ function Navi(props: any) {
 
     const roles = props.roles || [];;
     const hasChartsRole = roles.includes('role_charts');
+    const hasMatchEnginelRole = roles.includes('role_matchengine');
     const hasFetcherRole = roles.includes('role_fetcher');
-    const hasClinicalRole = roles.includes('role_clinical');
+    const hasLoaderRole = roles.includes('role_loader');
 
     return (
         <div>
@@ -19,14 +20,14 @@ function Navi(props: any) {
                 {hasChartsRole && (<h3 className={location.pathname === "/charts" ? "selected" : ""}>
                     <Link to="/charts" >CTIMS Viewer Charts</Link>
                 </h3>)}
-                {hasChartsRole && (<h3 className={location.pathname === "/matchengine" ? "selected" : ""}>
+                {hasMatchEnginelRole && (<h3 className={location.pathname === "/matchengine" ? "selected" : ""}>
                     <Link to="/matchengine" >CTIMS Match Engine</Link>
                 </h3>)}
-                {hasClinicalRole && (<h3 className={location.pathname === "/clinical" ? "selected" : ""}>
-                    <Link to="/clinical" >CTIMS Clinical</Link>
+                {hasLoaderRole && (<h3 className={location.pathname === "/loader" ? "selected" : ""}>
+                    <Link to="/loader" >CTIMS Loader</Link>
                 </h3>)}
-                {hasFetcherRole && (<h3 className={location.pathname === "/sample" ? "selected" : ""}>
-                    <Link to="/sample">CTIMS Assembler Fetcher</Link>
+                {hasFetcherRole && (<h3 className={location.pathname === "/fetcher" ? "selected" : ""}>
+                    <Link to="/fetcher">CTIMS Assembler Fetcher</Link>
                 </h3>)}
             </div>
         </div>

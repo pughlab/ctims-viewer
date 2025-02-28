@@ -68,7 +68,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
         @Param("gene") String gene
     );
 
-    @Query("SELECT TrialArmId, patient_id FROM ClinicalData WHERE " +
+    @Query("SELECT TrialArmId, patient_id, combineddata, StudyID FROM ClinicalData WHERE " +
         "(TRIALCREATED = :TRIALCREATED OR :TRIALCREATED IS NULL) AND " +
         "(TrialId = :trialId OR :trialId IS NULL) AND " +
         "(TrialName = :trialName OR :trialName IS NULL) AND " +
