@@ -401,7 +401,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             String oncotreePrimaryDiagnosisMatchOnly = csvRecord.get("Oncotree Primary Diagnosis Match Value");
             System.out.printf("oncotreePrimaryDiagnosisMatchOnly %s",oncotreePrimaryDiagnosisMatchOnly);
 
-            chartsTableRepository.insertClinicalData(
+            chartsTableRepository.insertResultsData(
                 trialId, trialName, trialMatchDate, trialArmId, armCode, studyID, 
                 patientId, sampleID, vitalStatus, gender, age, diagnosis, HER2Status, 
                 ERStatus, PRStatus, genomicAlteration, hugoSymbol, mutationEffect, 
@@ -839,7 +839,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 String combinedData = (String) record.get("patient_match_values");
                 String oncotreePrimaryDiagnosisMatchOnly = (String) record.get("oncotree_primary_diagnosis_match_value");
 
-                chartsTableRepository.insertClinicalData(
+                chartsTableRepository.insertResultsData(
                     trialId, nickname, trialMatchDate, trialArmId, armCode, studyId, 
                     patientId, sampleId, vitalStatus, gender, age, diagnosis, HER2Status, 
                     ERStatus, PRStatus, genomicAlteration, hugoSymbol, mutationEffect, 

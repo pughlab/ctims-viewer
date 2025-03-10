@@ -137,7 +137,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Modifying
     @Query("INSERT INTO ClinicalData (TrialId, TrialName, TrialMatchDate, TrialArmId, ArmCode, StudyID, patient_id, SampleID, VitalStatus, Gender, Age, Diagnosis, HER2Status, ERStatus, PRStatus, GenomicAlteration, HugoSymbol, MutationEffect, TrueVariantClassification, VariantCategory, LeftPartnerGene, RightPartnerGene, CNVCall, MSStatus, TRIALCREATED, COMBINEDDATA, ONCOTREEPRIMARYDIAGNOSISMATCHONLY) " +
            "VALUES (:trialId, :trialName, :trialMatchDate, :trialArmId, :armCode, :studyID, :patientId, :sampleID, :vitalStatus, :gender, :age, :diagnosis, :her2Status, :erStatus, :prStatus, :genomicAlteration, :hugoSymbol, :mutationEffect, :trueVariantClassification, :variantCategory, :leftPartnerGene, :rightPartnerGene, :cnvCall, :msStatus, :trialcreated, :combinedData, :oncotreePrimaryDiagnosisMatchOnly)")
-    void insertClinicalData(@Param("trialId") String trialId,
+    void insertResultsData(@Param("trialId") String trialId,
                             @Param("trialName") String trialName,
                             @Param("trialMatchDate") String trialMatchDate,
                             @Param("trialArmId") String trialArmId,
