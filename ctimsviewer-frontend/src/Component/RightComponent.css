@@ -14,7 +14,8 @@ table {
 }
 
 thead {
-  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  background: #329adb;
+  /*linear-gradient(90deg, #6a11cb, #2575fc);*/
   color: #fff;
 }
 
@@ -73,6 +74,54 @@ button:hover {
   background: #c3aaac;
 }
 
+/* Pagination controls */
+.pagination-controls {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination-controls label {
+  font-weight: bold;
+}
+
+.pagination-controls select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #080202;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination span {
+  font-weight: bold;
+}
 @media screen and (max-width: 768px) {
   table {
     font-size: 12px;

@@ -235,6 +235,7 @@ const UploadCsv = (props: any) => {
         if (reactPlotlyChartResponse != null) {
             setReactPlotlyData(reactPlotlyChartResponse);
             console.log("React Plotly data", reactPlotlyData);
+            handleViewPlot();
         }
     }, [reactPlotlyChartResponse]);
 
@@ -865,7 +866,7 @@ const UploadCsv = (props: any) => {
                 {selectedTab === 'charts' && (
                     <div className="charts-tab-content">
                         <div className="left">
-                            <div className="buttonsContainer">
+                            <div className="mainButtonsContainer">
                                 <div className="dropdown-container">
                                     <div className="indi-dropdown-container">
                                         <label htmlFor="plotTypeDropdown" className="dropdown-label">Plot Type</label>
@@ -874,7 +875,7 @@ const UploadCsv = (props: any) => {
                                             value={selectedItem} 
                                             onChange={(e) => setSelectedItem(e.value)} 
                                             options={items} 
-                                            itemTemplate={customOptionTemplate}
+                                            //itemTemplate={customOptionTemplate}
                                             placeholder="Plot Type" 
                                             className="fixed-width-select" 
                                         />
@@ -908,6 +909,7 @@ const UploadCsv = (props: any) => {
                                                     value={selectedOptions}
                                                     placeholder="Trial Arm Id's"
                                                     filter
+                                                    disabled={selectedTrials.length === 0}
                                                     onChange={(e) => handleChange(e.value)}
                                                 />
                                             </>
@@ -925,6 +927,7 @@ const UploadCsv = (props: any) => {
                                                     value={selectedStudy}
                                                     placeholder="Study Id's"
                                                     filter
+                                                    disabled={selectedTrials.length === 0}
                                                     onChange={(e) => handleStudyChange(e.value)}
                                                 />
                                             </>
@@ -935,11 +938,19 @@ const UploadCsv = (props: any) => {
                                     <button className="createCtmlButton" onClick={handleReactPlotlyChart} disabled={!(selectedItem)} style={{ height: "2.5rem", alignItems: "center" }} >
                                         Create Chart
                                     </button>
-                                    {!reactPlotlyChartLoading && reactPlotlyChartResponse && 
+                                    {/*!reactPlotlyChartLoading && reactPlotlyChartResponse && 
                                         <button className="createCtmlButton" onClick={() => handleViewPlot()}>
                                             View Plot
                                         </button>
-                                    }
+                                        */}
+                                    <div>
+                                        {false && <button className="createCtmlButton" onClick={handleChartValidate} disabled={!(selectedItem)} style={{ height: "2.5rem", alignItems: "center" }} >Create Chart</button>}
+                                        {imageSrc && createStatus && (((createStatus as string).startsWith("Success"))) && !(csvChartLoading) &&   <Popup trigger={<button className="createCtmlButton" > View Plot </button>} modal nested position="left center">
+                                            <img src={imageSrc} alt="Plot" style={{ width: '100%', height:'auto', maxWidth: '1000px', display: 'block', margin: '0 auto' }} />
+                                            </Popup>}
+                                        {createStatus && (!((createStatus as string).startsWith("Success")) ? <p></p> :  <button className="createCtmlButton" onClick={() => handleDownload()}>Download
+                                        </button>)}  
+                                    </div>
                                 </div>
                             </div>
                         </div>

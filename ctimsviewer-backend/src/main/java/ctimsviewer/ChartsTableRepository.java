@@ -68,7 +68,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
         @Param("gene") String gene
     );
 
-    @Query("SELECT TrialArmId, patient_id FROM ClinicalData WHERE " +
+    @Query("SELECT TrialArmId, patient_id, combineddata, StudyID FROM ClinicalData WHERE " +
         "(TRIALCREATED = :TRIALCREATED OR :TRIALCREATED IS NULL) AND " +
         "(TrialId = :trialId OR :trialId IS NULL) AND " +
         "(TrialName = :trialName OR :trialName IS NULL) AND " +
@@ -107,7 +107,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Transactional
     @Modifying
     @Query("INSERT INTO CTIMSCHARTS (TRIALCREATED, USERNAME, UNIQUEARMS, UNIQUEPATIENTS, TRIALID, TRIALMATCHDATE, UNIQUESTUDYID, TRIALNAME) VALUES (:trialcreated, :username, :uniquearms, :uniquepatients, :trialid, :trialmatchdate, :uniquestudyid, :trialname)")
-    void insertChart(@Param("trialcreated") String trialcreated, @Param("username") String username, @Param("uniquearms") int uniquearms, @Param("uniquepatients") int uniquepatients, @Param("trialid") String trialid, @Param("trialmatchdate") String trialmatchdate, @Param("uniquestudyid") int uniquestudyid, @Param("trialname") String trialname);
+    void insertTrialInformation(@Param("trialcreated") String trialcreated, @Param("username") String username, @Param("uniquearms") int uniquearms, @Param("uniquepatients") int uniquepatients, @Param("trialid") String trialid, @Param("trialmatchdate") String trialmatchdate, @Param("uniquestudyid") int uniquestudyid, @Param("trialname") String trialname);
 
 
 
@@ -137,7 +137,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Modifying
     @Query("INSERT INTO ClinicalData (TrialId, TrialName, TrialMatchDate, TrialArmId, ArmCode, StudyID, patient_id, SampleID, VitalStatus, Gender, Age, Diagnosis, HER2Status, ERStatus, PRStatus, GenomicAlteration, HugoSymbol, MutationEffect, TrueVariantClassification, VariantCategory, LeftPartnerGene, RightPartnerGene, CNVCall, MSStatus, TRIALCREATED, COMBINEDDATA, ONCOTREEPRIMARYDIAGNOSISMATCHONLY) " +
            "VALUES (:trialId, :trialName, :trialMatchDate, :trialArmId, :armCode, :studyID, :patientId, :sampleID, :vitalStatus, :gender, :age, :diagnosis, :her2Status, :erStatus, :prStatus, :genomicAlteration, :hugoSymbol, :mutationEffect, :trueVariantClassification, :variantCategory, :leftPartnerGene, :rightPartnerGene, :cnvCall, :msStatus, :trialcreated, :combinedData, :oncotreePrimaryDiagnosisMatchOnly)")
-    void insertClinicalData(@Param("trialId") String trialId,
+    void insertResultsData(@Param("trialId") String trialId,
                             @Param("trialName") String trialName,
                             @Param("trialMatchDate") String trialMatchDate,
                             @Param("trialArmId") String trialArmId,

@@ -51,11 +51,11 @@ public interface DatabaseService{
 
     public String getTrialFromMatchEngine(String userId);
 
-    void saveJsonData(List<Map<String, Object>> records, String time);
+    void saveTrialInformation(List<Map<String, Object>> records, String time);
 
     public String formatDate(String dateString);
 
-    void saveClinicalJsonData(List<Map<String, Object>> records, String time);
+    void saveResultsJsonData(List<Map<String, Object>> records, String time);
 
     public String getTrialDataFromMatchEngine(String userId, String trialInternalId, String trialId, String dataUpdated);
     
