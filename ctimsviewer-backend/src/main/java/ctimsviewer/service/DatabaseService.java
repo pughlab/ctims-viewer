@@ -51,7 +51,7 @@ public interface DatabaseService{
 
     public String getTrialFromMatchEngine(String userId);
 
-    void saveJsonData(List<Map<String, Object>> records, String time);
+    void saveTrialInformation(List<Map<String, Object>> records, String time);
 
     public String formatDate(String dateString);
 

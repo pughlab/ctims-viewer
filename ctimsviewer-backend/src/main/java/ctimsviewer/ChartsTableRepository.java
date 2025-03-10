@@ -107,7 +107,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Transactional
     @Modifying
     @Query("INSERT INTO CTIMSCHARTS (TRIALCREATED, USERNAME, UNIQUEARMS, UNIQUEPATIENTS, TRIALID, TRIALMATCHDATE, UNIQUESTUDYID, TRIALNAME) VALUES (:trialcreated, :username, :uniquearms, :uniquepatients, :trialid, :trialmatchdate, :uniquestudyid, :trialname)")
-    void insertChart(@Param("trialcreated") String trialcreated, @Param("username") String username, @Param("uniquearms") int uniquearms, @Param("uniquepatients") int uniquepatients, @Param("trialid") String trialid, @Param("trialmatchdate") String trialmatchdate, @Param("uniquestudyid") int uniquestudyid, @Param("trialname") String trialname);
+    void insertTrialInformation(@Param("trialcreated") String trialcreated, @Param("username") String username, @Param("uniquearms") int uniquearms, @Param("uniquepatients") int uniquepatients, @Param("trialid") String trialid, @Param("trialmatchdate") String trialmatchdate, @Param("uniquestudyid") int uniquestudyid, @Param("trialname") String trialname);
 
 
 

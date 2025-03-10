@@ -350,7 +350,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 String trialname = trialName;
 
 
-                chartsTableRepository.insertChart(trialcreated, username, uniquearms, uniquepatients, trialid, trialmatchdate, uniqueStudyCount, trialname);
+                chartsTableRepository.insertTrialInformation(trialcreated, username, uniquearms, uniquepatients, trialid, trialmatchdate, uniqueStudyCount, trialname);
 
 
         } catch (IOException e) {
@@ -728,7 +728,7 @@ public class DatabaseServiceImpl implements DatabaseService{
     }
 
     @Override
-    public String getTrialDataFromMatchEngine(String userId, String trialInternalId, String trialId, String dataUpdated){
+    public String getTrialDataFromMatchEngine(String userId, String trialInternalId, String trialId, String matchedDate){
         System.out.printf("trialInternalId2 %s", trialInternalId);
         String whereClause = "{\"trial_internal_id\":\"" + trialInternalId + "\", \"is_disabled\": false}";
         // Use URLCodec to encode the JSON string
@@ -759,12 +759,12 @@ public class DatabaseServiceImpl implements DatabaseService{
             for (Map<String, Object> value : values) {
             String trialName = (String) value.get("nickname");
             value.put("trialId", trialId);
-            value.put("matchDate", dataUpdated);
+            value.put("matchDate", matchedDate);
             value.put("trialName", trialName);
             }
             LocalDateTime time = LocalDateTime.now();
             String Time = time.toString();
-            saveJsonData(values, Time); 
+            saveTrialInformation(values, Time); 
             saveResultsJsonData(values, Time);  
             return values.toString();
         } catch (Exception e) {
@@ -774,7 +774,7 @@ public class DatabaseServiceImpl implements DatabaseService{
     }
 
     @Override
-    public void saveJsonData(List<Map<String, Object>> records, String time) {
+    public void saveTrialInformation(List<Map<String, Object>> records, String time) {
         try {
             Set<String> uniquePatientIds = new HashSet<>();
             Set<String> uniqueTrialArmIds = new HashSet<>();
@@ -800,10 +800,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             int uniqueStudyCount = uniqueStudyIds.size();
             String trialCreated = time;
             String username = getUserName();
-            int uniqueArms = uniqueTrialArmCount;
-            int uniquePatients = uniquePatientCount;
-            int uniqueStudies = uniqueStudyCount;
-            chartsTableRepository.insertChart(trialCreated, username, uniqueArms, uniquePatients, trialId, trialMatchDate, uniqueStudyCount, nickName);
+            chartsTableRepository.insertTrialInformation(trialCreated, username, uniqueTrialArmCount, uniquePatientCount, trialId, trialMatchDate, uniqueStudyCount, nickName);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse records: " + e.getMessage());
         }

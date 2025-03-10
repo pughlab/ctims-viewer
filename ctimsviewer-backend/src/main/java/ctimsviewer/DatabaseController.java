@@ -302,11 +302,11 @@ public class DatabaseController {
         }
     }
 
-    @GetMapping("/FetchTrialDataFromMatchEngine/{trialInternalId}/{trialId}/{dataUpdated}")
-    public ResponseEntity<String> getTrialDataFromMatchEngine(HttpSession session, @PathVariable String trialInternalId, @PathVariable String trialId, @PathVariable String dataUpdated){
+    @GetMapping("/FetchTrialDataFromMatchEngine/{trialInternalId}/{trialId}/{matchDate}")
+    public ResponseEntity<String> getTrialDataFromMatchEngine(HttpSession session, @PathVariable String trialInternalId, @PathVariable String trialId, @PathVariable String matchDate){
         System.out.printf("trialInternalId %s", trialInternalId);
         String userId = getUserIdFromSession(session);
-        String bytes = dataService.getTrialDataFromMatchEngine(userId, trialInternalId, trialId, dataUpdated);
+        String bytes = dataService.getTrialDataFromMatchEngine(userId, trialInternalId, trialId, matchDate);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
