@@ -318,7 +318,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
             hovertemplate:
               `<b>Patient ID:</b> %{x}<br>` +
               `<b>Trial Arm:</b> %{y}<br>` +
-              `<b>Matched Data:<br></b>%{customdata}<br>` +
+              //`<b>Matched Data:<br></b>%{customdata}<br>` +
               "<extra></extra>",
             xgap,
             ygap: 10,

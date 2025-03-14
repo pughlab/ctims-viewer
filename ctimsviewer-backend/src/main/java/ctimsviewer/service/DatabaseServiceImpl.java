@@ -325,7 +325,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                     trialMatchDate = csvRecord.get("Trial Match Date");
                     trialName = csvRecord.get("Nickname");
                     String patientId = csvRecord.get("Patient ID");
-                    String trialArmId = trialId + "_"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"_Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number")))+1);
+                    String trialArmId = trialId + "_"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"_Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
                     String studyId = csvRecord.get("Study ID");
                     uniquePatientIds.add(patientId);
                     uniqueTrialArmIds.add(trialArmId);
@@ -375,7 +375,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             .orElse(null);
             String trialName = csvRecord.get("Nickname");
             String trialMatchDate = csvRecord.get("Trial Match Date");
-            String trialArmId = trialId + "_"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"_Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number")))+1);
+            String trialArmId = trialId + "_"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"_Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
             String armCode = csvRecord.get("Arm Code");
             String studyID = csvRecord.get("Study ID");
             String patientId = csvRecord.get("Patient ID");
@@ -788,7 +788,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 nickName = (String) record.get("nickname");
                 String patientId = (String) record.get("patient_id");
                 String trialArmId = trialId + "_"+ (nickName != null && !nickName.isEmpty() ? nickName : " ") + "_Arm" + 
-                                    (Integer.parseInt((String) record.get("trial_arm_number")) + 1);
+                                    (Integer.parseInt((String) record.get("trial_arm_number")));
                 String studyId = (String) record.get("study_id");
                 
                 uniquePatientIds.add(patientId);
@@ -814,7 +814,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 String nickname = (String) record.get("nickname");
                 String trialMatchDate = (String) record.get("matchDate");
                 String trialArmId = trialId + "_"+ (nickname != null && !nickname.isEmpty() ? nickname : " ") + "_Arm" + 
-                                    (Integer.parseInt((String) record.get("trial_arm_number")) + 1);
+                                    (Integer.parseInt((String) record.get("trial_arm_number")));
                 String armCode = (String) record.get("trial_curation_level_status");  // Assuming arm code is trial curation level status
                 String studyId = (String) record.get("study_id");
                 String patientId = (String) record.get("patient_id");
