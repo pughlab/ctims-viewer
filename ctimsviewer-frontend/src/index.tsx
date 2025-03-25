@@ -17,7 +17,6 @@ import {ReactKeycloakProvider, useKeycloak} from '@react-keycloak/web';
 import Keycloak from 'keycloak-js'
 import {login} from "./service/AuthService"
 
-const apiUrl = process.env.REACT_APP_API_URL;
 const keycloakIntegration = process.env.REACT_APP_KEYCLOAK_INTEGRATION;
 
 //console.log("Value in KEYCLOAK_INTEGRATION", keycloakIntegration);
