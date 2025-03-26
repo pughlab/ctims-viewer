@@ -684,7 +684,7 @@ public class DatabaseServiceImpl implements DatabaseService{
 
     @Override
     public String getTrialFromMatchEngine(String userId) {
-    String url = MM_API_URL + "/ctims_trial_summary_with_nctid";
+    String url = MM_API_URL + "/ctims_viewer_trial_summary";
     Map<String, Object> requestBody = new HashMap<>();
     requestBody.put("key", "value");
 
