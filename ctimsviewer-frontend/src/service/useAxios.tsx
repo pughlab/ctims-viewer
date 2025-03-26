@@ -4,7 +4,7 @@ import axios from "axios";
 const useAxios = () => {
 
     useEffect(() => {
-        axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+        axios.defaults.baseURL = process.env.REACT_APP_API_URL+"file/";
     }, []);
 
     const [response, setResponse] = useState(null);

@@ -4,7 +4,7 @@ import axios from "axios";
 const useAxiosDb = () => {
 
     const axiosDbInstance = axios.create({
-        baseURL: process.env.REACT_APP_API_URL_DB,
+        baseURL: process.env.REACT_APP_API_URL+"db/",
     });
 
     const [response, setResponse] = useState(null);
