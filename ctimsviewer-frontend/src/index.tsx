@@ -19,11 +19,10 @@ import {login} from "./service/AuthService"
 
 const keycloakIntegration = process.env.REACT_APP_KEYCLOAK_INTEGRATION;
 
-//console.log("Value in KEYCLOAK_INTEGRATION", keycloakIntegration);
 
-//console.log("Check1 Value", process.env.REACT_APP_KEYCLOAK_INTEGRATION);
+console.log("REACT_APP_KEYCLOAK_INTEGRATION value:", process.env.REACT_APP_KEYCLOAK_INTEGRATION);
 const initOptions ={ onLoad: 'login-required', redirectUri: '', checkLoginIframe: false};
-console.log("Check2 Value", process.env.REACT_APP_KEYCLOAK_CLIENT_SECRET);
+
 const keycloak = new Keycloak({
   url: process.env.REACT_APP_KEYCLOAK_URL,
   realm: process.env.REACT_APP_KEYCLOAK_REALM || '',
@@ -31,9 +30,7 @@ const keycloak = new Keycloak({
   clientSecret: process.env.REACT_APP_KEYCLOAK_CLIENT_SECRET || "" // Add client secret
 } as Keycloak.KeycloakConfig);
  // Type assertion to inform TypeScript about the new property
-console.log('Keycloak object:', keycloak);
 
-//login("dgavini", "Dheeraj@23");
 
 //          <App  accessToken={check}/>
 const AppWithKeycloak: React.FC = () => {
@@ -43,16 +40,13 @@ const AppWithKeycloak: React.FC = () => {
     var check = keycloak.token;
     const resourceAccess = keycloak.tokenParsed?.resource_access;
     const ctimsRoles = resourceAccess?.[client]?.roles || [];
-    console.log("Content in keycloak", ctimsRoles);
+    console.log("Roles in keycloak", ctimsRoles);
     useEffect(() => {
       if (initialized && keycloak.authenticated) {
        const token = keycloak.token;
-        console.log("Access Token", token);
-        console.log("User Name", userName);
         // Now you can use the token or perform any other actions with the authenticated user
       }
     }, [initialized, keycloak]);
-  console.log("Check value", check);
     return (
           <BrowserRouter>
                 <div>
@@ -68,7 +62,7 @@ const AppWithKeycloak: React.FC = () => {
 // @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-if(keycloakIntegration== "enable")
+if(keycloakIntegration == "enable")
 {
   root.render(
     <ReactKeycloakProvider authClient={keycloak} initOptions={initOptions}>
@@ -77,7 +71,7 @@ if(keycloakIntegration== "enable")
 );
 }
 else{
-  {console.log("Entered Else statement")}
+  {console.log("Keycloak not enabled")}
 root.render(
   <BrowserRouter>
   <div>
