@@ -1,4 +1,4 @@
-FROM maven:3.8.6-jdk-11 as maven_builder
+FROM arm64v8/maven:3.6.1-jdk-8 as maven_builder
 
 WORKDIR /backend
 COPY . /backend

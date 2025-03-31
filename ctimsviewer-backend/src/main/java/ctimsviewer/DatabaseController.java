@@ -4,7 +4,7 @@ package ctimsviewer;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import ctimsviewer.service.DatabaseService;
 import ctimsviewer.ChartsTableRepository;
 import ctimsviewer.ChartsTable;
@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.servlet.http.HttpSession;
 
 import ctimsviewer.ClinicalData;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 
@@ -276,6 +279,34 @@ public class DatabaseController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @SuppressWarnings("unchecked")
+    @GetMapping("/ctims_viewer_trial_match")
+    public ResponseEntity<List<ClinicalData>> ctims_viewer_trial_match(
+            @RequestParam(value = "where", required = false) String where,
+            HttpSession session) {
+        System.out.println("where parameter: " + where);
+        String userId = getUserIdFromSession(session);
+        Map<String, Object> filters = null;
+        if (where != null && !where.isEmpty()) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                filters = objectMapper.readValue(where, Map.class);
+            } catch (IOException e) {
+                System.out.println("Error parsing 'where' parameter: " + e.getMessage());
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        List<ClinicalData> data = dataService.ctims_viewer_trial_match(userId, filters);
+        
+        if (data != null) {
+            return new ResponseEntity<>(data, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
 
     @GetMapping("/reactPlotlyFilter/{ArmTypes}/{TrialCreationDates}/{StudyIds}")

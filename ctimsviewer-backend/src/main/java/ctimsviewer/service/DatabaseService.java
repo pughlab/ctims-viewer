@@ -37,6 +37,8 @@ public interface DatabaseService{
 
     public String getFilteredStudyIDs(String userId, String TrialCreationDates);
 
+    public List<ClinicalData> ctims_viewer_trial_match(String userId, Map<String, Object> filters);
+
     public List<ClinicalData> viewTrialData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);
 
     public List<Map<String, String>> reactPlotlyData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);

@@ -10,11 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-
-import java.util.List;
 import java.util.*;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -23,7 +19,9 @@ import ctimsviewer.ChartsTable;
 import ctimsviewer.ClinicalData;
 import ctimsviewer.TrialDataDTO;
 import ctimsviewer.TrialGroup;
-
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -36,13 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 import java.io.InputStream;
@@ -75,7 +68,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 @Service
@@ -228,6 +220,30 @@ public class DatabaseServiceImpl implements DatabaseService{
         System.out.printf("results.toString() %s", results.toString());
         return results.toString();
     }
+
+    public List<ClinicalData> ctims_viewer_trial_match(String userId, Map<String, Object> filters) {
+        
+        //String trialCreated=filters.map("trialcreated")
+        System.out.println("filters@!@#"+ filters);
+        String trialId = filters.get("trialid") != null ? String.valueOf(filters.get("trialid")) : null;
+        String StudyID = filters.get("studyid") != null ? String.valueOf(filters.get("studyid")) : null;
+        String patientId = filters.get("patientid") != null ? String.valueOf(filters.get("patientid")) : null;        
+        /* 
+        Object patientIdObj = String.valueOf(filters.get("patientid"));
+        String patientId = patientIdObj != null ? String.valueOf(patientIdObj) : null;
+        */
+        System.out.println("trialId, patientId, StudyID"+ trialId+ patientId +StudyID);
+        List<ClinicalData> results = chartsTableRepository.ctims_viewer_trial_match_filter(trialId,patientId,StudyID);
+
+        
+        //findDataByCustomFilter
+        StringBuilder resultString = new StringBuilder();
+        for (ClinicalData chart : results) {
+            resultString.append(chart).append("");
+        }
+        return results;
+    }
+
 
     @Override
     public List<ClinicalData> viewTrialData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene){

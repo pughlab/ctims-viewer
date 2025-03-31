@@ -5,92 +5,119 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Data
 @Table(name ="clinicaldata")
 public class ClinicalData {
-
     @Id
-    @Column(name="trialarmid")
+    @Column(name = "trialarmid")
+    @JsonProperty("trialarmid")
     private String trialarmid;
 
-    @Column(name="trialid")
+    @Column(name = "trialid")
+    @JsonProperty("trialid")
     private String trialid;
 
-    @Column(name="trialname")
+    @Column(name = "trialname")
+    @JsonProperty("trialname")
     private String trialname;
 
-    @Column(name="trialmatchdate")
+    @Column(name = "trialmatchdate")
+    @JsonProperty("trialmatchdate")
     private String trialmatchdate;
 
-    @Column(name="armcode")
+    @Column(name = "armcode")
+    @JsonProperty("armcode")
     private String armcode;
 
-    @Column(name="studyid")
+    @Column(name = "studyid")
+    @JsonProperty("studyid")
     private String studyid;
 
-    @Column(name="patient_id")
+    @Column(name = "patient_id")
+    @JsonProperty("patient_id")
     private String patient_id;
 
-    @Column(name="sampleid")
+    @Column(name = "sampleid")
+    @JsonProperty("sampleid")
     private String sampleid;
 
-    @Column(name="vitalstatus")
+    @Column(name = "vitalstatus")
+    @JsonProperty("vitalstatus")
     private String vitalstatus;
 
-    @Column(name="gender")
+    @Column(name = "gender")
+    @JsonProperty("gender")
     private String gender;
 
-    @Column(name="age")
+    @Column(name = "age")
+    @JsonProperty("age")
     private String age;
 
-    @Column(name="diagnosis")
+    @Column(name = "diagnosis")
+    @JsonProperty("diagnosis")
     private String diagnosis;
 
-    @Column(name="her2status")
+    @Column(name = "her2status")
+    @JsonProperty("her2status")
     private String her2status;
 
-    @Column(name="erstatus")
+    @Column(name = "erstatus")
+    @JsonProperty("erstatus")
     private String erstatus;
 
-    @Column(name="prstatus")
+    @Column(name = "prstatus")
+    @JsonProperty("prstatus")
     private String prstatus;
 
-    @Column(name="genomicalteration")
+    @Column(name = "genomicalteration")
+    @JsonProperty("genomicalteration")
     private String genomicalteration;
 
-    @Column(name="hugosymbol")
+    @Column(name = "hugosymbol")
+    @JsonProperty("hugosymbol")
     private String hugosymbol;
 
-    @Column(name="mutationeffect")
+    @Column(name = "mutationeffect")
+    @JsonProperty("mutationeffect")
     private String mutationeffect;
 
-    @Column(name="truevariantclassification")
+    @Column(name = "truevariantclassification")
+    @JsonProperty("truevariantclassification")
     private String truevariantclassification;
 
-    @Column(name="variantcategory")
+    @Column(name = "variantcategory")
+    @JsonProperty("variantcategory")
     private String variantcategory;
 
-    @Column(name="leftpartnergene")
+    @Column(name = "leftpartnergene")
+    @JsonProperty("leftpartnergene")
     private String leftpartnergene;
 
-    @Column(name="rightpartnergene")
+    @Column(name = "rightpartnergene")
+    @JsonProperty("rightpartnergene")
     private String rightpartnergene;
 
-    @Column(name="cnvcall")
+    @Column(name = "cnvcall")
+    @JsonProperty("cnvcall")
     private String cnvcall;
 
-    @Column(name="msstatus")
+    @Column(name = "msstatus")
+    @JsonProperty("msstatus")
     private String msstatus;
 
-    @Column(name="trialcreated")
+    @Column(name = "trialcreated")
+    @JsonProperty("trialcreated")
     private String trialcreated;
 
-    @Column(name="combineddata")
+    @Column(name = "combineddata")
+    @JsonProperty("combineddata")
     private String combineddata;
 
-    @Column(name="oncotreeprimarydiagnosismatchonly")
+    @Column(name = "oncotreeprimarydiagnosismatchonly")
+    @JsonProperty("oncotreeprimarydiagnosismatchonly")
     private String oncotreeprimarydiagnosismatchonly;
 
     

@@ -68,6 +68,17 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
         @Param("gene") String gene
     );
 
+    @Query("SELECT * FROM ClinicalData WHERE " +
+        "(TrialId = :trialId OR :trialId IS NULL) AND" +
+        "(patient_id = :patient_id OR :patient_id IS NULL) AND " +
+        "(StudyID = :StudyID OR :StudyID IS NULL)" )
+    List<ClinicalData> ctims_viewer_trial_match_filter(
+        @Param("trialId") String trialId,
+        @Param("patient_id") String patient_id,
+        @Param("StudyID") String StudyID
+    );
+
+
     @Query("SELECT TrialArmId, patient_id, combineddata, StudyID FROM ClinicalData WHERE " +
         "(TRIALCREATED = :TRIALCREATED OR :TRIALCREATED IS NULL) AND " +
         "(TrialId = :trialId OR :trialId IS NULL) AND " +
