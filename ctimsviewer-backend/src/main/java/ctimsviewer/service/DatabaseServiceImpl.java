@@ -10,11 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-
-import java.util.List;
 import java.util.*;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -36,13 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 import java.io.InputStream;
@@ -75,7 +66,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 @Service
@@ -128,7 +118,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 "ReverseBarChart.py",
                 "TopBarChart.py",
                 "BarChart.py",
-                "configFile.json",
+                //"configFile.json",
                 "CtimsImports.py"
                 };
         return fileNames;
@@ -325,7 +315,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                     trialMatchDate = csvRecord.get("Trial Match Date");
                     trialName = csvRecord.get("Nickname");
                     String patientId = csvRecord.get("Patient ID");
-                    String trialArmId = trialId + "_"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"_Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
+                    String trialArmId = trialId + "-"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"-Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
                     String studyId = csvRecord.get("Study ID");
                     uniquePatientIds.add(patientId);
                     uniqueTrialArmIds.add(trialArmId);
@@ -375,7 +365,7 @@ public class DatabaseServiceImpl implements DatabaseService{
             .orElse(null);
             String trialName = csvRecord.get("Nickname");
             String trialMatchDate = csvRecord.get("Trial Match Date");
-            String trialArmId = trialId + "_"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"_Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
+            String trialArmId = trialId + "-"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"-Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
             String armCode = csvRecord.get("Arm Code");
             String studyID = csvRecord.get("Study ID");
             String patientId = csvRecord.get("Patient ID");
@@ -576,6 +566,9 @@ public class DatabaseServiceImpl implements DatabaseService{
             System.out.println("Python script not found in temporary directory.");
             return "Error: Python script not found.";
         }
+        else{
+            System.out.println("Success in Python script not found in temporary directory.");
+        }
 
             // Create the results folder if it doesn't exist
         File resultsFolder = new File("ctimsFiles/user-local/results");
@@ -590,10 +583,20 @@ public class DatabaseServiceImpl implements DatabaseService{
         //byte[] dbDataBytes = getData("CTIMSCHARTS", userId);
         String dbData = new String(dbDataBytes, "UTF-8");
         System.out.printf("Data from db %s", dbData);
-        String headers = "TrialArmId,patient_id";
+        String headers = "TrialArmId,patient_id\n";
         FileOutputStream fos = new FileOutputStream("ctimsFiles/user-local/inputcsvfile.csv");
         fos.write(headers.getBytes(StandardCharsets.UTF_8)); 
-        fos.write(dbData.getBytes(StandardCharsets.UTF_8));
+        //fos.write(dbData.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder trimmedData = new StringBuilder();
+        String[] rows = dbData.split("\n");
+        for (String row : rows) {
+            String[] columns = row.split(",");
+            if (columns.length >= 2) {
+                trimmedData.append(columns[0]).append(",").append(columns[1]).append("\n");
+            }
+        }
+        fos.write(trimmedData.toString().getBytes(StandardCharsets.UTF_8));
 
 
 
@@ -602,8 +605,8 @@ public class DatabaseServiceImpl implements DatabaseService{
         String[] command = {
             pythonCommand,
             scriptFile.toString(),
-            "cbpFiles/user-local/inputcsvfile.csv",
-            "cbpFiles/user-local/results/heatmap.png",
+            "ctimsFiles/user-local/inputcsvfile.csv",
+            "ctimsFiles/user-local/results/heatmap.png",
             result
         };
         System.out.printf("command1234 %s", command[4]);
@@ -787,7 +790,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 trialMatchDate = (String) record.get("matchDate");
                 nickName = (String) record.get("nickname");
                 String patientId = (String) record.get("patient_id");
-                String trialArmId = trialId + "_"+ (nickName != null && !nickName.isEmpty() ? nickName : " ") + "_Arm" + 
+                String trialArmId = trialId + "-"+ (nickName != null && !nickName.isEmpty() ? nickName : " ") + "-Arm" + 
                                     (Integer.parseInt((String) record.get("trial_arm_number")));
                 String studyId = (String) record.get("study_id");
                 
@@ -813,7 +816,7 @@ public class DatabaseServiceImpl implements DatabaseService{
                 String trialId = (String) record.get("trialId");
                 String nickname = (String) record.get("nickname");
                 String trialMatchDate = (String) record.get("matchDate");
-                String trialArmId = trialId + "_"+ (nickname != null && !nickname.isEmpty() ? nickname : " ") + "_Arm" + 
+                String trialArmId = trialId + "-"+ (nickname != null && !nickname.isEmpty() ? nickname : " ") + "-Arm" + 
                                     (Integer.parseInt((String) record.get("trial_arm_number")));
                 String armCode = (String) record.get("trial_curation_level_status");  // Assuming arm code is trial curation level status
                 String studyId = (String) record.get("study_id");
