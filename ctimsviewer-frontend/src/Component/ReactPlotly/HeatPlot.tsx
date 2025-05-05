@@ -178,7 +178,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
       const armValue = event.points[0].y;
       const studyValue = getStudyForPoint(armValue, patientValue);
       const cbiPortalUrl= process.env.REACT_APP_CBIOPORTAL_URL
-      const link = `${cbiPortalUrl}?studyId=${studyValue}&caseId=${patientValue}`;
+      const link = `${cbiPortalUrl}/cbioportal/patient?studyId=${studyValue}&caseId=${patientValue}`;
       window.open(link, "_blank");
     }
   };
