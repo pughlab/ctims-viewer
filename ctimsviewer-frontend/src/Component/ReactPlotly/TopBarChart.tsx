@@ -65,7 +65,8 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
       const xValue = event.points[0].x; 
       const yValue = event.points[0].y; 
       //const link = `https://cbioportal.ca/cbioportal/?trial=${yValue}&patient=${xValue}`;
-      const link = `https://cbioportal.ca/cbioportal/patient?studyId=${study_id}&caseId=${xValue}`;
+      const cbiPortalUrl= process.env.REACT_APP_CBIOPORTAL_URL
+      const link = `${cbiPortalUrl}?studyId=${study_id}&caseId=${xValue}`;
       window.open(link, "_blank"); 
     }
   };
