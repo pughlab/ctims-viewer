@@ -2,33 +2,33 @@ import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 
 interface DataItem {
-  patient_id: number;
+  patient_id: string | number;
   trialarmid: string;
 }
 
 interface TopBarChartProps {
   data: DataItem[]; 
-  study_id: String;
+  study_id: string;
 }
 
 const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
   
-  const patientCount = data.reduce((acc, item) => {
-    if (!acc[item.patient_id]) {
-      acc[item.patient_id] = 0;
+  const patientTrialMap = data.reduce((acc, item) => {
+    const idStr = String(item.patient_id);
+    if (!acc[idStr]) {
+      acc[idStr] = new Set<string>();
     }
-    acc[item.patient_id] += 1;
+    acc[idStr].add(item.trialarmid);
     return acc;
-  }, {} as Record<number, number>);
-
+  }, {} as Record<string, Set<string>>);
   
-  const patientIds = Object.keys(patientCount).map(Number); 
-  const trialCounts = Object.values(patientCount);
-
+  const patientIds = Object.keys(patientTrialMap);
+  const trialCounts = patientIds.map(id => patientTrialMap[id].size);
+  
   
   const [isSorted, setIsSorted] = useState(false);
   const [chartData, setChartData] = useState({
-    x: patientIds.map(String), 
+    x: patientIds,
     y: trialCounts,
   });
 
@@ -43,8 +43,8 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
     const sortedTrialCounts = sortedIndices.map((index) => trialCounts[index]);
 
     setChartData({
-      x: sortedPatientIds.map(String), 
-      y: sortedTrialCounts, 
+      x: sortedPatientIds,
+      y: sortedTrialCounts,
     });
 
     setIsSorted(true);
@@ -53,8 +53,8 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
   
   const unsortData = () => {
     setChartData({
-      x: patientIds.map(String), 
-      y: trialCounts, 
+      x: patientIds,
+      y: trialCounts,
     });
 
     setIsSorted(false);
@@ -88,8 +88,8 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
       <Plot
         data={[
           {
-            x: chartData.x, 
-            y: chartData.y, 
+            x: chartData.x,
+            y: chartData.y,
             type: 'bar',
             marker: {
               color: 'rgb(45, 94, 127)',

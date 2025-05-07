@@ -32,7 +32,7 @@ const RightComponent = (props: any) => {
   const [trial, setTrial] = useState("");
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Default items per page
+  const [itemsPerPage, setItemsPerPage] = useState(20); // Default items per page
 
   useEffect(() => {
     handleChartValidate();
