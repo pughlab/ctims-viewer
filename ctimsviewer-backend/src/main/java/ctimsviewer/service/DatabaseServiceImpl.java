@@ -128,7 +128,6 @@ public class DatabaseServiceImpl implements DatabaseService{
                 "ReverseBarChart.py",
                 "TopBarChart.py",
                 "BarChart.py",
-                //"configFile.json",
                 "CtimsImports.py"
                 };
         return fileNames;

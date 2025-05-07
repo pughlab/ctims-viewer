@@ -25,7 +25,6 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
   const patientIds = Object.keys(patientTrialMap);
   const trialCounts = patientIds.map(id => patientTrialMap[id].size);
   
-  console.log("patientCount",patientTrialMap)
   
   const [isSorted, setIsSorted] = useState(false);
   const [chartData, setChartData] = useState({
