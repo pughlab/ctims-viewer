@@ -153,6 +153,20 @@ public class DatabaseController {
 
     }
 
+    @GetMapping("/FilteredTrialArmIDsWithTrialId/{TrialCreationDates}/{TrialId}")
+    public ResponseEntity<String> FilteredTrialArmIDsWithTrialId(HttpSession session, @PathVariable String TrialCreationDates, @PathVariable String TrialId){
+        String userId = getUserIdFromSession(session);
+        System.out.printf("TrialCreationDates, %s", TrialCreationDates);
+        String bytes = dataService.getFilteredTrialArmIDsWithTrialId(userId, TrialCreationDates, TrialId);
+         if (bytes != null) {
+            return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+
     @GetMapping("/fetchStudyIDs")
     public ResponseEntity<String> getStudyIDs(HttpSession session){
         String userId = getUserIdFromSession(session);
@@ -165,10 +179,10 @@ public class DatabaseController {
 
     }
 
-    @GetMapping("/FilteredStudyIDs/{TrialCreationDates}")
-    public ResponseEntity<String> getFilteredStudyIDs(HttpSession session, @PathVariable String TrialCreationDates){
+    @GetMapping("/FilteredStudyIDs/{TrialCreationDates}/{TrialIds}")
+    public ResponseEntity<String> getFilteredStudyIDs(HttpSession session, @PathVariable String TrialCreationDates , @PathVariable String TrialIds){
         String userId = getUserIdFromSession(session);
-        String bytes = dataService.getFilteredStudyIDs(userId, TrialCreationDates);
+        String bytes = dataService.getFilteredStudyIDs(userId, TrialCreationDates, TrialIds);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
@@ -339,11 +353,11 @@ public class DatabaseController {
         return ResponseEntity.status(HttpStatus.OK).body(username);
     }
 
-    @DeleteMapping("/delete/{trialDate}")
-    public ResponseEntity<String> deleteTrial(@PathVariable String trialDate, HttpSession session) {
+    @DeleteMapping("/delete/{trialDate}/{trialId}")
+    public ResponseEntity<String> deleteTrial(@PathVariable String trialDate, @PathVariable String trialId, HttpSession session) {
     String userId = getUserIdFromSession(session);
-    dataService.deleteTrial(userId, trialDate);
-    String message = String.format("Deleted Trial %s", trialDate);
+    dataService.deleteTrial(userId, trialDate, trialId);
+    String message = String.format("Deleted Trial %s %s", trialDate, trialId);
     return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 

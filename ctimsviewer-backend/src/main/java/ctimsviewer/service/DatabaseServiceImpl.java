@@ -207,6 +207,15 @@ public class DatabaseServiceImpl implements DatabaseService{
         return results.toString();
     }
 
+
+    @Override
+    public String getFilteredTrialArmIDsWithTrialId(String userId, String TrialCreationDates, String TrialId){
+        List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
+        List<String> trislIdsList = Arrays.asList(TrialId.split(","));
+        List<String> results = chartsTableRepository.findFilteredUniqueTrialarmidWithTrialId(dateList, trislIdsList);
+        return results.toString();
+    }
+
     @Override
     public String getStudyIDs(String userId){
 
@@ -215,15 +224,16 @@ public class DatabaseServiceImpl implements DatabaseService{
     }
 
     @Override
-    public String getFilteredStudyIDs(String userId, String TrialCreationDates){
+    public String getFilteredStudyIDs(String userId, String TrialCreationDates, String TrialIds){
 
 
         System.out.printf("TrialCreationDates1 %s", TrialCreationDates);
         //System.out.printf("TrialCreationDates %s", TrialCreationDates);
 
         List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
+        List<String> trislIdsList = Arrays.asList(TrialIds.split(","));
         //System.out.printf("dateList %s", dateList);
-        List<String> results = chartsTableRepository.findFilteredUniqueStudyid(dateList);
+        List<String> results = chartsTableRepository.findFilteredUniqueStudyid(dateList, trislIdsList);
         System.out.printf("results.toString() %s", results.toString());
         return results.toString();
     }
@@ -304,59 +314,64 @@ public class DatabaseServiceImpl implements DatabaseService{
     public void save(MultipartFile file, String time, String userId) {
         try (
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-           
-
-             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
-
-               Set<String> uniquePatientIds = new HashSet<>();
-               Set<String> uniqueTrialArmIds = new HashSet<>();
-               Set<String> uniqueStudyIds = new HashSet<>();
-               String trialId ="";
-               String trialMatchDate="";
-               String trialName="";
-               for (CSVRecord csvRecord : csvParser) {
-
-                    trialId = csvRecord.toMap().entrySet().stream()
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())
+        ) {
+            Map<String, List<CSVRecord>> recordsByTrialId = new HashMap<>();
+            for (CSVRecord record : csvParser) {
+                String trialId = record.toMap().entrySet().stream()
                     .filter(entry -> entry.getKey().contains("Trial Id"))
                     .map(entry -> entry.getValue().replace("\"", "").trim())
                     .findFirst()
                     .orElse(null);
-                    trialMatchDate = csvRecord.get("Trial Match Date");
-                    trialName = csvRecord.get("Nickname");
-                    String patientId = csvRecord.get("Patient ID");
-                    String trialArmId = trialId + "-"+(trialName != null && !trialName.isEmpty() ? trialName : " ")+"-Arm"+Integer.toString((Integer.parseInt(csvRecord.get("Arm Number"))));
-                    String studyId = csvRecord.get("Study ID");
+    
+                if (trialId != null) {
+                    recordsByTrialId.computeIfAbsent(trialId, k -> new ArrayList<>()).add(record);
+                }
+            }
+            for (Map.Entry<String, List<CSVRecord>> entry : recordsByTrialId.entrySet()) {
+                String trialId = entry.getKey();
+                List<CSVRecord> records = entry.getValue();
+                Set<String> uniquePatientIds = new HashSet<>();
+                Set<String> uniqueTrialArmIds = new HashSet<>();
+                Set<String> uniqueStudyIds = new HashSet<>();
+                String trialMatchDate = null;
+                String trialName = null;
+                for (CSVRecord record : records) {
+                    if (trialMatchDate == null) trialMatchDate = record.get("Trial Match Date");
+                    if (trialName == null) trialName = record.get("Nickname");
+    
+                    String patientId = record.get("Patient ID");
+                    String armNumber = record.get("Arm Number");
+                    String studyId = record.get("Study ID");
+                    String trialArmId = trialId + "-" + 
+                        (trialName != null && !trialName.isEmpty() ? trialName : " ") + 
+                        "-Arm" + armNumber;
+    
                     uniquePatientIds.add(patientId);
                     uniqueTrialArmIds.add(trialArmId);
                     uniqueStudyIds.add(studyId);
-                    System.out.printf("trialArmId %s",trialArmId );
-               }
-               //CAPTUR_Arm1
-//String trialArmId = csvRecord.get("Trial Id")+"CAPTUR_Arm"+csvRecord.get("Arm Number");
-
-                System.out.printf("Trial id and Trial match Date %s %s",trialId,trialMatchDate );
+                }
+    
                 int uniquePatientCount = uniquePatientIds.size();
                 int uniqueTrialArmCount = uniqueTrialArmIds.size();
                 int uniqueStudyCount = uniqueStudyIds.size();
 
                 String trialcreated = time;
                 String username = getUserName();
-                int uniquearms = uniqueTrialArmCount;
-                int uniquepatients = uniquePatientCount;
-                int uniquestudies = uniqueStudyCount;
-                String trialid = trialId;
-                String trialmatchdate = trialMatchDate;
-                String trialname = trialName;
-
-
-                chartsTableRepository.insertTrialInformation(trialcreated, username, uniquearms, uniquepatients, trialid, trialmatchdate, uniqueStudyCount, trialname);
-
-
+                chartsTableRepository.insertTrialInformation(
+                    trialcreated,
+                    username,
+                    uniqueTrialArmCount,
+                    uniquePatientCount,
+                    trialId,
+                    trialMatchDate,
+                    uniqueStudyCount,
+                    trialName
+                );
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file: " + e.getMessage());
         }
-
-
     }
 
     @Override
@@ -886,10 +901,10 @@ public class DatabaseServiceImpl implements DatabaseService{
 
 
     @Override
-    public void deleteTrial(String userId, String trialDate) {
+    public void deleteTrial(String userId, String trialDate, String trialId) {
         System.out.printf("Entered  dataserviveImpl %s", trialDate);
-        chartsTableRepository.deleteTrialFromClinicalData(trialDate);
-        chartsTableRepository.deleteTrialFromCTIMSCHARTS(trialDate);
+        chartsTableRepository.deleteTrialFromClinicalData(trialDate, trialId);
+        chartsTableRepository.deleteTrialFromCTIMSCHARTS(trialDate, trialId);
     }
 
 }

@@ -107,7 +107,7 @@ const RightComponent = (props: any) => {
     }
   };
 
-  const handleDelete = (selectedTrial: string) => {
+  const handleDelete = (selectedTrial: string, trialId: String) => {
     console.log("selectedTrial", selectedTrial);
     const headers: Record<string, string> = {
       'Content-type': 'application/json; charset=UTF-8',
@@ -119,7 +119,7 @@ const RightComponent = (props: any) => {
 
     deleteOperation({
       method: 'DELETE',
-      url: 'delete/' + selectedTrial,
+      url: `delete/${selectedTrial}/${trialId}`,
       headers: headers,
     }).then(() => {
       // After successful deletion, reload the folder list
@@ -206,7 +206,7 @@ const RightComponent = (props: any) => {
                   <td>{chart.uniquestudyid}</td>
                   <td>{chart.username}</td>
                   <td>
-                    <button className="deleteButton" onClick={() => handleDelete(chart.trialcreated)}>
+                    <button className="deleteButton" onClick={() => handleDelete(chart.trialcreated, chart.trialid)}>
                       <MdDelete />
                     </button>
                   </td>

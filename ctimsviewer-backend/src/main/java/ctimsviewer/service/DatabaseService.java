@@ -33,9 +33,11 @@ public interface DatabaseService{
 
     public String getFilteredTrialArmIDs(String userId, String TrialCreationDates);
 
+    public String getFilteredTrialArmIDsWithTrialId(String userId, String TrialCreationDates, String TrialId);
+
     String getStudyIDs(String userId);
 
-    public String getFilteredStudyIDs(String userId, String TrialCreationDates);
+    public String getFilteredStudyIDs(String userId, String TrialCreationDates, String TrialIds);
 
     public List<ClinicalData> viewTrialData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);
 
@@ -47,7 +49,7 @@ public interface DatabaseService{
 
     List<ChartsTable> getPatientMatch(String patientid, String userId);
 
-    public void deleteTrial(String userId, String trialDate);
+    public void deleteTrial(String userId, String trialDate, String trialId);
 
     public String getTrialFromMatchEngine(String userId);
 
