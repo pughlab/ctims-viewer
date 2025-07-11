@@ -71,6 +71,8 @@ const UploadCsv = (props: any) => {
 
     const [selectedTrials, setSelectedTrials] = useState<ChartData[]>([]);
 
+    const [selectedTrialsLabel, setSelectedTrialsLabel] = useState<ChartData[]>([]);
+
     const [selectedStudy, setSelectedStudy] = useState([]);
 
     const [selectedFolder, setSelectedFolder] = useState(null);
@@ -179,7 +181,7 @@ const UploadCsv = (props: any) => {
 
     const transformedTrialOptions = charts.map((trial: any) => ({
         label: `${trial.trialid}`, 
-        value: trial.trialcreated, 
+        value: trial.trialid, 
       }));
       
     console.log("transformedTrialOptions", transformedTrialOptions)
@@ -409,18 +411,15 @@ const UploadCsv = (props: any) => {
     };
 
     const handleTrialsChange = (selectedList: any) => {
-        setSelectedTrials(selectedList as ChartData[]);
-        console.log("Selected Trials", selectedTrials)
-
-        setNewCheckedItems((prev) => {
-            const newCheckedItems = [...prev];
-              newCheckedItems.push(selectedList);
-              return newCheckedItems;
-
-          });
-
-
-    };
+        setSelectedTrialsLabel(selectedList);
+        const matchedCreatedDates = selectedList.map((trialId: any) => {
+          const match = charts.find(chart => chart.trialid === trialId);
+          return match?.trialcreated ?? null;
+        }).filter(Boolean);
+        setSelectedTrials(matchedCreatedDates as ChartData[]);
+        setNewCheckedItems(prev => [...prev, ...matchedCreatedDates]);
+      };
+      
 
     const handleStudyChange = (selectedList: any) => {
         setSelectedStudy(selectedList);
@@ -469,7 +468,7 @@ const UploadCsv = (props: any) => {
                 //newCheckedItems
                 fetchTrialIdOperation({
                     method: 'GET',
-                    url: `FilteredTrialArmIDs/${selectedTrials}`,
+                    url: `FilteredTrialArmIDsWithTrialId/${selectedTrials}/${selectedTrialsLabel}`,
                     headers: headers
                 });
             }
@@ -544,7 +543,7 @@ const UploadCsv = (props: any) => {
                 console.log("checkedItems.length", checkedItems)
                 fetchStudyIdOperation({
                     method: 'GET',
-                    url: `FilteredStudyIDs/${selectedTrials}`,
+                    url: `FilteredStudyIDs/${selectedTrials}/${selectedTrialsLabel}`,
                     headers: headers
                 });
             }
@@ -889,7 +888,7 @@ const UploadCsv = (props: any) => {
                                                     id="trialIdsMultiSelect"
                                                     className="fixed-width-select w-full md:w-20rem"
                                                     options={transformedTrialOptions}
-                                                    value={selectedTrials}
+                                                    value={selectedTrialsLabel}
                                                     placeholder="Trial Id's"
                                                     filter
                                                     onChange={(e) => handleTrialsChange(e.value)}

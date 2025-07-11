@@ -98,11 +98,14 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Query("SELECT DISTINCT c.trialarmid FROM ClinicalData c WHERE TRIALCREATED IN (:arguments)")
     List<String> findFilteredUniqueTrialarmid(@Param("arguments") List<String>  arguments);
 
+    @Query("SELECT DISTINCT c.trialarmid FROM ClinicalData c WHERE TRIALCREATED IN (:arguments) AND TRIALID IN (:trialid)")
+    List<String> findFilteredUniqueTrialarmidWithTrialId(@Param("arguments") List<String>  arguments, @Param("trialid") List<String>  trialid);
+
     @Query("SELECT DISTINCT c.studyid FROM ClinicalData c")
     List<String> findAllUniqueStudyid();
 
-    @Query("SELECT DISTINCT c.studyid FROM ClinicalData c WHERE TRIALCREATED IN (:arguments)")
-    List<String> findFilteredUniqueStudyid(@Param("arguments") List<String>  arguments);
+    @Query("SELECT DISTINCT c.studyid FROM ClinicalData c WHERE TRIALCREATED IN (:arguments) AND TRIALID IN (:trialid)")
+    List<String> findFilteredUniqueStudyid(@Param("arguments") List<String>  arguments, @Param("trialid") List<String>  trialid);
 
     @Transactional
     @Modifying
@@ -124,13 +127,13 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM CTIMSCHARTS WHERE TRIALCREATED = :argument")
-    void deleteTrialFromCTIMSCHARTS(@Param("argument") String argument);
+    @Query("DELETE FROM CTIMSCHARTS WHERE TRIALCREATED = :argument AND TRIALID = :trialid")
+    void deleteTrialFromCTIMSCHARTS(@Param("argument") String argument, @Param("trialid") String trialid);
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM ClinicalData WHERE TRIALCREATED = :argument")
-    void deleteTrialFromClinicalData(@Param("argument") String argument);
+    @Query("DELETE FROM ClinicalData WHERE TRIALCREATED = :argument  AND TRIALID = :trialid")
+    void deleteTrialFromClinicalData(@Param("argument") String argument, @Param("trialid") String trialid);
 
 
     @Transactional
