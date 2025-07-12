@@ -4,6 +4,15 @@ services:
     build:
       context: ctimsviewer-frontend
       dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
+        REACT_APP_API_URL_DB: ${REACT_APP_API_URL_DB}
+        REACT_APP_KEYCLOAK_INTEGRATION: ${REACT_APP_KEYCLOAK_INTEGRATION}
+        REACT_APP_KEYCLOAK_URL: ${REACT_APP_KEYCLOAK_URL}
+        REACT_APP_KEYCLOAK_CLIENT: ${REACT_APP_KEYCLOAK_CLIENT}
+        REACT_APP_KEYCLOAK_REALM: ${REACT_APP_KEYCLOAK_REALM}
+    env_file:
+      - path: .env
     ports:
       - "3030:3030"
     environment:
@@ -13,7 +22,7 @@ services:
       REACT_APP_KEYCLOAK_CLIENT: ${REACT_APP_KEYCLOAK_CLIENT}
       REACT_APP_KEYCLOAK_REALM: ${REACT_APP_KEYCLOAK_REALM}
     networks:
-      - my-network
+      - cv-network
       
   backend:
     build:
@@ -24,8 +33,10 @@ services:
     environment:
       - JAVA_OPTS=-Dserver.port=8080
       - SPRING_PROFILES_ACTIVE=dev
+    env_file:
+      - path: ./.env
     networks:
-      - my-network
+      - cv-network
 
   mysql:
     image: mysql:8
@@ -37,12 +48,12 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - cv_mysql_data:/var/lib/mysql
     networks:
-      - my-network
+      - cv-network
 
 networks:
-  my-network:
+  cv-network:
 
 volumes:
-  mysql_data:
+  cv_mysql_data:
