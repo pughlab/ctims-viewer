@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Plot from "react-plotly.js";
+import "./PlotStyles.css";
 
 interface DataItem {
-  trialarmid: string;
-  patient_id: number;
+  t: string;
+  p: number;
 }
 
 interface BarChartProps {
@@ -14,10 +15,10 @@ interface BarChartProps {
 const BarChart: React.FC<BarChartProps> = ({ data, study_id }) => {
   
   const patientCountByArm = data.reduce((acc, item) => {
-    if (!acc[item.trialarmid]) {
-      acc[item.trialarmid] = new Set(); 
+    if (!acc[item.t]) {
+      acc[item.t] = new Set(); 
     }
-    acc[item.trialarmid].add(item.patient_id);
+    acc[item.t].add(item.p);
     return acc;
   }, {} as Record<string, Set<number>>);
 
@@ -37,7 +38,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, study_id }) => {
   
   const sortData = () => {
     const sortedIndices = [...Array(trialArmNames.length).keys()].sort(
-      (a, b) => patientCounts[a] - patientCounts[b]
+      (a, b) => patientCounts[b] - patientCounts[a]
     );
     setSortedData({
       x: sortedIndices.map((i) => trialArmNames[i]),
@@ -69,7 +70,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, study_id }) => {
   };
 
   return (
-    <div>
+    <div className="barchart-container">
+      <div className="chart-container">
       <div style={{ marginBottom: "10px" }}>
         <button onClick={sortData} disabled={isSorted}>
           Sort
@@ -88,8 +90,8 @@ const BarChart: React.FC<BarChartProps> = ({ data, study_id }) => {
               color: "rgb(51, 153, 255)",
             },
             hovertemplate:
-            `<b>Patient Matched:</b> %{x}<br>` +
-            `<b>Trial Arm:</b> %{y}<br>` +
+          `<b>Patient Matched:</b> %{y}<br>` +
+            `<b>Trial Arm:</b> %{x}<br>` +
             '<extra></extra>',
           },
         ]}
@@ -101,13 +103,28 @@ const BarChart: React.FC<BarChartProps> = ({ data, study_id }) => {
             automargin: true,
             tickmode: "array",
             tickvals: sortedData.x,
-          },
-          yaxis: {
-            title: "Unique Patient Count",
+              
+            },
+            yaxis: {
+              title: "Unique Patient Count",
+              
 
-          },
-          width: 200+ chartHeight,  // Fixed height for the entire chart
-          height: 800, 
+            },
+            width: 200+ chartHeight,  // Fixed height for the entire chart
+            height: 800,
+            annotations: sortedData.x.map((patient_id, index) => ({
+              x: patient_id,
+              y: sortedData.y[index]+5,
+              text: String(sortedData.y[index]),
+              showarrow: false,
+              font: {
+                color: "black",
+                size: 12,
+              },
+              textangle:"-90",
+              xanchor: "center",
+              yanchor: "bottom",
+            })),
           margin: {
             l: 50,
             r: 20, 
@@ -118,6 +135,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, study_id }) => {
         }}
         //onClick={handleClick}
       />
+    </div>
     </div>
   );
 };

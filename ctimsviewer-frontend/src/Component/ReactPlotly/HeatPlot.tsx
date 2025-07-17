@@ -2,13 +2,12 @@ import React, { useState, useMemo, useEffect } from "react";
 import Plot from "react-plotly.js";
 import { MultiSelect } from "primereact/multiselect";
 import { Dropdown } from "primereact/dropdown";
-import "./HeatPlot.css";
+import "./PlotStyles.css";
 
 interface DataItem {
-  trialarmid: string;
-  patient_id: number;
-  combineddata: string;
-  studyid: string;
+  t: string;
+  p: number;
+  s: string;
 }
 
 interface HeatmapChartProps {
@@ -17,39 +16,24 @@ interface HeatmapChartProps {
 }
 
 const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
-  const trialArmNames = Array.from(new Set(data.map((item) => item.trialarmid)));
-  const patientIds = Array.from(new Set(data.map((item) => item.patient_id)));
+  const trialArmNames = Array.from(new Set(data.map((item) => item.t)));
+  const patientIds = Array.from(new Set(data.map((item) => item.p)));
   const patientIdsAsStrings = patientIds.map(String);
   const [isSorted, setIsSorted] = useState(false);
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [selectedSortOption, setSelectedSortOption] = useState("unsort");
+  const [selectedSortOption, setSelectedSortOption] = useState("patientCount");
   const [sortedData, setSortedData] = useState({
     trialArms: trialArmNames,
     patients: patientIdsAsStrings,
   });
-
-  useEffect(() => {
-    const sortedTrialArms = [...trialArmNames].sort(
-      (a, b) => patientCountByArm[a] - patientCountByArm[b]
-    );
-
-    const sortedPatients = [...patientIdsAsStrings].sort(
-      (a, b) => armCountByPatient[b] - armCountByPatient[a]
-    );
-    setSortedData({
-      trialArms: sortedTrialArms,
-      patients: sortedPatients,
-    });
-    
-  }, []);
 
 
 
   const patientCountByArm = useMemo(() => {
     return trialArmNames.reduce((acc, trialArm) => {
       const patientsInArm = new Set(
-        data.filter((item) => item.trialarmid === trialArm).map((item) => item.patient_id)
+        data.filter((item) => item.t === trialArm).map((item) => item.p)
       );
       acc[trialArm] = patientsInArm.size;
       return acc;
@@ -59,7 +43,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
   const armCountByPatient = useMemo(() => {
     return patientIdsAsStrings.reduce((acc, patientId) => {
       const armsInPatient = new Set(
-        data.filter((item) => String(item.patient_id) === patientId).map((item) => item.trialarmid)
+        data.filter((item) => String(item.p) === patientId).map((item) => item.t)
       );
       acc[patientId] = armsInPatient.size;
       return acc;
@@ -68,51 +52,34 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
 
   const heatmapMatrixWithColors = useMemo(() => {
     const { trialArms, patients } = sortedData;
+  
+    // Step 1: Preprocess `data` into a Map
+    const dataMap = new Map<string, Set<string>>();
+    data.forEach((item) => {
+      const trialArmId = item.t;
+      const patientId = String(item.p);
+      if (!dataMap.has(trialArmId)) {
+        dataMap.set(trialArmId, new Set());
+      }
+      dataMap.get(trialArmId)?.add(patientId);
+    });
+  
+    // Step 2: Now build the matrix
     return trialArms.map((trialArm) =>
-    patients.map((patientId) => {
+      patients.map((patientId) => {
         const isPatientSelected = selectedOptions.includes(patientId);
-
-        if (isPatientSelected &&  data.some(
-          (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
-        )) {
+        const hasData = dataMap.get(trialArm)?.has(patientId) ?? false;
+  
+        if (isPatientSelected && hasData) {
           return 1;
         }
-        if (
-          data.some(
-            (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
-          )
-        ) {
+        if (hasData) {
           return 2;
         }
         return 0;
       })
     );
-  }, [data, trialArmNames, patientIdsAsStrings, selectedOptions]);
-
-  const sortedHeatmapWithColors = useMemo(() => {
-    if (isSorted) {
-      const { trialArms, patients } = sortedData;
-      return trialArms.map((trialArm) =>
-        patients.map((patientId) => {
-          const isPatientSelected = selectedOptions.includes(patientId);
-          if (isPatientSelected && data.some(
-            (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
-          )) {
-            return 1;
-          }
-          if (
-            data.some(
-              (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
-            )
-          ) {
-            return 2;
-          }
-          return 0;
-        })
-      );
-    }
-    return heatmapMatrixWithColors;
-  }, [sortedData, isSorted, data, heatmapMatrixWithColors, selectedOptions]);
+  }, [data, sortedData, selectedOptions]);
 
   const sortDataByCount = () => {
     const sortedPatients = [...patientIdsAsStrings].sort(
@@ -184,29 +151,13 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
     }
   };
 
-  const getCombinedDataForPoint = (trialArm: string, patientId: string) => {
-    const matchingItem = data.find(
-      (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
-    );
-    if (!matchingItem) return "N/A";
-    try {
-      const parsedData = JSON.parse(matchingItem.combineddata.replace(/'/g, '"'));
-      return Object.entries(parsedData)
-        .map(([key, value]) => `  <b>${key}:</b> ${value}`)
-        .join("<br>");
-    } catch (error) {
-      console.error("Error parsing combineddata:", error);
-      return matchingItem.combineddata;
-    }
-  };
-
   const getStudyForPoint = (trialArm: string, patientId: string) => {
     const matchingItem = data.find(
-      (item) => item.trialarmid === trialArm && String(item.patient_id) === patientId
+      (item) => item.t === trialArm && String(item.p) === patientId
     );
     if (!matchingItem) return "N/A";
     try {
-      return matchingItem.studyid;
+      return matchingItem.s;
     } catch (error) {
       console.error("Error parsing combineddata:", error);
 
@@ -215,11 +166,11 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
 
   const getStudyByTrial = (trialArm: string) => {
     const matchingItem = data.find(
-      (item) => item.trialarmid === trialArm 
+      (item) => item.t === trialArm 
     );
     if (!matchingItem) return "";
     try {
-      return matchingItem.studyid;
+      return matchingItem.s;
     } catch (error) {
       console.error("Error parsing combineddata:", error);
 
@@ -284,8 +235,8 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
             className="w-full md:w-8rem"
             value={selectedSortOption}
             options={[
-              { label: "IDSort", value: "trialId" },
-              { label: "PatientCount", value: "patientCount" },
+              { label: "Trial Id", value: "trialId" },
+              { label: "Patient Match Count", value: "patientCount" },
               { label: "Default", value: "unsort" },
             ]}
             onChange={(e) => {
@@ -307,7 +258,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
       <Plot
         data={[
           {
-            z: sortedHeatmapWithColors,
+            z: heatmapMatrixWithColors,
             x: sortedData.patients,
             y: sortedData.trialArms,
             type: "heatmap",
@@ -324,11 +275,6 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
               "<extra></extra>",
             xgap,
             ygap: 10,
-            customdata: sortedData.trialArms.map((trialArm) =>
-              sortedData.patients.map((patientId) =>
-                getCombinedDataForPoint(trialArm, patientId)
-              )
-            ),
             hoverlabel: {
               bgcolor: "white",
               font: {
@@ -341,8 +287,6 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
         layout={{
           xaxis: { showticklabels: false, type: "category", ticks: "", showgrid: false },
           yaxis: { 
-            //tickvals: sortedData.trialArms,
-            //ticktext: [],
             tickfont: { size: 10,
            }, 
            type: "category", showticklabels: true, automargin: true, showgrid: false },

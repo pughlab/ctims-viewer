@@ -84,15 +84,11 @@ public class DatabaseController {
         return ResponseEntity.status(HttpStatus.OK).body("Can access the Endpoint " );
     }
 
-    @GetMapping("/createChart/{chartType}/{ArmTypes}")
+    @PostMapping("/createChart/{chartType}/{ArmTypes}")
     public ResponseEntity<String> getCreateChart(@PathVariable String chartType, @PathVariable String[] ArmTypes, HttpSession session) {
         String userId = getUserIdFromSession(session);
-        System.out.printf("Entered FileController123 %s",chartType);
         String bytes = dataService.getCreateChart(userId, chartType, ArmTypes);
         if (bytes != null) {
-            //String result = new String(bytes, StandardCharsets.UTF_8);
-                    //return ResponseEntity.status(HttpStatus.OK).body("Uploaded the file successfully: " + file.getOriginalFilename());
-            System.out.printf("Success %s",bytes.toString() );
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -100,15 +96,11 @@ public class DatabaseController {
     }
 
 
-    @GetMapping("/createChartFilter/{chartType}/{ArmTypes}/{TrialCreationDates}/{StudyIds}")
+    @PostMapping("/createChartFilter/{chartType}/{ArmTypes}/{TrialCreationDates}/{StudyIds}")
     public ResponseEntity<String> getFilterChart(@PathVariable String chartType, @PathVariable String[] ArmTypes, @PathVariable String TrialCreationDates, @PathVariable String StudyIds, HttpSession session) {
         String userId = getUserIdFromSession(session);
-        System.out.printf("Entered FileController123 %s",chartType);
         String bytes = dataService.getFilterChart(userId, chartType, ArmTypes, TrialCreationDates, StudyIds);
         if (bytes != null) {
-            //String result = new String(bytes, StandardCharsets.UTF_8);
-                    //return ResponseEntity.status(HttpStatus.OK).body("Uploaded the file successfully: " + file.getOriginalFilename());
-            System.out.printf("Success %s",bytes.toString() );
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -119,7 +111,6 @@ public class DatabaseController {
     public ResponseEntity<String> getTrialIDs(HttpSession session){
         String userId = getUserIdFromSession(session);
         String bytes = dataService.getTrialIDs(userId);
-        System.out.printf("bytes  trial ids %s", bytes.toString());
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {
@@ -143,7 +134,6 @@ public class DatabaseController {
     @GetMapping("/FilteredTrialArmIDs/{TrialCreationDates}")
     public ResponseEntity<String> getFilteredTrialArmIDs(HttpSession session, @PathVariable String TrialCreationDates){
         String userId = getUserIdFromSession(session);
-        System.out.printf("TrialCreationDates, %s", TrialCreationDates);
         String bytes = dataService.getFilteredTrialArmIDs(userId, TrialCreationDates);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
@@ -156,7 +146,6 @@ public class DatabaseController {
     @GetMapping("/FilteredTrialArmIDsWithTrialId/{TrialCreationDates}/{TrialId}")
     public ResponseEntity<String> FilteredTrialArmIDsWithTrialId(HttpSession session, @PathVariable String TrialCreationDates, @PathVariable String TrialId){
         String userId = getUserIdFromSession(session);
-        System.out.printf("TrialCreationDates, %s", TrialCreationDates);
         String bytes = dataService.getFilteredTrialArmIDsWithTrialId(userId, TrialCreationDates, TrialId);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
@@ -197,10 +186,8 @@ public class DatabaseController {
 
     @GetMapping("/groupTrials")
     public ResponseEntity<List<ChartsTable>> getGroupTrials(HttpSession session){
-        System.out.printf("Check1");
         String userId = getUserIdFromSession(session);
         List<ChartsTable> bytes = dataService.getGroupTrials(userId);
-        System.out.printf("Check1 bytes123 %s", bytes);
         if (bytes != null) {
             return new ResponseEntity<>(bytes,HttpStatus.OK);
         } else {
@@ -258,7 +245,7 @@ public class DatabaseController {
         }
     }
 
-    @GetMapping("/reactPlotlyData")
+    @PostMapping("/reactPlotlyData")
     public ResponseEntity<List<Map<String, String>>> reactPlotlyData(
             @RequestParam(value = "trialcreated", required = false) String trialCreated,
             @RequestParam(value = "trialid", required = false) String trialId,
@@ -271,7 +258,6 @@ public class DatabaseController {
             HttpSession session) {
         
         String userId = getUserIdFromSession(session);
-        System.out.printf("Check1");
         List<Map<String, String>> bytes = dataService.reactPlotlyData(
                 userId, 
                 trialCreated, 
@@ -283,7 +269,6 @@ public class DatabaseController {
                 hugoSymbol, 
                 gene
         );
-        System.out.printf("Check4 ");
         if (bytes != null) {
             return new ResponseEntity<>(bytes, HttpStatus.OK);
         } else {
@@ -292,10 +277,9 @@ public class DatabaseController {
     }
 
 
-    @GetMapping("/reactPlotlyFilter/{ArmTypes}/{TrialCreationDates}/{StudyIds}")
+    @PostMapping("/reactPlotlyFilter/{ArmTypes}/{TrialCreationDates}/{StudyIds}")
     public ResponseEntity<List<Map<String, String>>> reactPlotlyFilter(@PathVariable String[] ArmTypes, @PathVariable String TrialCreationDates, @PathVariable String StudyIds, HttpSession session) {
         String userId = getUserIdFromSession(session);
-        System.out.printf("Check12");
         List<Map<String, String>> bytes = dataService.reactPlotlyFilter(userId, ArmTypes, TrialCreationDates, StudyIds);
         if (bytes != null) {
             return new ResponseEntity<>(bytes ,HttpStatus.OK);
@@ -318,7 +302,6 @@ public class DatabaseController {
 
     @GetMapping("/FetchTrialDataFromMatchEngine/{trialInternalId}/{trialId}/{matchDate}")
     public ResponseEntity<String> getTrialDataFromMatchEngine(HttpSession session, @PathVariable String trialInternalId, @PathVariable String trialId, @PathVariable String matchDate){
-        System.out.printf("trialInternalId %s", trialInternalId);
         String userId = getUserIdFromSession(session);
         String bytes = dataService.getTrialDataFromMatchEngine(userId, trialInternalId, trialId, matchDate);
          if (bytes != null) {
