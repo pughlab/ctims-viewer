@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 
 interface DataItem {
-  patient_id: string | number;
-  trialarmid: string;
+  p: string | number;
+  t: string;
 }
 
 interface TopBarChartProps {
@@ -14,11 +14,11 @@ interface TopBarChartProps {
 const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
   
   const patientTrialMap = data.reduce((acc, item) => {
-    const idStr = String(item.patient_id);
+    const idStr = String(item.p);
     if (!acc[idStr]) {
       acc[idStr] = new Set<string>();
     }
-    acc[idStr].add(item.trialarmid);
+    acc[idStr].add(item.t);
     return acc;
   }, {} as Record<string, Set<string>>);
   
@@ -62,15 +62,16 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
 
   const handleClick = (event: any) => {
     if (event.points.length > 0) {
-      const xValue = event.points[0].x; 
-      const yValue = event.points[0].y; 
-      //const link = `CBIOPORTALURL/patient?studyId=${study_id}&caseId=${xValue}`;
+      const xValue = event.points[0].x;
       const cbiPortalUrl= process.env.REACT_APP_CBIOPORTAL_URL
       const link = `${cbiPortalUrl}/patient?studyId=${study_id}&caseId=${xValue}`;
-      window.open(link, "_blank"); 
+      window.open(link, "_blank");
     }
   };
 
+  const maxTrialCount = Math.max(...chartData.y);
+  const dynamicHeight = 75 * 7;
+  const yAxisMax = Math.max(maxTrialCount, 100);
   /*
   const rowHeight = 25;
   const chartHeight = rowHeight * patientIds.length;
@@ -92,7 +93,7 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
             y: chartData.y,
             type: 'bar',
             marker: {
-              color: 'rgb(45, 94, 127)',
+              color: 'rgb(51, 153, 255)',
             },
             hovertemplate:
               `<b>Patient ID:</b> %{x}<br>` +
@@ -112,9 +113,11 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
           },
           yaxis: {
             title: 'Number of Trials Matched',
+            dtick: 10,
+            range: [0, yAxisMax],
           },
-          height: 600,  // Fixed height for the entire chart
-          width: 800, 
+          height: dynamicHeight,
+          width: 1200, 
         }}
         onClick={handleClick}
       />

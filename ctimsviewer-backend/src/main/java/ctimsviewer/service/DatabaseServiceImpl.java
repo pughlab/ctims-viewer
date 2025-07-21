@@ -137,7 +137,6 @@ public class DatabaseServiceImpl implements DatabaseService{
     public byte[] getData(String tableName, String userId) {
         String sql = "SELECT * FROM " + tableName;
         List<Map<String, Object>> results = jdbcTemplate.queryForList(sql);
-        //System.out.printf("%s", results);
         StringBuilder resultString = new StringBuilder();
         for (Map<String, Object> row : results) {
             resultString.append(row.toString()).append("\n");
@@ -150,7 +149,6 @@ public class DatabaseServiceImpl implements DatabaseService{
     @Override
     public byte[] getDataUsingRepo(String tableName, String userId) {
         List<ChartsTable> chartsTables = chartsTableRepository.findAllByTableName(tableName);
-        //System.out.printf("%s", chartsTables);
         StringBuilder resultString = new StringBuilder();
         for (ChartsTable chart : chartsTables) {
             resultString.append(chart.toString()).append("");
@@ -163,12 +161,9 @@ public class DatabaseServiceImpl implements DatabaseService{
     public byte[] getDataUsingFilter(String TrialCreationDates, String StudyIds, String userId) {
 
         List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
-        System.out.printf("Date List %s", dateList);
 
         List<String> studyList = Arrays.asList(StudyIds.split(","));
-        System.out.printf("Date List %s", studyList);
         List<ClinicalData> chartsTables = chartsTableRepository.findDataByCreationDate(dateList, studyList);
-       // System.out.printf("Table %s", chartsTables);
         StringBuilder resultString = new StringBuilder();
         
         for (ClinicalData chart : chartsTables) {
@@ -197,13 +192,9 @@ public class DatabaseServiceImpl implements DatabaseService{
     public String getFilteredTrialArmIDs(String userId, String TrialCreationDates){
 
 
-        System.out.printf("TrialCreationDates1 %s", TrialCreationDates);
-        //System.out.printf("TrialCreationDates %s", TrialCreationDates);
 
         List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
-        //System.out.printf("dateList %s", dateList);
         List<String> results = chartsTableRepository.findFilteredUniqueTrialarmid(dateList);
-        System.out.printf("results.toString() %s", results.toString());
         return results.toString();
     }
 
@@ -227,14 +218,10 @@ public class DatabaseServiceImpl implements DatabaseService{
     public String getFilteredStudyIDs(String userId, String TrialCreationDates, String TrialIds){
 
 
-        System.out.printf("TrialCreationDates1 %s", TrialCreationDates);
-        //System.out.printf("TrialCreationDates %s", TrialCreationDates);
 
         List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
         List<String> trislIdsList = Arrays.asList(TrialIds.split(","));
-        //System.out.printf("dateList %s", dateList);
         List<String> results = chartsTableRepository.findFilteredUniqueStudyid(dateList, trislIdsList);
-        System.out.printf("results.toString() %s", results.toString());
         return results.toString();
     }
 
@@ -246,7 +233,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         //List<ClinicalData> results = chartsTableRepository.findDataByCreationDate(dateList);
 
 
-        System.out.printf("TrialCreationDates %s %s", trialCreated, patientId);
         List<ClinicalData> results = chartsTableRepository.findDataByCustomFilter(trialCreated, trialId, trialName, StudyID, patientId, SampleID, hugoSymbol, gene);
 
         
@@ -268,12 +254,11 @@ public class DatabaseServiceImpl implements DatabaseService{
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
             String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
-            String[] parts = data.split(",", 4); // Split into two parts
+            String[] parts = data.split(",", 3);
             Map<String, String> map = new HashMap<>();
-            map.put("trialarmid", parts[0]);
-            map.put("patient_id", parts[1]);
-            map.put("studyid", parts[2]);
-            map.put("combineddata", parts[3]);
+            map.put("t", parts[0]);
+            map.put("p", parts[1]);
+            map.put("s", parts[2]);
             convertedResults.add(map);
         }
 
@@ -283,27 +268,23 @@ public class DatabaseServiceImpl implements DatabaseService{
     @Override
     public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String TrialCreationDates, String StudyIds) {
         List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
-        System.out.printf("Date List %s", TrialCreationDates);
 
         List<String> studyList = Arrays.asList(StudyIds.split(","));
-        System.out.printf("Date List %s", StudyIds);
 
         List<String> armList = Arrays.asList(ArmTypes);
-        System.out.printf("Date List %s",armList );
+
         List<ClinicalData> results = chartsTableRepository.findPlotlyDataByCreationDate(armList, dateList, studyList);
-        System.out.printf("results %s", results.toString());
+
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
             String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
-            String[] parts = data.split(",", 4); // Split into two parts
+            String[] parts = data.split(",", 3);
             Map<String, String> map = new HashMap<>();
-            map.put("trialarmid", parts[0]);
-            map.put("patient_id", parts[1]);
-            map.put("studyid", parts[2]);
-            map.put("combineddata", parts[3]);
+            map.put("t", parts[0]);
+            map.put("p", parts[1]);
+            map.put("s", parts[2]);
             convertedResults.add(map);
         }
-        System.out.printf("Date%s", convertedResults.toString());
         return convertedResults;
 
 
@@ -413,7 +394,6 @@ public class DatabaseServiceImpl implements DatabaseService{
             String trialcreated = time;
             String combinedData = csvRecord.get("Patient Match Values");
             String oncotreePrimaryDiagnosisMatchOnly = csvRecord.get("Oncotree Primary Diagnosis Match Value");
-            System.out.printf("oncotreePrimaryDiagnosisMatchOnly %s",oncotreePrimaryDiagnosisMatchOnly);
 
             chartsTableRepository.insertResultsData(
                 trialId, trialName, trialMatchDate, trialArmId, armCode, studyID, 
@@ -434,10 +414,8 @@ public class DatabaseServiceImpl implements DatabaseService{
 
     @Override
     public String getCreateChart(String userId, String chartType, String[] ArmTypes) {
-        System.out.printf("Entered getCreateChart2 %s",chartType);
 
         String result = String.join(",", ArmTypes);
-        System.out.printf("result %s", result);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String retRes ="";
 
@@ -448,7 +426,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         byte[] dbDataBytes2 = getDataUsingRepo("ClinicalData", userId);
         //byte[] dbDataBytes = getData("CTIMSCHARTS", userId);
         String dbData2 = new String(dbDataBytes2, "UTF-8");
-        System.out.printf("Data from db2 %s", dbData2);
 
         String pythonCommand = "python3";
        // Path userDir = getUserPath(userId);
@@ -489,7 +466,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         byte[] dbDataBytes = getDataUsingRepo("ClinicalData", userId);
         //byte[] dbDataBytes = getData("CTIMSCHARTS", userId);
         String dbData = new String(dbDataBytes, "UTF-8");
-        System.out.printf("Data from db %s", dbData);
         String headers = "trialArmId,patient_id";
         FileOutputStream fos = new FileOutputStream("ctimsFiles/user-local/inputcsvfile.csv");
         fos.write(headers.getBytes(StandardCharsets.UTF_8)); 
@@ -506,7 +482,6 @@ public class DatabaseServiceImpl implements DatabaseService{
             "ctimsFiles/user-local/results/heatmap.png",
             result
         };
-        System.out.printf("command1234 %s", command[4]);
         ProcessBuilder pb = new ProcessBuilder(command);
         Process process = pb.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -521,7 +496,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         LocalDateTime now = LocalDateTime.now();
 
         if (exitCode == 0) {
-            System.out.printf("Python script executed successfully.");
             retRes = "Success"+chartType+now;
         } else {
             //System.out.println("Error, exit code is not zero");
@@ -531,14 +505,10 @@ public class DatabaseServiceImpl implements DatabaseService{
                 errorMessage.append(line).append("\n");
             }
             retRes = "Error: Failed to execute Python script. Error details: " + errorMessage.toString();
-            System.out.printf("%s",retRes);
-            System.out.printf("%d",exitCode);
         }
         
         } catch (IOException | InterruptedException e) {
-            System.out.printf("Check_@@@@");
             e.printStackTrace();
-            System.out.printf("Check_@@@@");
             retRes = "Error: " + e.getMessage();
         } finally {
             return retRes;
@@ -550,10 +520,8 @@ public class DatabaseServiceImpl implements DatabaseService{
 
     @Override
     public String getFilterChart(String userId, String chartType, String[] ArmTypes, String TrialCreationDates, String StudyIds) {
-        System.out.printf("Entered getCreateChart3 %s",chartType);
 
         String result = String.join(",", ArmTypes);
-        System.out.printf("result %s", result);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String retRes ="";
 
@@ -562,7 +530,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         byte[] dbDataBytes2 = getDataUsingFilter(TrialCreationDates, userId);
         //byte[] dbDataBytes = getData("CTIMSCHARTS", userId);
         String dbData2 = new String(dbDataBytes2, "UTF-8");
-        System.out.printf("Data from db2 %s", dbData2);
 */
         String pythonCommand = "python3";
        // Path userDir = getUserPath(userId);
@@ -576,7 +543,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         Path scriptFile = importerDir.resolve(scriptName);
         copyScriptsToTempDir(importerDir);
     /*
-    System.out.println("Files in temporary directory:");
         try (Stream<Path> paths = Files.walk(tempDir)) {
             paths.filter(Files::isRegularFile)
                 .forEach(System.out::println);
@@ -606,7 +572,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         byte[] dbDataBytes = getDataUsingFilter(TrialCreationDates, StudyIds, userId);
         //byte[] dbDataBytes = getData("CTIMSCHARTS", userId);
         String dbData = new String(dbDataBytes, "UTF-8");
-        System.out.printf("Data from db %s", dbData);
         String headers = "TrialArmId,patient_id\n";
         FileOutputStream fos = new FileOutputStream("ctimsFiles/user-local/inputcsvfile.csv");
         fos.write(headers.getBytes(StandardCharsets.UTF_8)); 
@@ -633,7 +598,6 @@ public class DatabaseServiceImpl implements DatabaseService{
             "ctimsFiles/user-local/results/heatmap.png",
             result
         };
-        System.out.printf("command1234 %s", command[4]);
         ProcessBuilder pb = new ProcessBuilder(command);
         Process process = pb.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -648,7 +612,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         LocalDateTime now = LocalDateTime.now();
 
         if (exitCode == 0) {
-            System.out.printf("Python script executed successfully.");
             retRes = "Success"+chartType+now;
         } else {
             //System.out.println("Error, exit code is not zero");
@@ -658,14 +621,10 @@ public class DatabaseServiceImpl implements DatabaseService{
                 errorMessage.append(line).append("\n");
             }
             retRes = "Error: Failed to execute Python script. Error details: " + errorMessage.toString();
-            System.out.printf("%s",retRes);
-            System.out.printf("%d",exitCode);
         }
         
         } catch (IOException | InterruptedException e) {
-            System.out.printf("Check_@@@@");
             e.printStackTrace();
-            System.out.printf("Check_@@@@");
             retRes = "Error: " + e.getMessage();
         } finally {
             return retRes;
@@ -681,16 +640,13 @@ public class DatabaseServiceImpl implements DatabaseService{
 
        List<ChartsTable> results = chartsTableRepository.groupTrials();
 
-        System.out.printf("Check_@@@@&&&& %s", chartsTableRepository.groupTrials().toString());
         StringBuilder detailedResults = new StringBuilder();
         for (ChartsTable result : results) {
             detailedResults.append(result.toDetailedString());
         }
-        System.out.printf("detailed output  %s", results);
         return results;
 
     }
-    
 
     @Override
     public List<ChartsTable> getPatientMatch(String patientid, String userId){
@@ -756,7 +712,6 @@ public class DatabaseServiceImpl implements DatabaseService{
 
     @Override
     public String getTrialDataFromMatchEngine(String userId, String trialInternalId, String trialId, String matchedDate){
-        System.out.printf("trialInternalId2 %s", trialInternalId);
         String whereClause = "{\"trial_internal_id\":\"" + trialInternalId + "\", \"is_disabled\": false}";
         // Use URLCodec to encode the JSON string
         URLCodec codec = new URLCodec();
@@ -770,7 +725,6 @@ public class DatabaseServiceImpl implements DatabaseService{
         }
         // Construct the URL with the encoded 'where' parameter
         String url = MM_API_URL + "/ctims_viewer_trial_match?where=" + encodedWhereClause;
-        System.out.printf("URL: %s\n", url);
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -902,7 +856,6 @@ public class DatabaseServiceImpl implements DatabaseService{
 
     @Override
     public void deleteTrial(String userId, String trialDate, String trialId) {
-        System.out.printf("Entered  dataserviveImpl %s", trialDate);
         chartsTableRepository.deleteTrialFromClinicalData(trialDate, trialId);
         chartsTableRepository.deleteTrialFromCTIMSCHARTS(trialDate, trialId);
     }

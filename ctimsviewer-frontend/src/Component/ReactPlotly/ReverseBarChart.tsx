@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import Plot from "react-plotly.js";
 
 interface DataItem {
-  trialarmid: string;
-  patient_id: number;
+  t: string;
+  p: number;
 }
 
 interface ReverseBarChartProps {
@@ -14,10 +14,10 @@ interface ReverseBarChartProps {
 const ReverseBarChart: React.FC<ReverseBarChartProps> = ({ data, study_id }) => {
   
   const patientCountByArm = data.reduce((acc, item) => {
-    if (!acc[item.trialarmid]) {
-      acc[item.trialarmid] = new Set(); 
+    if (!acc[item.t]) {
+      acc[item.t] = new Set(); 
     }
-    acc[item.trialarmid].add(item.patient_id);
+    acc[item.t].add(item.p);
     return acc;
   }, {} as Record<string, Set<number>>);
 
@@ -101,17 +101,27 @@ const ReverseBarChart: React.FC<ReverseBarChartProps> = ({ data, study_id }) => 
             automargin: true,
             tickmode: "array",
             tickvals: sortedData.y,
-            showticklabels: false,
+            showticklabels: true, 
           },
           xaxis: {
             title: "Unique Patient Count",
           },
-          height: 200+ chartHeight,  // Fixed height for the entire chart
-          width: 800, 
-          autosize: false
-        }}
-        //onClick={handleClick}
-      />
+        height: 200 + chartHeight,
+        width: 800,
+        autosize: false,
+        annotations: sortedData.y.map((arm, index) => ({
+          x: sortedData.x[index] + 1,
+          y: arm,
+          text: String(sortedData.x[index]),
+          showarrow: false,
+          font: {
+            color: "black",
+            size: 12,
+          },
+          xanchor: "left",
+        })),
+      }}
+    />
     </div>
   );
 };

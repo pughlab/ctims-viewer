@@ -648,7 +648,7 @@ const UploadCsv = (props: any) => {
         if(selectedTrials.length>0)
         {
             csvChartOperation({
-                method: 'GET',
+                method: 'POST',
                 url: `createChartFilter/${selectedItem}/${selectedOptions}/${selectedTrials}/${selectedStudy}` ,
                 headers: headers,
             })
@@ -656,7 +656,7 @@ const UploadCsv = (props: any) => {
         else
         {
             csvChartOperation({
-                method: 'GET',
+                method: 'POST',
                 url: `createChart/${selectedItem}/${selectedOptions}` ,
                 headers: headers,
             })
@@ -680,7 +680,7 @@ const UploadCsv = (props: any) => {
         if(selectedTrials.length>0)
         {
             reactPlotlyChartOperation({
-                method: 'GET',
+                method: 'POST',
                 url: `reactPlotlyFilter/${selectedOptions}/${selectedTrials}/${selectedStudy}` ,
                 headers: headers,
             })
@@ -688,7 +688,7 @@ const UploadCsv = (props: any) => {
         else
         {
             reactPlotlyChartOperation({
-                method: 'GET',
+                method: 'POST',
                 url: `reactPlotlyData` ,
                 headers: headers,
             })
