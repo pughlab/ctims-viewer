@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -36,24 +36,72 @@ const keycloak = new Keycloak({
 const AppWithKeycloak: React.FC = () => {
     const client: any= process.env.REACT_APP_KEYCLOAK_CLIENT;
     const { initialized, keycloak } = useKeycloak();
-    const userName = keycloak?.idTokenParsed?.name;
-    var check = keycloak.token;
-    const resourceAccess = keycloak.tokenParsed?.resource_access;
-    const ctimsRoles = resourceAccess?.[client]?.roles || [];
-    console.log("Roles in keycloak", ctimsRoles);
-    useEffect(() => {
-      if (initialized && keycloak.authenticated) {
-       const token = keycloak.token;
-        // Now you can use the token or perform any other actions with the authenticated user
+  const [accessToken, setAccessToken] = useState<string | undefined>();
+  const [ctimsRoles, setCtimsRoles] = useState<string[]>([]);
+  const userName = keycloak?.idTokenParsed?.name;
+  
+  useEffect(() => {
+    let refreshTimeout: NodeJS.Timeout;
+  
+    const scheduleRefresh = () => {
+      const exp = keycloak.tokenParsed?.exp;
+      const iat = keycloak.tokenParsed?.iat;
+  
+      if (exp && iat) {
+        const tokenLifespan = exp - iat;
+        const refreshTimeInSeconds = tokenLifespan - 60;
+        const refreshTimeInMs = refreshTimeInSeconds * 1000;
+  
+        refreshTimeout = setTimeout(() => {
+          keycloak.updateToken(60).then((refreshed) => {
+            if (refreshed) {
+              console.log('Token refreshed successfully');
+              setAccessToken(keycloak.token);
+  
+              const resourceAccess = keycloak.tokenParsed?.resource_access;
+              const roles = resourceAccess?.[client]?.roles || [];
+              setCtimsRoles(roles);
+  
+              scheduleRefresh();
+            } else {
+              console.log('⏳ Token still valid, scheduling next refresh...');
+              scheduleRefresh();
+            }
+          }).catch((err) => {
+            console.error('Token refresh failed, logging out...', err);
+            keycloak.logout();
+          });
+  
+          console.log(`Refresh attempted at ${new Date().toISOString()}`);
+        }, refreshTimeInMs);
+  
+        console.log(`Token will be refreshed in ${refreshTimeInSeconds} seconds.`);
       }
-    }, [initialized, keycloak]);
+    };
+  
+    if (initialized && keycloak.authenticated) {
+      setAccessToken(keycloak.token);
+  
+      const resourceAccess = keycloak.tokenParsed?.resource_access;
+      const roles = resourceAccess?.[client]?.roles || [];
+      setCtimsRoles(roles);
+  
+      scheduleRefresh();
+    }
+  
+    return () => {
+      if (refreshTimeout) {
+        clearTimeout(refreshTimeout);
+      }
+    };
+  }, [initialized, keycloak, client]);
     return (
           <BrowserRouter>
                 <div>
                   <Header userName={userName} />
                   <Navi roles={ctimsRoles} />
                   <Home />
-                  <App accessToken={check} roles={ctimsRoles}  />
+                  <App accessToken={accessToken || ''} roles={ctimsRoles} />
                 </div>
           </BrowserRouter>
     );
