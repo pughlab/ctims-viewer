@@ -20,7 +20,6 @@ import {login} from "./service/AuthService"
 const keycloakIntegration = process.env.REACT_APP_KEYCLOAK_INTEGRATION;
 
 
-console.log("REACT_APP_KEYCLOAK_INTEGRATION value:", process.env.REACT_APP_KEYCLOAK_INTEGRATION);
 const initOptions ={ onLoad: 'login-required', redirectUri: '', checkLoginIframe: false};
 
 const keycloak = new Keycloak({
@@ -39,7 +38,7 @@ const AppWithKeycloak: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string | undefined>();
   const [ctimsRoles, setCtimsRoles] = useState<string[]>([]);
   const userName = keycloak?.idTokenParsed?.name;
-  
+
   useEffect(() => {
     let refreshTimeout: NodeJS.Timeout;
   
@@ -55,7 +54,6 @@ const AppWithKeycloak: React.FC = () => {
         refreshTimeout = setTimeout(() => {
           keycloak.updateToken(60).then((refreshed) => {
             if (refreshed) {
-              console.log('Token refreshed successfully');
               setAccessToken(keycloak.token);
   
               const resourceAccess = keycloak.tokenParsed?.resource_access;
@@ -64,18 +62,14 @@ const AppWithKeycloak: React.FC = () => {
   
               scheduleRefresh();
             } else {
-              console.log('⏳ Token still valid, scheduling next refresh...');
               scheduleRefresh();
             }
           }).catch((err) => {
-            console.error('Token refresh failed, logging out...', err);
             keycloak.logout();
           });
   
-          console.log(`Refresh attempted at ${new Date().toISOString()}`);
         }, refreshTimeInMs);
   
-        console.log(`Token will be refreshed in ${refreshTimeInSeconds} seconds.`);
       }
     };
   
@@ -119,7 +113,6 @@ if(keycloakIntegration == "enable")
 );
 }
 else{
-  {console.log("Keycloak not enabled")}
 root.render(
   <BrowserRouter>
   <div>
