@@ -41,11 +41,10 @@ const AppWithKeycloak: React.FC = () => {
 
   useEffect(() => {
     let refreshTimeout: NodeJS.Timeout;
-  
-    const scheduleRefresh = () => {
+    let autoLogoutTimeout: NodeJS.Timeout;
+    const scheduleTokenRefresh = () => {
       const exp = keycloak.tokenParsed?.exp;
       const iat = keycloak.tokenParsed?.iat;
-  
       if (exp && iat) {
         const tokenLifespan = exp - iat;
         const refreshTimeInSeconds = tokenLifespan - 60;
@@ -59,10 +58,10 @@ const AppWithKeycloak: React.FC = () => {
               const resourceAccess = keycloak.tokenParsed?.resource_access;
               const roles = resourceAccess?.[client]?.roles || [];
               setCtimsRoles(roles);
-  
-              scheduleRefresh();
+              scheduleTokenRefresh();
+              scheduleAutoLogout();
             } else {
-              scheduleRefresh();
+              scheduleTokenRefresh();
             }
           }).catch((err) => {
             keycloak.logout();
@@ -72,21 +71,33 @@ const AppWithKeycloak: React.FC = () => {
   
       }
     };
-  
+    const scheduleAutoLogout = () => {
+      const exp = keycloak.tokenParsed?.exp;
+      if (!exp) return;
+
+      const now = Date.now();
+      const expMs = exp * 1000;
+      const timeUntilLogout = expMs - now;
+
+      if (timeUntilLogout > 0) {
+        autoLogoutTimeout = setTimeout(() => {
+          keycloak.logout();
+        }, timeUntilLogout);
+      }
+    };
     if (initialized && keycloak.authenticated) {
       setAccessToken(keycloak.token);
   
       const resourceAccess = keycloak.tokenParsed?.resource_access;
       const roles = resourceAccess?.[client]?.roles || [];
       setCtimsRoles(roles);
-  
-      scheduleRefresh();
+      scheduleTokenRefresh();
+      scheduleAutoLogout();
     }
   
     return () => {
-      if (refreshTimeout) {
-        clearTimeout(refreshTimeout);
-      }
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+      if (autoLogoutTimeout) clearTimeout(autoLogoutTimeout);
     };
   }, [initialized, keycloak, client]);
     return (
