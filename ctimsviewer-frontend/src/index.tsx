@@ -41,7 +41,8 @@ const AppWithKeycloak: React.FC = () => {
 
   useEffect(() => {
     let refreshTimeout: NodeJS.Timeout;
-    let autoLogoutTimeout: NodeJS.Timeout;
+    let inactivityTimeout: NodeJS.Timeout;
+    let activityEvents: string[] = [];
     const scheduleTokenRefresh = () => {
       const exp = keycloak.tokenParsed?.exp;
       const iat = keycloak.tokenParsed?.iat;
@@ -54,15 +55,11 @@ const AppWithKeycloak: React.FC = () => {
           keycloak.updateToken(60).then((refreshed) => {
             if (refreshed) {
               setAccessToken(keycloak.token);
-  
-              const resourceAccess = keycloak.tokenParsed?.resource_access;
-              const roles = resourceAccess?.[client]?.roles || [];
-              setCtimsRoles(roles);
-              scheduleTokenRefresh();
-              scheduleAutoLogout();
-            } else {
-              scheduleTokenRefresh();
+                const resourceAccess = keycloak.tokenParsed?.resource_access;
+                const roles = resourceAccess?.[client]?.roles || [];
+                setCtimsRoles(roles);
             }
+              scheduleTokenRefresh();
           }).catch((err) => {
             keycloak.logout();
           });
@@ -71,20 +68,42 @@ const AppWithKeycloak: React.FC = () => {
   
       }
     };
-    const scheduleAutoLogout = () => {
+    const setupInactivityLogout = () => {
       const exp = keycloak.tokenParsed?.exp;
-      if (!exp) return;
+      const iat = keycloak.tokenParsed?.iat;
+      if (!exp || !iat) return;
 
-      const now = Date.now();
-      const expMs = exp * 1000;
-      const timeUntilLogout = expMs - now;
+      const inactivityLimit = (exp - iat) * 1000;
 
-      if (timeUntilLogout > 0) {
-        autoLogoutTimeout = setTimeout(() => {
+      const resetInactivityTimer = () => {
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = setTimeout(() => {
           keycloak.logout();
-        }, timeUntilLogout);
-      }
+        }, inactivityLimit);
+      };
+      activityEvents = ['mousemove', 'keydown', 'click', 'scroll'];
+      activityEvents.forEach((event) =>
+        window.addEventListener(event, resetInactivityTimer)
+      );
+      resetInactivityTimer();
     };
+    const cleanupInactivityTracking = () => {
+      activityEvents.forEach((event) =>
+        window.removeEventListener(event, resetInactivityTimer)
+      );
+      clearTimeout(inactivityTimeout);
+    };
+    const resetInactivityTimer = () => {
+      clearTimeout(inactivityTimeout);
+      const exp = keycloak.tokenParsed?.exp;
+      const iat = keycloak.tokenParsed?.iat;
+      if (!exp || !iat) return;
+      const inactivityLimit = (exp - iat) * 1000;
+      inactivityTimeout = setTimeout(() => {
+        keycloak.logout();
+      }, inactivityLimit);
+    };
+
     if (initialized && keycloak.authenticated) {
       setAccessToken(keycloak.token);
   
@@ -92,12 +111,12 @@ const AppWithKeycloak: React.FC = () => {
       const roles = resourceAccess?.[client]?.roles || [];
       setCtimsRoles(roles);
       scheduleTokenRefresh();
-      scheduleAutoLogout();
+      setupInactivityLogout();
     }
   
     return () => {
       if (refreshTimeout) clearTimeout(refreshTimeout);
-      if (autoLogoutTimeout) clearTimeout(autoLogoutTimeout);
+      cleanupInactivityTracking();
     };
   }, [initialized, keycloak, client]);
     return (
