@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -20,7 +20,6 @@ import {login} from "./service/AuthService"
 const keycloakIntegration = process.env.REACT_APP_KEYCLOAK_INTEGRATION;
 
 
-console.log("REACT_APP_KEYCLOAK_INTEGRATION value:", process.env.REACT_APP_KEYCLOAK_INTEGRATION);
 const initOptions ={ onLoad: 'login-required', redirectUri: '', checkLoginIframe: false};
 
 const keycloak = new Keycloak({
@@ -36,24 +35,97 @@ const keycloak = new Keycloak({
 const AppWithKeycloak: React.FC = () => {
     const client: any= process.env.REACT_APP_KEYCLOAK_CLIENT;
     const { initialized, keycloak } = useKeycloak();
-    const userName = keycloak?.idTokenParsed?.name;
-    var check = keycloak.token;
-    const resourceAccess = keycloak.tokenParsed?.resource_access;
-    const ctimsRoles = resourceAccess?.[client]?.roles || [];
-    console.log("Roles in keycloak", ctimsRoles);
-    useEffect(() => {
-      if (initialized && keycloak.authenticated) {
-       const token = keycloak.token;
-        // Now you can use the token or perform any other actions with the authenticated user
+  const [accessToken, setAccessToken] = useState<string | undefined>();
+  const [ctimsRoles, setCtimsRoles] = useState<string[]>([]);
+  const userName = keycloak?.idTokenParsed?.name;
+
+  useEffect(() => {
+    let refreshTimeout: NodeJS.Timeout;
+    let inactivityTimeout: NodeJS.Timeout;
+    let activityEvents: string[] = [];
+    const scheduleTokenRefresh = () => {
+      const exp = keycloak.tokenParsed?.exp;
+      const iat = keycloak.tokenParsed?.iat;
+      if (exp && iat) {
+        const tokenLifespan = exp - iat;
+        const refreshTimeInSeconds = tokenLifespan - 60;
+        const refreshTimeInMs = refreshTimeInSeconds * 1000;
+  
+        refreshTimeout = setTimeout(() => {
+          keycloak.updateToken(60).then((refreshed) => {
+            if (refreshed) {
+              setAccessToken(keycloak.token);
+                const resourceAccess = keycloak.tokenParsed?.resource_access;
+                const roles = resourceAccess?.[client]?.roles || [];
+                setCtimsRoles(roles);
+            }
+              scheduleTokenRefresh();
+          }).catch((err) => {
+            keycloak.logout();
+          });
+  
+        }, refreshTimeInMs);
+  
       }
-    }, [initialized, keycloak]);
+    };
+    const setupInactivityLogout = () => {
+      const exp = keycloak.tokenParsed?.exp;
+      const iat = keycloak.tokenParsed?.iat;
+      if (!exp || !iat) return;
+
+      const inactivityLimit = (exp - iat) * 1000;
+
+      const resetInactivityTimer = () => {
+        clearTimeout(inactivityTimeout);
+        inactivityTimeout = setTimeout(() => {
+          keycloak.logout();
+        }, inactivityLimit);
+      };
+      activityEvents = ['mousemove', 'keydown', 'click', 'scroll'];
+      activityEvents.forEach((event) =>
+        window.addEventListener(event, resetInactivityTimer)
+      );
+      resetInactivityTimer();
+    };
+    const cleanupInactivityTracking = () => {
+      activityEvents.forEach((event) =>
+        window.removeEventListener(event, resetInactivityTimer)
+      );
+      clearTimeout(inactivityTimeout);
+    };
+    const resetInactivityTimer = () => {
+      clearTimeout(inactivityTimeout);
+      const exp = keycloak.tokenParsed?.exp;
+      const iat = keycloak.tokenParsed?.iat;
+      if (!exp || !iat) return;
+      const inactivityLimit = (exp - iat) * 1000;
+      inactivityTimeout = setTimeout(() => {
+        keycloak.logout();
+      }, inactivityLimit);
+    };
+
+    if (initialized && keycloak.authenticated) {
+      setAccessToken(keycloak.token);
+  
+      const resourceAccess = keycloak.tokenParsed?.resource_access;
+      const roles = resourceAccess?.[client]?.roles || [];
+      setCtimsRoles(roles);
+      scheduleTokenRefresh();
+      setupInactivityLogout();
+    }
+  
+    return () => {
+      if (refreshTimeout) clearTimeout(refreshTimeout);
+      cleanupInactivityTracking();
+    };
+  }, [initialized, keycloak, client]);
     return (
           <BrowserRouter>
                 <div>
                   <Header userName={userName} />
                   <Navi roles={ctimsRoles} />
                   <Home />
-                  <App accessToken={check} roles={ctimsRoles}  />
+                  <App accessToken={accessToken || ''} roles={ctimsRoles} />
                 </div>
           </BrowserRouter>
     );
@@ -71,7 +143,6 @@ if(keycloakIntegration == "enable")
 );
 }
 else{
-  {console.log("Keycloak not enabled")}
 root.render(
   <BrowserRouter>
   <div>
