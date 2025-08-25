@@ -10,6 +10,7 @@ function Navi(props: any) {
     const hasMatchEnginelRole = roles.includes('role_matchengine');
     const hasFetcherRole = roles.includes('role_fetcher');
     const hasLoaderRole = roles.includes('role_loader');
+    const hasEditorRole = roles.includes('role_editor');
 
     return (
         <div>
@@ -18,13 +19,16 @@ function Navi(props: any) {
                     <Link to="/" >Home Page</Link>
                 </h3>
                 {hasChartsRole && (<h3 className={location.pathname === "/charts" ? "selected" : ""}>
-                    <Link to="/charts" >CTIMS Viewer Charts</Link>
+                    <Link to="/charts" >Viewer</Link>
                 </h3>)}
                 {hasMatchEnginelRole && (<h3 className={location.pathname === "/matchengine" ? "selected" : ""}>
-                    <Link to="/matchengine" >CTIMS Match Engine</Link>
+                    <Link to="/matchengine" >Match Engine</Link>
+                </h3>)}
+                {hasEditorRole && (<h3 className={location.pathname === "/CtimsEditor" ? "selected" : ""}>
+                    <Link to="/CtimsEditor" >Editor</Link>
                 </h3>)}
                 {hasLoaderRole && (<h3 className={location.pathname === "/loader" ? "selected" : ""}>
-                    <Link to="/loader" >CTIMS Loader</Link>
+                    <Link to="/loader" >Loader</Link>
                 </h3>)}
                 {hasFetcherRole && (<h3 className={location.pathname === "/fetcher" ? "selected" : ""}>
                     <Link to="/fetcher">CTIMS Assembler Fetcher</Link>
