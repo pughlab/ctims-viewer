@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import ctimsviewer.ChartsTableRepository;
 import ctimsviewer.ChartsTable;
 import ctimsviewer.ClinicalData;
+import ctimsviewer.AssemblerLogs;
 import ctimsviewer.TrialDataDTO;
 import ctimsviewer.TrialGroup;
 
@@ -95,6 +97,9 @@ public class DatabaseServiceImpl implements DatabaseService{
     @Value("${MM_API_TOKEN}")
     private String MM_API_TOKEN;
 
+    @Value("$MM_DB_URL")
+    private String MM_DB_URL;
+
 
     @Override
     public void init() {
@@ -158,6 +163,12 @@ public class DatabaseServiceImpl implements DatabaseService{
     }
 
     @Override
+    public List<AssemblerLogs> getAssemblerLogsData(String userId) {
+        List<AssemblerLogs> assemblerLogs = chartsTableRepository.findAssemblerLogs();
+        return assemblerLogs;
+    }
+
+    @Override
     public byte[] getDataUsingFilter(String TrialCreationDates, String StudyIds, String userId) {
 
         List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
@@ -213,6 +224,74 @@ public class DatabaseServiceImpl implements DatabaseService{
         List<String> results = chartsTableRepository.findAllUniqueStudyid();
         return results.toString();
     }
+
+    @Async
+    @Override
+    public void fetchAssemblerData(String userId, String studyIds, String email) {
+        String mongoUri = MM_DB_URL;
+        String[] scripts = {
+            "pull_clinical_data.py",
+            "pull_genomic_data.py",
+            "pull_treatment_data.py"
+        };
+        LocalDateTime jobTriggeredTime = LocalDateTime.now();
+        try {
+            String userTriggered= getUserName();
+            System.out.println("UserId" + userTriggered);
+            chartsTableRepository.insertAssemblerLogsData(
+            userTriggered,                  
+            studyIds,                  
+            jobTriggeredTime.toString(),
+            null,
+            "RUNNING",
+            "IN_PROGRESS"
+        );
+            for (String script : scripts) {
+                runPythonScript(script, "-s", studyIds, "-i", mongoUri);
+            }
+            chartsTableRepository.updateAssemblerLogsData(
+            jobTriggeredTime.toString(),
+            LocalDateTime.now().toString(),
+            "COMPLETED",
+            "SUCCESS"
+        );
+        } catch (Exception e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage != null && errorMessage.length() > 5000) {
+                errorMessage = errorMessage.substring(0, 5000);
+            }
+            chartsTableRepository.updateAssemblerLogsData(
+            jobTriggeredTime.toString(),
+            LocalDateTime.now().toString(),
+            "FAILED",
+            errorMessage
+        );
+            e.printStackTrace();
+        }
+    }
+
+    private static void runPythonScript(String scriptName, String... args) throws IOException, InterruptedException {
+        List<String> command = new ArrayList<>();
+        command.add("python3");
+        command.add("/app/python_scripts/cbio_tools/" + scriptName);
+        for (String arg : args) {
+            command.add(arg);
+        }
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+            }
+        }
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new RuntimeException("Script " + scriptName + " failed with exit code " + exitCode + ". Output: " + output);
+        }
+    } 
+
 
     @Override
     public String getFilteredStudyIDs(String userId, String TrialCreationDates, String TrialIds){
@@ -693,6 +772,25 @@ public class DatabaseServiceImpl implements DatabaseService{
             return "Error extracting values.";
         }
     }
+
+    @Override
+    public String getStudyDataFromMatchEngine(String userId) {
+        String url = MM_API_URL + "/ctims_viewer_study_summary";
+    
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + MM_API_TOKEN);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+    
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
+            return response.getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"error\":\"Error extracting values.\"}";
+        }
+    }
+
 
     public String formatDate(String dateString) {
         try {

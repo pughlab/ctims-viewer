@@ -11,6 +11,7 @@ function Navi(props: any) {
     const hasFetcherRole = roles.includes('role_fetcher');
     const hasLoaderRole = roles.includes('role_loader');
     const hasEditorRole = roles.includes('role_editor');
+    const hasAssemblerRole = roles.includes('role_assembler');
 
     return (
         <div>
@@ -31,7 +32,10 @@ function Navi(props: any) {
                     <Link to="/loader" >Loader</Link>
                 </h3>)}
                 {hasFetcherRole && (<h3 className={location.pathname === "/fetcher" ? "selected" : ""}>
-                    <Link to="/fetcher">CTIMS Assembler Fetcher</Link>
+                    <Link to="/fetcher">ct.gov Fetcher</Link>
+                </h3>)}
+                {hasAssemblerRole && (<h3 className={location.pathname === "/CtimsAssembler" ? "selected" : ""}>
+                    <Link to="/CtimsAssembler">Assembler</Link>
                 </h3>)}
             </div>
         </div>

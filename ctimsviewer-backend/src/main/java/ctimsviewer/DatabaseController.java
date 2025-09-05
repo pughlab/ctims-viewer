@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import ctimsviewer.service.DatabaseService;
 import ctimsviewer.ChartsTableRepository;
 import ctimsviewer.ChartsTable;
+
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,6 +74,14 @@ public class DatabaseController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new String(data));
+    }
+
+
+    @GetMapping("/fetchAssemblerLogs")
+    public ResponseEntity<List<AssemblerLogs>> getAssemblerLogsData(HttpSession session) {
+        String userId = getUserIdFromSession(session);
+        List<AssemblerLogs> data = dataService.getAssemblerLogsData(userId);
+        return ResponseEntity.ok(data);
     }
 
     @PostMapping("/upload")
@@ -166,6 +178,16 @@ public class DatabaseController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @GetMapping("/fetchAssemblerData/{studyIds}")
+    public ResponseEntity<String> fetchAssemblerData(HttpSession session, @PathVariable String studyIds,  KeycloakAuthenticationToken authentication) {
+        String userId = (String) session.getAttribute("userId");
+        KeycloakPrincipal principal = (KeycloakPrincipal) authentication.getPrincipal();
+        KeycloakSecurityContext session1 = principal.getKeycloakSecurityContext();
+        String email = session1.getToken().getEmail();
+        dataService.fetchAssemblerData(userId, studyIds, email);
+        return new ResponseEntity<>("Job started for user: " + userId, HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/FilteredStudyIDs/{TrialCreationDates}/{TrialIds}")
@@ -293,6 +315,17 @@ public class DatabaseController {
     public ResponseEntity<String> getTrialFromMatchEngine(HttpSession session){
         String userId = getUserIdFromSession(session);
         String bytes = dataService.getTrialFromMatchEngine(userId);
+         if (bytes != null) {
+            return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/FetchStudyDataFromMatchEngine")
+    public ResponseEntity<String> getStudyDataFromMatchEngine(HttpSession session){
+        String userId = getUserIdFromSession(session);
+        String bytes = dataService.getStudyDataFromMatchEngine(userId);
          if (bytes != null) {
             return new ResponseEntity<>(bytes.toString(),HttpStatus.OK);
         } else {

@@ -1,6 +1,7 @@
 package ctimsviewer.service;
 import ctimsviewer.ChartsTable;
 import ctimsviewer.ClinicalData;
+import ctimsviewer.AssemblerLogs;
 import ctimsviewer.TrialDataDTO;
 import java.util.List;
 import java.util.Map;
@@ -43,15 +44,21 @@ public interface DatabaseService{
 
     public List<Map<String, String>> reactPlotlyData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);
 
+    public void fetchAssemblerData(String userId, String StudyIds, String email);
+
     public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String TrialCreationDates, String StudyIds);
 
     List<ChartsTable> getGroupTrials(String userId);
+
+    List<AssemblerLogs> getAssemblerLogsData(String userId);
 
     List<ChartsTable> getPatientMatch(String patientid, String userId);
 
     public void deleteTrial(String userId, String trialDate, String trialId);
 
     public String getTrialFromMatchEngine(String userId);
+
+    public String getStudyDataFromMatchEngine(String userId);
 
     void saveTrialInformation(List<Map<String, Object>> records, String time);
 
