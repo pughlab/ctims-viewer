@@ -1,0 +1,233 @@
+.textHeading {
+    font-size: xx-large;
+    color: black;
+    text-align: center;
+    font-weight: bold;
+}
+
+.mainButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 4rem;
+}
+
+.dropdown-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: space-around;
+}
+
+.indi-dropdown-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0.5rem; 
+}
+
+
+.dropdown-label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.fixed-width-select {
+    width: 100%;
+    min-width: 100px;
+    max-width: 150px;
+    height: 3.5rem;
+    border-color: #0b0202;
+}
+
+.ButtonContainer {
+    display: flex;
+    flex-direction: row;
+    padding-top: 30px;
+}
+
+.createCtmlButton {
+    background: #2E72D2;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    margin-left: 12px;
+    border-radius: 5px;
+    color: white;
+    height: 2.5rem;
+}
+
+.createCtmlButton:disabled {
+    background-color: grey;
+    color: white;
+}
+
+.charts-tab-content {
+    padding: 1rem;
+}
+
+.left {
+    padding: 10px;
+}
+
+.table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .modal-content {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 600px;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    position: relative;
+    animation: slideUp 0.3s ease-in-out;
+    font-family: 'Inter', sans-serif;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .close-button:hover {
+    color: #000;
+  }
+  
+  .modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: #2E72D2;
+  }
+  
+  .modal-content p {
+    margin: 0.5rem 0;
+  }
+  
+  .modal-content ul {
+    padding-left: 1.2rem;
+  }
+  
+  .modal-content li {
+    margin-bottom: 0.5rem;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      background-color: rgba(0, 0, 0, 0);
+    }
+    to {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  }
+  
+
+  
+.patient-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+}
+
+.patient-data-table th,
+.patient-data-table td {
+    border: 1px solid #329adb;
+    padding: 8px;
+}
+
+.patient-data-table th {
+    background-color: #329adb; 
+    font-weight: bold;
+    text-align: left;
+}
+
+.patient-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+
+  
+  .patient-card {
+    background-color: #f8f9fa;
+    border: 1px solid #329adb;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .patient-card:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  
+  .patient-info p {
+    margin: 0.3rem 0;
+  }
+  
+  .match-values summary {
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #2E72D2;
+  }
+  
+  .match-values ul {
+    margin-top: 0.5rem;
+    padding-left: 1.2rem;
+  }
+  
+
+

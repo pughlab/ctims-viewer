@@ -22,6 +22,9 @@ import HeatmapChart from "./ReactPlotly/HeatPlot";
 import ReverseBarChart from "./ReactPlotly/ReverseBarChart";
 import TopBarChart from "./ReactPlotly/TopBarChart";
 import 'react-tabs/style/react-tabs.css';
+import StudyView from "./StudyView";
+import PatientView from "./PatientView";
+import { Link, Outlet, useLocation } from "react-router-dom";
 //import { FloatLabel } from 'primereact/floatlabel';
 
 interface ChartData {
@@ -40,7 +43,7 @@ interface ChartData {
     patient_id: number;
   }
 
-  const chartComponents: Record<string, React.FC<{ data: any[], study_id: any }>> = {
+  const chartComponents: Record<string, React.FC<{ data: any[], study_id: any, onBarClick: (patient: any, study:any) => void }>> = {
     bar: BarChart,
     HeatMap: HeatmapChart,
     ReverseBarChart: ReverseBarChart,
@@ -112,6 +115,13 @@ const UploadCsv = (props: any) => {
     const [showPopup, setShowPopup] = useState(false);
 
     const [selectedTab, setSelectedTab] = useState('table');
+
+    const [selectedPatient, setSelectedPatient] = useState('');
+    
+    const [selectedPatientStudy, setSelectedPatientStudy] = useState('');
+
+    const location = useLocation();
+
 
     const items =[
         "HeatMap",
@@ -681,8 +691,12 @@ const UploadCsv = (props: any) => {
         {
             reactPlotlyChartOperation({
                 method: 'POST',
-                url: `reactPlotlyFilter/${selectedOptions}/${selectedTrials}/${selectedStudy}` ,
+                url: `reactPlotlyFilter` ,
                 headers: headers,
+                data: {
+                    selectedOptions,
+                    selectedStudy,
+                },
             })
         }
         else
@@ -832,9 +846,6 @@ const UploadCsv = (props: any) => {
                     <ProgressSpinner style={{ width: '50px', height: '50px' }} />
                 </div>
             )}
-            <div>
-                <h3>CTIMS Viewer can be used to generate Charts for analysis of trial matches using Charts component. It generates the Heatmap, Bar Chart, and Vertical Bar Chart.</h3>
-            </div>
             <br />
             <br />
             <div className="tab-buttons">
@@ -850,6 +861,18 @@ const UploadCsv = (props: any) => {
                 >
                     Generate Charts
                 </button>
+                {false && <button 
+                    onClick={() => setSelectedTab('study')} 
+                    className={selectedTab === 'study' ? 'active' : ''}
+                >
+                    Study View
+                </button>}
+                <button 
+                    onClick={() => setSelectedTab('patient')} 
+                    className={selectedTab === 'patient' ? 'active' : ''}
+                >
+                    Patient View
+                </button>
             </div>
             <br />
             <div className="tab-content">
@@ -864,6 +887,11 @@ const UploadCsv = (props: any) => {
                 )}
                 {selectedTab === 'charts' && (
                     <div className="charts-tab-content">
+                        <div>
+                            <h3>CTIMS Viewer can be used to generate Charts for analysis of trial matches using Charts component. It generates the Heatmap, Bar Chart, and Vertical Bar Chart.</h3>
+                        </div>
+                        <br/>
+                        <br/>
                         <div className="left">
                             <div className="mainButtonsContainer">
                                 <div className="dropdown-container">
@@ -943,7 +971,7 @@ const UploadCsv = (props: any) => {
                                         </button>
                                         */}
                                     <div>
-                                        {false && <button className="createCtmlButton" onClick={handleChartValidate} disabled={!(selectedItem)} style={{ height: "2.5rem", alignItems: "center" }} >Create Chart</button>}
+                                        {<button className="createCtmlButton" onClick={handleChartValidate} disabled={!(selectedItem)} style={{ height: "2.5rem", alignItems: "center" }} >Create Python Charts</button>}
                                         {imageSrc && createStatus && (((createStatus as string).startsWith("Success"))) && !(csvChartLoading) &&   <Popup trigger={<button className="createCtmlButton" > View Plot </button>} modal nested position="left center">
                                             <img src={imageSrc} alt="Plot" style={{ width: '100%', height:'auto', maxWidth: '1000px', display: 'block', margin: '0 auto' }} />
                                             </Popup>}
@@ -955,9 +983,23 @@ const UploadCsv = (props: any) => {
                         </div>
                     </div>
                 )}
+                {
+                    false && selectedTab== 'study' && <StudyView accessToken={props.accessToken}></StudyView>
+                }
+                {
+                    selectedTab== 'patient' && <PatientView accessToken={props.accessToken} patient_ids={selectedPatient} study_id={selectedPatientStudy}></PatientView>
+                }
             </div>
             { selectedTab === 'charts' && showPopup && <div className="plot-container">
-                {reactPlotlyData && !reactPlotlyChartLoading && React.createElement(chartComponents[selectedItem.toString()] || BarChart, { data: reactPlotlyData, study_id: selectedStudy })}
+                {reactPlotlyData && !reactPlotlyChartLoading && React.createElement(chartComponents[selectedItem.toString()], {
+                data: reactPlotlyData,
+                study_id: "someStudyId",
+                onBarClick: (patient: any, study:any) => {
+                setSelectedTab('patient');
+                setSelectedPatient(patient);
+                setSelectedPatientStudy(study);
+
+                }})}
             </div>}
             <br />
             {uploadMessage && <p>{uploadMessage}</p> && selectedTab === 'table'}

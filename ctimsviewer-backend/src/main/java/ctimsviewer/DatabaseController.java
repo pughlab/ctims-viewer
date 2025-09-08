@@ -277,12 +277,57 @@ public class DatabaseController {
     }
 
 
-    @PostMapping("/reactPlotlyFilter/{ArmTypes}/{TrialCreationDates}/{StudyIds}")
-    public ResponseEntity<List<Map<String, String>>> reactPlotlyFilter(@PathVariable String[] ArmTypes, @PathVariable String TrialCreationDates, @PathVariable String StudyIds, HttpSession session) {
+    @PostMapping("/reactPlotlyFilter")
+    public ResponseEntity<List<Map<String, String>>> reactPlotlyFilter(
+            @RequestBody FetchDataFromRequest request,
+            HttpSession session) {
+    
         String userId = getUserIdFromSession(session);
-        List<Map<String, String>> bytes = dataService.reactPlotlyFilter(userId, ArmTypes, TrialCreationDates, StudyIds);
+    
+        List<Map<String, String>> bytes = dataService.reactPlotlyFilter(
+                userId,
+                request.getSelectedOptions(),
+                request.getSelectedStudy()
+        );
+    
         if (bytes != null) {
-            return new ResponseEntity<>(bytes ,HttpStatus.OK);
+            return new ResponseEntity<>(bytes, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/fetchPatientsData")
+    public ResponseEntity<List<Map<String, String>>> fetchPatientsData(
+            @RequestBody FetchDataFromRequest request,
+            HttpSession session) {
+
+        String userId = getUserIdFromSession(session);
+
+        List<Map<String, String>> bytes = dataService.fetchPatientsData(
+                userId,
+                request.getSelectedOptions(),
+                request.getSelectedStudy()
+        );
+
+        if (bytes != null) {
+            return new ResponseEntity<>(bytes, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/fetchIndividualPatientsData")
+    public ResponseEntity<List<Map<String, String>>> fetchIndividualPatientsData(
+            @RequestBody FetchDataFromRequest request,
+            HttpSession session) {
+        String userId = getUserIdFromSession(session);
+        List<Map<String, String>> bytes = dataService.fetchIndividualPatientsData(
+                userId,
+                request.getSelectedPatientIds()
+        );
+        if (bytes != null) {
+            return new ResponseEntity<>(bytes, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,0 +1,153 @@
+.charts-tab-content {
+  padding: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.table-container {
+  margin-top: 1rem;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #329adb;
+  color: white;
+  font-weight: bold;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #eef6fc;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  width: 90%;
+  max-width: 600px;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+.match-values li {
+  margin-bottom: 0.3rem;
+}
+
+.p-input-icon-left i {
+  left: 0.75rem;
+}
+
+.patient-info-bar {
+  display: flex;
+  gap: 2rem;
+  justify-content: flex-start;
+  align-items: center;
+  background: #f9fbfd;
+  border: 1px solid #d8e4f0;
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #2c3e50;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.patient-info-bar .cbiportal-button {
+  margin-left: auto;
+}
+
+.patient-info-bar .label {
+  font-weight: 600;
+  color: #329adb;
+  margin-right: 0.3rem;
+}
+
+.cbiportal-button {
+  background-color: #329adb;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cbiportal-button:hover {
+  background-color: #267bbf;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+  border: 1px solid #d8e4f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 250px;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #329adb;
+  box-shadow: 0 0 0 3px rgba(50, 154, 219, 0.15);
+}
+
+
+.search-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.clear-search {
+  position: absolute;
+  right: 0.6rem;
+  background: transparent;
+  border: none;
+  color: #666;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-search:hover {
+  color: #000;
+}

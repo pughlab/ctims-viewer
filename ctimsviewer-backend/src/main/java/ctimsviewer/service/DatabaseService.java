@@ -43,7 +43,11 @@ public interface DatabaseService{
 
     public List<Map<String, String>> reactPlotlyData(String userId, String trialCreated, String trialId, String trialName, String StudyID, String patientId, String SampleID, String hugoSymbol, String gene);
 
-    public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String TrialCreationDates, String StudyIds);
+    public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String[] StudyIds);
+
+    List<Map<String, String>> fetchPatientsData(String userId, String[] armTypes, String[] studyIds);
+
+    public List<Map<String, String>> fetchIndividualPatientsData(String userId, String[] patient_ids);
 
     List<ChartsTable> getGroupTrials(String userId);
 

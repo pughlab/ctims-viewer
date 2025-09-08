@@ -122,7 +122,12 @@ public class ClinicalData {
     @JsonProperty("oncotreeprimarydiagnosismatchonly")
     private String oncotreeprimarydiagnosismatchonly;
 
-    
+
+    public String toDetailedString3() {
+        return String.format("\n%s,%s,%s,%s,%s,%s",
+                             trialarmid, patient_id, studyid, trialid, trialname, combineddata);
+    }
+   
     public String toDetailedString2() {
         return String.format("\n%s,%s,%s",
                              trialarmid, patient_id, studyid);
