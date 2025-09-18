@@ -61,6 +61,9 @@ private String authReq = getAuthenticationRequirement();
         http
             .cors().and()
                 .authorizeRequests()
+                    .antMatchers(
+                        "/api/info"
+                    ).permitAll()
                     .anyRequest().access(integrationStatus)
             .and()
             .csrf().disable()
