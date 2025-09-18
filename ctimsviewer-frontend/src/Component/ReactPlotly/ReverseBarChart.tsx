@@ -9,7 +9,7 @@ interface DataItem {
 interface ReverseBarChartProps {
   data: DataItem[]; 
   study_id: String;
-  onBarClick: (patient: any, study:any) => void;
+  onBarClick: (patient: string, study: string) => void;
 }
 
 const ReverseBarChart: React.FC<ReverseBarChartProps> = ({ data, study_id, onBarClick }) => {

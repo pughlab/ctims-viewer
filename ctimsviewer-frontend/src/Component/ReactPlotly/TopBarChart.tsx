@@ -9,7 +9,7 @@ interface DataItem {
 interface TopBarChartProps {
   data: DataItem[]; 
   study_id: string;
-  onBarClick: (patient: any, study:any) => void;
+  onBarClick: (patient: string, study: string) => void;
 }
 
 const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick}) => {

@@ -13,7 +13,7 @@ interface DataItem {
 interface HeatmapChartProps {
   data: DataItem[];
   study_id: string;
-  onBarClick: (patient: any, study:any) => void;
+  onBarClick: (patient: string, study: string) => void;
 }
 
 const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick }) => {
@@ -151,7 +151,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     }
   };
 
-  const getStudyForPoint = (trialArm: any, patientId: any) => {
+  const getStudyForPoint = (trialArm: string, patientId: string) => {
     const matchingItem = data.find(
       (item) => item.t === trialArm && String(item.p) === patientId
     );
