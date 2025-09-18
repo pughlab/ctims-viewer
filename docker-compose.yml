@@ -37,6 +37,10 @@ services:
       - path: ./.env
     networks:
       - cv-network
+    volumes:
+      - type: bind
+        source: ./python_scripts/trial-match-utils/src
+        target: /app/python_scripts
 
   mysql:
     image: mysql:8
@@ -54,6 +58,7 @@ services:
 
 networks:
   cv-network:
+    driver: bridge
 
 volumes:
   cv_mysql_data:
