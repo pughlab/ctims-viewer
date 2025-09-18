@@ -9,7 +9,7 @@ interface DataItem {
 
 interface BarChartProps {
   data: DataItem[]; 
-  study_id: String;
+  study_id: string;
   onBarClick: (patient: string, study: string) => void;
 }
 

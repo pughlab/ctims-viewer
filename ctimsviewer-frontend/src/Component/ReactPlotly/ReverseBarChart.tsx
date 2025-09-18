@@ -8,7 +8,7 @@ interface DataItem {
 
 interface ReverseBarChartProps {
   data: DataItem[]; 
-  study_id: String;
+  study_id: string;
   onBarClick: (patient: string, study: string) => void;
 }
 
