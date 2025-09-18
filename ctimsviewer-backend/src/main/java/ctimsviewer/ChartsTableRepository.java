@@ -44,9 +44,14 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Query("SELECT DISTINCT TrialArmId, patient_id, StudyID FROM ClinicalData WHERE TRIALCREATED IN (:arguments)  AND STUDYID IN (:studylist)")
     List<ClinicalData> findDataByCreationDate(@Param("arguments") List<String> arguments, @Param("studylist") List<String>  studylist);
 
-    @Query("SELECT DISTINCT TrialArmId, patient_id, StudyID FROM ClinicalData WHERE TRIALARMID IN (:armlist) AND TRIALCREATED IN (:arguments)  AND STUDYID IN (:studylist)")
-    List<ClinicalData> findPlotlyDataByCreationDate(@Param("armlist") List<String> armlist, @Param("arguments") List<String> arguments, @Param("studylist") List<String>  studylist);
+    @Query("SELECT DISTINCT TrialArmId, patient_id, StudyID FROM ClinicalData WHERE TRIALARMID IN (:armlist)  AND STUDYID IN (:studylist)")
+    List<ClinicalData> findPlotlyDataByCreationDate(@Param("armlist") List<String> armlist,  @Param("studylist") List<String>  studylist);
 
+    @Query("SELECT TrialArmId, patient_id, StudyID, TrialId,TrialName, CombinedData FROM ClinicalData WHERE TRIALARMID IN (:armlist)  AND STUDYID IN (:studylist)")
+    List<ClinicalData> findPatientData(@Param("armlist") List<String> armlist, @Param("studylist") List<String>  studylist);
+
+    @Query("SELECT TrialArmId, patient_id, StudyID, TrialId,TrialName, CombinedData FROM ClinicalData WHERE patient_id IN (:patient_ids)")
+    List<ClinicalData> findIndividualPatientData(@Param("patient_ids") List<String> patient_ids);
 
     @Query("SELECT DISTINCT TrialArmId, patient_id, SampleID FROM ClinicalData WHERE TRIALARMID IN (:armlist) AND TRIALCREATED IN (:arguments) AND StudyID in (:studyid)")
     List<ClinicalData> findPlotlyDataByArmId(@Param("armlist") List<String> armlist, @Param("arguments") List<String> arguments, @Param("studyid") List<String> studyid);

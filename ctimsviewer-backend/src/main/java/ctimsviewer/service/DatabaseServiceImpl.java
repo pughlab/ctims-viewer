@@ -345,15 +345,10 @@ public class DatabaseServiceImpl implements DatabaseService{
     }
 
     @Override
-    public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String TrialCreationDates, String StudyIds) {
-        List<String> dateList = Arrays.asList(TrialCreationDates.split(","));
-
-        List<String> studyList = Arrays.asList(StudyIds.split(","));
-
+    public List<Map<String, String>> reactPlotlyFilter(String userId, String[] ArmTypes, String[] StudyIds) {
+        List<String> studyList = Arrays.asList(StudyIds);
         List<String> armList = Arrays.asList(ArmTypes);
-
-        List<ClinicalData> results = chartsTableRepository.findPlotlyDataByCreationDate(armList, dateList, studyList);
-
+        List<ClinicalData> results = chartsTableRepository.findPlotlyDataByCreationDate(armList, studyList);
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
             String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
@@ -365,8 +360,61 @@ public class DatabaseServiceImpl implements DatabaseService{
             convertedResults.add(map);
         }
         return convertedResults;
+    }
 
+    @Override
+    public List<Map<String, String>> fetchPatientsData(String userId, String[] armTypes, String[] studyIds) {
+        List<String> studyList = Arrays.asList(studyIds);
+        List<String> armList = Arrays.asList(armTypes);
+    
+        long startTime = System.currentTimeMillis();
+        List<ClinicalData> results = chartsTableRepository.findPatientData(armList, studyList);
+        long endTime = System.currentTimeMillis();
+        List<Map<String, String>> convertedResults = new ArrayList<>();
+        long startTime2 = System.currentTimeMillis();
+    
+        for (ClinicalData chart : results) {
+            String data = chart.toDetailedString3().replace("\n", "");
+            String[] parts = data.split(",", 6);
+            Map<String, String> map = new HashMap<>();
+            map.put("ta", parts[0]);
+            map.put("p", parts[1]);
+            map.put("s", parts[2]);
+            map.put("ti", parts[3]);
+            map.put("tn", parts[4]);
+            map.put("c", parts[5]);
+            convertedResults.add(map);
+        }
+    
+        long endTime2 = System.currentTimeMillis();
+        return convertedResults;
+    }
 
+    @Override
+    public List<Map<String, String>> fetchIndividualPatientsData(String userId, String[] patientIds) {
+        List<String> patient_ids = Arrays.asList(patientIds);
+    
+        long startTime = System.currentTimeMillis();
+        List<ClinicalData> results = chartsTableRepository.findIndividualPatientData(patient_ids);
+        long endTime = System.currentTimeMillis();
+        List<Map<String, String>> convertedResults = new ArrayList<>();
+        long startTime2 = System.currentTimeMillis();
+    
+        for (ClinicalData chart : results) {
+            String data = chart.toDetailedString3().replace("\n", "");
+            String[] parts = data.split(",", 6);
+            Map<String, String> map = new HashMap<>();
+            map.put("ta", parts[0]);
+            map.put("p", parts[1]);
+            map.put("s", parts[2]);
+            map.put("ti", parts[3]);
+            map.put("tn", parts[4]);
+            map.put("c", parts[5]);
+            convertedResults.add(map);
+        }
+    
+        long endTime2 = System.currentTimeMillis();
+        return convertedResults;
     }
 
 
