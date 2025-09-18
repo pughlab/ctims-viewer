@@ -13,9 +13,10 @@ interface DataItem {
 interface HeatmapChartProps {
   data: DataItem[];
   study_id: string;
+  onBarClick: (patient: any, study:any) => void;
 }
 
-const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
+const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick }) => {
   const trialArmNames = Array.from(new Set(data.map((item) => item.t)));
   const patientIds = Array.from(new Set(data.map((item) => item.p)));
   const patientIdsAsStrings = patientIds.map(String);
@@ -144,14 +145,13 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
       const patientValue = event.points[0].x;
       const armValue = event.points[0].y;
       const studyValue = getStudyForPoint(armValue, patientValue);
-      //const link = `CBIOPORTALURL/patient?studyId=${study_id}&caseId=${xValue}`;
       const cbiPortalUrl= process.env.REACT_APP_CBIOPORTAL_URL
       const link = `${cbiPortalUrl}/patient?studyId=${studyValue}&caseId=${patientValue}`;
       window.open(link, "_blank");
     }
   };
 
-  const getStudyForPoint = (trialArm: string, patientId: string) => {
+  const getStudyForPoint = (trialArm: any, patientId: any) => {
     const matchingItem = data.find(
       (item) => item.t === trialArm && String(item.p) === patientId
     );
@@ -296,7 +296,14 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id }) => {
           plot_bgcolor: "white",
           paper_bgcolor: "white",
         }}
-        onClick={handleClick}
+        onClick={(event) => {
+          if (event.points.length > 0) {
+            const patientValue = event.points[0].x;
+            const armValue = event.points[0].y;
+            const studyValue = getStudyForPoint(armValue, patientValue);
+            onBarClick(event.points[0].x,studyValue);
+          }
+        }}
       />
       </div>
     </div>
