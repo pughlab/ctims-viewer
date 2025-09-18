@@ -43,7 +43,7 @@ interface ChartData {
     patient_id: number;
   }
 
-  const chartComponents: Record<string, React.FC<{ data: any[], study_id: any, onBarClick: (patient: any, study:any) => void }>> = {
+  const chartComponents: Record<string, React.FC<{ data: any[], study_id: string, onBarClick: (patient: string, study:string) => void }>> = {
     bar: BarChart,
     HeatMap: HeatmapChart,
     ReverseBarChart: ReverseBarChart,
@@ -994,7 +994,7 @@ const UploadCsv = (props: any) => {
                 {reactPlotlyData && !reactPlotlyChartLoading && React.createElement(chartComponents[selectedItem.toString()], {
                 data: reactPlotlyData,
                 study_id: "someStudyId",
-                onBarClick: (patient: any, study:any) => {
+                onBarClick: (patient: string, study:string) => {
                 setSelectedTab('patient');
                 setSelectedPatient(patient);
                 setSelectedPatientStudy(study);

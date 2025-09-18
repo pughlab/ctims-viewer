@@ -9,9 +9,10 @@ interface DataItem {
 interface TopBarChartProps {
   data: DataItem[]; 
   study_id: string;
+  onBarClick: (patient: string, study: string) => void;
 }
 
-const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
+const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick}) => {
   
   const patientTrialMap = data.reduce((acc, item) => {
     const idStr = String(item.p);
@@ -119,7 +120,11 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id }) => {
           height: dynamicHeight,
           width: 1200, 
         }}
-        onClick={handleClick}
+        onClick={(event) => {
+          if (event.points.length > 0) {
+            onBarClick(event.points[0].x,study_id);
+          }
+        }}
       />
     </div>
   );
