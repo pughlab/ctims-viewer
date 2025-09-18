@@ -97,6 +97,9 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Query("SELECT c.trialid, c.trialcreated FROM CTIMSCHARTS c")
     List<ChartsTable> findAllUniqueTrialid();
 
+    @Query("Select * from AssemblerLogs")
+    List<AssemblerLogs> findAssemblerLogs();
+
 
     @Query("SELECT DISTINCT c.trialarmid FROM ClinicalData c WHERE TRIALCREATED IN (:arguments)")
     List<String> findFilteredUniqueTrialarmid(@Param("arguments") List<String>  arguments);
@@ -171,4 +174,33 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
                             @Param("combinedData") String combinedData,
                             @Param("oncotreePrimaryDiagnosisMatchOnly") String oncotreePrimaryDiagnosisMatchOnly);
 
+    @Transactional
+    @Modifying
+    @Query(value = "INSERT INTO AssemblerLogs " +
+                "(UserTriggered, StudyId, JobTriggeredTime, JobCompletedTime, JobStatus, JobResult) " +
+                "VALUES (:userTriggered, :studyId, :jobTriggeredTime, :jobCompletedTime, :jobStatus, :jobResult)")
+    void insertAssemblerLogsData(
+            @Param("userTriggered") String userTriggered,
+            @Param("studyId") String studyId,
+            @Param("jobTriggeredTime") String jobTriggeredTime,
+            @Param("jobCompletedTime") String jobCompletedTime,
+            @Param("jobStatus") String jobStatus,
+            @Param("jobResult") String jobResult
+    );
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE AssemblerLogs " +
+                "SET JobCompletedTime = :jobCompletedTime, " +
+                "    JobStatus = :jobStatus, " +
+                "    JobResult = :jobResult " +
+                "WHERE JobTriggeredTime = :jobTriggeredTime")
+    void updateAssemblerLogsData(
+            @Param("jobTriggeredTime") String jobTriggeredTime,
+            @Param("jobCompletedTime") String jobCompletedTime,
+            @Param("jobStatus") String jobStatus,
+            @Param("jobResult") String jobResult
+    );
+
 }
+

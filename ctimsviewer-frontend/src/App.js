@@ -11,7 +11,7 @@ import Fetcher from "./Component/Sample";
 import Home from "./Component/HomeMain";
 import MatchEngine from './pages/MatchEngine';
 import CtimsEditor from './pages/CtimsEditor';
-
+import CtimsAssembler from './pages/CtimsAssembler';
 
 
 
@@ -25,6 +25,7 @@ function App(props) {
     const hasFetcherRole = roles.includes('role_fetcher');
     const hasLoaderRole = roles.includes('role_loader');
     const hasEditorRole = roles.includes('role_editor');
+    const hasAssemblerRole = roles.includes('role_assembler');
 
     return (
         <React.Suspense >
@@ -35,6 +36,7 @@ function App(props) {
                 {hasLoaderRole && (<Route  path="/loader" name="CTIMS Loader" element={<Loader accessToken={props.accessToken} />} />)}
                 {hasFetcherRole && (<Route path="/fetcher" name="CTIMS Assembler Fetcher"  element={<Fetcher accessToken={props.accessToken}/>} />)}
                 {hasEditorRole && (<Route path="/CtimsEditor" name="Ctims Editor"  element={<CtimsEditor accessToken={props.accessToken}/>} />)}
+                {hasAssemblerRole &&(<Route path="/CtimsAssembler" name="Ctims Assembler"  element={<CtimsAssembler accessToken={props.accessToken}/>} />)}
             </Routes>
         </React.Suspense>
     );
