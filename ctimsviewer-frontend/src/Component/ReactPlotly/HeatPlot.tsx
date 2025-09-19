@@ -298,10 +298,10 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
         }}
         onClick={(event) => {
           if (event.points.length > 0) {
-            const patientValue = event.points[0].x;
-            const armValue = event.points[0].y;
-            const studyValue = getStudyForPoint(armValue, patientValue);
-            onBarClick(event.points[0].x,studyValue);
+            const patientValue = String(event.points[0].x);
+            const armValue = String(event.points[0].y);
+            const studyValue = String(getStudyForPoint(armValue, patientValue));
+            onBarClick(patientValue,studyValue);
           }
         }}
       />

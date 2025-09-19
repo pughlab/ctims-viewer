@@ -122,7 +122,7 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick})
         }}
         onClick={(event) => {
           if (event.points.length > 0) {
-            onBarClick(event.points[0].x,study_id);
+            onBarClick(String(event.points[0].x),study_id);
           }
         }}
       />
