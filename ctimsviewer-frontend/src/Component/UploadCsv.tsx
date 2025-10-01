@@ -846,8 +846,6 @@ const UploadCsv = (props: any) => {
                     <ProgressSpinner style={{ width: '50px', height: '50px' }} />
                 </div>
             )}
-            <br />
-            <br />
             <div className="tab-buttons">
                 <button 
                     onClick={() => setSelectedTab('table')} 
@@ -874,15 +872,12 @@ const UploadCsv = (props: any) => {
                     Patient View
                 </button>
             </div>
-            <br />
             <div className="tab-content">
                 {selectedTab === 'table' && (
                     <div className="table-tab-content">
-                        {/* Import Button inside the Table Tab */}
                         <div className="ImportButtonContainer">
-                            <button onClick={handleFileUpload} className="importButton">Import CSV</button>
+                            <button onClick={handleFileUpload} className="importButton">Upload CSV</button>
                         </div>
-                        {/* Other content for the Table can be added here */}
                     </div>
                 )}
                 {selectedTab === 'charts' && (

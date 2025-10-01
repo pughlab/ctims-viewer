@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useAxiosDb from "../service/useAxiosDb";
 import { TreeTable } from "primereact/treetable";
+import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ProgressSpinner } from "primereact/progressspinner"; // Import ProgressSpinner
 import "./styles.css";
@@ -137,7 +138,7 @@ const UploadMatchEngine = (props: any) => {
             </button>
         );
     };
-
+    const footer = `Total ${tableData ? tableData.length : 0} rows.`;
     return (
         <div>
             {pageLoading && (
@@ -152,23 +153,19 @@ const UploadMatchEngine = (props: any) => {
             {fetchTrialsLoading && <p>Loading...</p>}
             {fetchTrialsError && <p>Error fetching data: {fetchTrialsError}</p>}
 
-            {!fetchTrialsLoading && !fetchTrialsError && tableData.length > 0 && (
-                <TreeTable value={tableData}>
-                    <Column field="trial_id" header="Trial ID"></Column>
-                    <Column field="nickname" header="Nickname"></Column>
-                    <Column field="count" header="Trial Match Count" expander></Column>
-                    <Column field="updated" header="Last Matched in MatchEngine"></Column>
-                    <Column
-                        body={actionBodyTemplate}
-                        header="Actions"
-                        style={{ textAlign: "center", width: "150px" }}
-                    ></Column>
-                </TreeTable>
-            )}
-
-            {!fetchTrialsLoading && !fetchTrialsError && tableData.length === 0 && (
-                <p>No data available.</p>
-            )}
+            {!fetchTrialsLoading && !fetchTrialsError  && (
+                    <DataTable value={tableData} className="custom-datatable" footer={footer} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
+                        <Column field="trial_id" header="Trial ID" />
+                        <Column field="nickname" header="Nickname" />
+                        <Column field="count" header="Trial Match Count" />
+                        <Column field="updated" header="Last Matched in MatchEngine" />
+                        <Column
+                            body={actionBodyTemplate}
+                            header="Actions"
+                            style={{ textAlign: "center", width: "150px" }}
+                        />
+                    </DataTable>
+                )}
         </div>
     );
 };

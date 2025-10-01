@@ -1,11 +1,15 @@
 import useAxiosDb from "../service/useAxiosDb";
 import React, { useEffect, useState } from "react";
 import { ProgressSpinner } from 'primereact/progressspinner';
-import './RightComponent.css'; // Import the CSS file
+import './RightComponent.css';
 import Popup from 'reactjs-popup';
 import { format } from 'date-fns'; 
 import { MdDelete } from "react-icons/md";
 import { classNames } from "primereact/utils";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+
 
 interface ChartData {
   uniquearms: number;
@@ -158,79 +162,43 @@ const RightComponent = (props: any) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
+  const footer = `Total ${currentCharts ? currentCharts.length : 0} rows.`;
 
   return (
     <div>
       {groupTrialsError && <div>Error: Unable to fetch the Trials</div>}
       {charts.length > 0 && (
         <>
-          {/* Records per page dropdown */}
-          <div className="pagination-controls">
-            <label>
-              Records per page:
-              <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
-              <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
-            </label>
-          </div>
-
-          {/* Table */}
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Trial ID</th>
-                <th>Trial Name</th>
-                <th>Trial Match Date</th>
-                <th>Trial Uploaded On</th>
-                <th>Unique Arms</th>
-                <th>Unique Patients</th>
-                <th>Unique Studies</th>
-                <th>Uploaded User Name</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentCharts.map((chart, index) => (
-                <tr key={index}>
-                  <td>{indexOfFirstItem + index + 1}</td>
-                  <td>{chart.trialid}</td>
-                  <td>{chart.trialname}</td>
-                  <td>{chart.trialmatchdate}</td>
-                  <td>{formatDate(chart.trialcreated)}</td>
-                  <td>{chart.uniquearms}</td>
-                  <td>{chart.uniquepatients}</td>
-                  <td>{chart.uniquestudyid}</td>
-                  <td>{chart.username}</td>
-                  <td>
-                    <button className="deleteButton" onClick={() => handleDelete(chart.trialcreated, chart.trialid)}>
-                      <MdDelete />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="pagination">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+          <DataTable value={currentCharts} tableStyle={{ minWidth: "80rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer}>
+            <Column
+              header="ID"
+              body={(_, { rowIndex }) => indexOfFirstItem + rowIndex + 1}
+            />
+            <Column field="trialid" header="Trial ID" />
+            <Column field="trialname" header="Trial Name" />
+            <Column field="trialmatchdate" header="Trial Match Date" />
+            <Column
+              field="trialcreated"
+              header="Trial Uploaded On"
+              body={(rowData) => formatDate(rowData.trialcreated)}
+            />
+            <Column field="uniquearms" header="Unique Arms" />
+            <Column field="uniquepatients" header="Unique Patients" />
+            <Column field="uniquestudyid" header="Unique Studies" />
+            <Column field="username" header="Uploaded User Name" />
+            <Column
+              header="Delete"
+              body={(rowData) => (
+                <Button
+                  icon={<MdDelete />}
+                  severity="danger"
+                  size="small"
+                  onClick={() => handleDelete(rowData.trialcreated, rowData.trialid)}
+                  className="deleteButton"
+                />
+              )}
+            />
+          </DataTable>
         </>
       )}
     </div>

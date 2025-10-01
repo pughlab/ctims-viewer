@@ -8,9 +8,10 @@
 }
 
 .p-datatable .p-datatable-thead > tr > th {
-  background-color: #329adb;
-  color: white;
+  background: #329adb !important;
+  color: #ffffff !important; 
   font-weight: bold;
+  text-align: center;
 }
 
 .p-datatable .p-datatable-tbody > tr:hover {
