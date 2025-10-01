@@ -34,6 +34,7 @@ const PatientView = (props: any) => {
     useEffect(() => {
         if (fetchPatientsDataResponse && Array.isArray(fetchPatientsDataResponse)) {
             setPatientsData(fetchPatientsDataResponse);
+            console.log("Fetched Patients Data:", fetchPatientsDataResponse);
         }
     }, [fetchPatientsDataResponse]);
 
@@ -78,6 +79,8 @@ const PatientView = (props: any) => {
             .join(" ");
     };
 
+    const footer = `Total ${patientsData ? patientsData.length : 0} rows.`;
+
 
     return (
         <div className="charts-tab-content">
@@ -116,13 +119,15 @@ const PatientView = (props: any) => {
                 <DataTable
                     value={patientsData}
                     paginator
-                    rows={10}
+                    rows={5} 
+                    rowsPerPageOptions={[5, 10, 25, 50]}
                     responsiveLayout="scroll"
                     globalFilterFields={['ti', 'tn', 'ta', 'matchValuesStr']} 
                     selectionMode="single"
                     selection={selectedPatient}
                     onSelectionChange={(e) => setSelectedPatient(e.value)}
                     globalFilter={globalFilterValue}
+                    footer={footer}
                     emptyMessage="No patients found"
                     className="p-datatable-gridlines">
                     <Column field="ti" header="Trial ID" sortable />
