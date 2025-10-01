@@ -155,10 +155,10 @@ const UploadMatchEngine = (props: any) => {
 
             {!fetchTrialsLoading && !fetchTrialsError  && (
                     <DataTable value={tableData} className="custom-datatable" footer={footer} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
-                        <Column field="trial_id" header="Trial ID" />
-                        <Column field="nickname" header="Nickname" />
-                        <Column field="count" header="Trial Match Count" />
-                        <Column field="updated" header="Last Matched in MatchEngine" />
+                        <Column field="data.trial_id" header="Trial ID" />
+                        <Column field="data.nickname" header="Nickname" />
+                        <Column field="data.count" header="Trial Match Count" />
+                        <Column field="data.updated" header="Last Matched in MatchEngine" />
                         <Column
                             body={actionBodyTemplate}
                             header="Actions"

@@ -165,10 +165,10 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
         return (
             <div className="mb-6">
             <DataTable value={tableData} tableStyle={{ minWidth: "50rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer}>
-              <Column field="study_id" header="Study ID" />
-              {false && <Column field="total_count" header="Total Count" />}
-              <Column field="patient_count" header="Patient Count" />
-              <Column field="sample_count" header="Sample Count" />
+              <Column field="data.study_id" header="Study ID" />
+              {false && <Column field="data.total_count" header="Total Count" />}
+              <Column field="data.patient_count" header="Patient Count" />
+              <Column field="data.sample_count" header="Sample Count" />
               <Column
                 header="Delete Study"
                 body={(rowData) => (
