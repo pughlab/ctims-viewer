@@ -990,10 +990,10 @@ const UploadCsv = (props: any) => {
                 data: reactPlotlyData,
                 study_id: "someStudyId",
                 onBarClick: (patient: string, study:string) => {
+                if(study!="N/A"){                
                 setSelectedTab('patient');
                 setSelectedPatient(patient);
-                setSelectedPatientStudy(study);
-
+                setSelectedPatientStudy(study);}
                 }})}
             </div>}
             <br />
