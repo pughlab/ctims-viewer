@@ -169,18 +169,6 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
               {false && <Column field="data.total_count" header="Total Count" />}
               <Column field="data.patient_count" header="Patient Count" />
               <Column field="data.sample_count" header="Sample Count" />
-              <Column
-                header="Delete Study"
-                body={(rowData) => (
-                  <Button
-                    label="Delete"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    size="small"
-                    onClick={() => handleDelete(rowData.study_id)}
-                  />
-                )}
-              />
             </DataTable>
           </div>
         );
