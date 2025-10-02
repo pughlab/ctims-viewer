@@ -268,11 +268,15 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
               [1, "rgb(51, 75, 255)"],
             ],
             showscale: false,
-            hovertemplate:
-              `<b>Patient ID:</b> %{x}<br>` +
-              `<b>Trial Arm:</b> %{y}<br>` +
-              //`<b>Matched Data:<br></b>%{customdata}<br>` +
-              "<extra></extra>",
+            text: heatmapMatrixWithColors.map((row, i) =>
+              row.map((val, j) =>
+                val === 0
+                  ? ""
+                  : `<b>Patient ID:</b> ${sortedData.patients[j]}<br>` +
+                    `<b>Trial Arm:</b> ${sortedData.trialArms[i]}`
+              )
+            ) as any,
+            hoverinfo: "text",
             xgap,
             ygap: 10,
             hoverlabel: {
