@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ProgressSpinner } from 'primereact/progressspinner';
 import './RightComponent.css'; // Import the CSS file
 import Popup from 'reactjs-popup';
-import { format } from 'date-fns'; 
+import { formatInTimeZone} from 'date-fns-tz'; 
 import { MdDelete } from "react-icons/md";
 import { classNames } from "primereact/utils";
 
@@ -134,7 +134,7 @@ const RightComponent = (props: any) => {
       return "Invalid date";
     }
     const [datePart, timePart] = dateString.split('.');
-    return format(new Date(datePart), "MMM d, yyyy, h:mm a");
+    return formatInTimeZone(dateString, Intl.DateTimeFormat().resolvedOptions().timeZone, "MMM d, yyyy, h:mm a");
   };
 
   const DataPopup = (trialmatchdate: any) => {
