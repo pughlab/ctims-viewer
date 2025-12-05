@@ -33,7 +33,7 @@ const RightComponent = (props: any) => {
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20); // Default items per page
-
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   useEffect(() => {
     handleChartValidate();
   }, []);
@@ -133,7 +133,6 @@ const RightComponent = (props: any) => {
       // If dateString is undefined, null, or an empty string, return a default value
       return "Invalid date";
     }
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     return formatInTimeZone(dateString + "Z", tz, "MMM d, yyyy, h:mm a");
   };
 
