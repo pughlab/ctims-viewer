@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Button } from 'primereact/button';
 import useAxiosDb from "../service/useAxiosDb";
 import './Assembler.css';
 import { TreeTable } from "primereact/treetable";
+import {DataTable} from "primereact/datatable";
 import { Column } from "primereact/column";
 
 interface AssemblerLog {
@@ -118,7 +120,7 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
             headers: headers
         }).then((res: any) => {
             setJobMessage(res || 'Job request sent.');
-            fetchLogs(); // Refresh logs after job submission
+            fetchLogs();
         }).catch(() => {
             setJobMessage('Failed to start job.');
         });
@@ -159,26 +161,23 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
             sample_count: row.sample_count,
           },
         }));
-    
+        const footer = `Total ${tableData ? tableData.length : 0} rows.`;
         return (
-          <div className="mb-6">
-            {false && <h2 className="text-lg font-bold mb-2">{title}</h2>}
-            <TreeTable value={tableData} tableStyle={{ minWidth: "50rem" }}>
-              <Column field="study_id" header="Study ID" />
-              {false && <Column field="total_count" header="Total Count" />}
-              <Column field="patient_count" header="Patient Count" />
-              <Column field="sample_count" header="Sample Count" />
-            </TreeTable>
+            <div className="mb-6">
+            <DataTable value={tableData} tableStyle={{ minWidth: "50rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer}>
+              <Column field="data.study_id" header="Study ID" />
+              {false && <Column field="data.total_count" header="Total Count" />}
+              <Column field="data.patient_count" header="Patient Count" />
+              <Column field="data.sample_count" header="Sample Count" />
+            </DataTable>
           </div>
         );
       };
-
+    const footer_logs = `Total ${assemblerLogs ? assemblerLogs.length : 0} rows.`;
     return (
         <div>
-            <h1 className="assembler-title">Assembler</h1>
-
             <form onSubmit={handleSubmit} className="assembler-form">
-                <h3>Enter StudyId to pull from CbioPortal</h3>
+                <h3 className='h3_center' >Enter StudyId to pull from CbioPortal</h3>
                 <input
                     type="text"
                     value={studyId}
@@ -204,49 +203,46 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
                     <h2 className="logs-title">Assembler Logs</h2>
                     <button
                         onClick={() => setShowLogs(!showLogs)}
-                        className="toggle-logs-btn bg-blue-500 text-white px-4 py-2 rounded-lg"
+                        className="toggle-logs-btn text-white px-4 py-2 rounded-lg"
+                        style={{ backgroundColor: "rgba(59,145,216)" }}
                     >
                         {showLogs ? "Hide Logs" : "Show Logs"}
                     </button>
                 </div>
                 {showLogs && (
                 <>
-                    {assemblerLogs.length > 0 ? (
-                        <table className="assembler-logs-table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Study ID</th>
-                                    <th>Job Triggered</th>
-                                    <th>Job Completed</th>
-                                    <th>Status</th>
-                                    <th>Result</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {assemblerLogs.map((log, index) => (
-                                    <tr key={index}>
-                                        <td>{log.usertriggered}</td>
-                                        <td>{log.studyid}</td>
-                                        <td>{new Date(log.jobtriggeredtime).toLocaleString()}</td>
-                                        <td>{new Date(log.jobcompletedtime).toLocaleString()}</td>
-                                        <td>
-                                            <span className={`status-badge ${getStatusClass(log.jobstatus)}`}>
-                                                {log.jobstatus}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <span className={`result-badge ${getResultClass(log.jobresult)}`}>
-                                                {log.jobresult}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p>No logs available.</p>
-                    )}
+                        <DataTable value={assemblerLogs} className="assembler-logs-table" tableStyle={{ minWidth: "70rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer_logs}>
+                        <Column field="usertriggered" header="User" />
+                        <Column field="studyid" header="Study ID" />
+                        <Column
+                          field="jobtriggeredtime"
+                          header="Job Triggered"
+                          body={(rowData) => new Date(rowData.jobtriggeredtime).toLocaleString()}
+                        />
+                        <Column
+                          field="jobcompletedtime"
+                          header="Job Completed"
+                          body={(rowData) => new Date(rowData.jobcompletedtime).toLocaleString()}
+                        />
+                        <Column
+                          field="jobstatus"
+                          header="Status"
+                          body={(rowData) => (
+                            <span className={`status-badge ${getStatusClass(rowData.jobstatus)}`}>
+                              {rowData.jobstatus}
+                            </span>
+                          )}
+                        />
+                        <Column
+                          field="jobresult"
+                          header="Result"
+                          body={(rowData) => (
+                            <span className={`result-badge ${getResultClass(rowData.jobresult)}`}>
+                              {rowData.jobresult}
+                            </span>
+                          )}
+                        />
+                      </DataTable>
                 </>)}    
             </div>
 

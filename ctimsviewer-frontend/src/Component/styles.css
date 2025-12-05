@@ -150,7 +150,7 @@
   
 
 .createCtmlButton {
-    background: #2E72D2;
+    background: rgba(59,145,216);
     font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: 600;
@@ -162,7 +162,7 @@
     height: 2.5rem;
   }
 
-  .createCtmlButton_new {
+.createCtmlButton_new {
     background: #2E72D2;
     font-family: 'Inter', sans-serif;
     font-style: normal;
@@ -464,7 +464,7 @@
   /*border-radius: 8px; /* Rounded corners for a modern feel */
   /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   margin: 20px  auto; /* Space around the component */
-  max-width: 1200px; /* Restrict max width for better layout on large screens */
+  max-width: 1600px; /* Restrict max width for better layout on large screens */
   width: 100%; /* Ensure responsiveness */
 }
 
@@ -493,6 +493,23 @@
 .fetch-button:hover {
   background-color: #0056b3;
 }
+
+.custom-treetable thead {
+  background: #329adb;
+  color: #fff;
+}
+
+.custom-treetable th {
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 15px;
+}
+
+.custom-treetable td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+
 
 
 .page-overlay {
