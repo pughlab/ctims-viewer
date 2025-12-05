@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ProgressSpinner } from 'primereact/progressspinner';
 import './RightComponent.css';
 import Popup from 'reactjs-popup';
-import { format } from 'date-fns'; 
+import { formatInTimeZone} from 'date-fns-tz'; 
 import { MdDelete } from "react-icons/md";
 import { classNames } from "primereact/utils";
 import { DataTable } from "primereact/datatable";
@@ -37,7 +37,7 @@ const RightComponent = (props: any) => {
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20); // Default items per page
-
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   useEffect(() => {
     handleChartValidate();
   }, []);
@@ -137,8 +137,7 @@ const RightComponent = (props: any) => {
       // If dateString is undefined, null, or an empty string, return a default value
       return "Invalid date";
     }
-    const [datePart, timePart] = dateString.split('.');
-    return format(new Date(datePart), "MMM d, yyyy, h:mm a");
+    return formatInTimeZone(dateString + "Z", tz, "MMM d, yyyy, h:mm a");
   };
 
   const DataPopup = (trialmatchdate: any) => {
