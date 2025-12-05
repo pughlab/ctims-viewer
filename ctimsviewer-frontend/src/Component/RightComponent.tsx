@@ -133,8 +133,7 @@ const RightComponent = (props: any) => {
       // If dateString is undefined, null, or an empty string, return a default value
       return "Invalid date";
     }
-    const fixedDateString = dateString + "Z";
-    return formatInTimeZone(fixedDateString, Intl.DateTimeFormat().resolvedOptions().timeZone, "MMM d, yyyy, h:mm a");
+    return formatInTimeZone(dateString + "Z", Intl.DateTimeFormat().resolvedOptions().timeZone, "MMM d, yyyy, h:mm a");
   };
 
   const DataPopup = (trialmatchdate: any) => {
