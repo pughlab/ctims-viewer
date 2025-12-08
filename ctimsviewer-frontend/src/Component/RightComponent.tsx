@@ -9,6 +9,7 @@ import { classNames } from "primereact/utils";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 
 
 interface ChartData {
@@ -38,6 +39,7 @@ const RightComponent = (props: any) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20); // Default items per page
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
   useEffect(() => {
     handleChartValidate();
   }, []);
@@ -168,23 +170,35 @@ const RightComponent = (props: any) => {
       {groupTrialsError && <div>Error: Unable to fetch the Trials</div>}
       {charts.length > 0 && (
         <>
-          <DataTable value={currentCharts} tableStyle={{ minWidth: "80rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer}>
+          <div className="table-toolbar">
+            <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText
+                  value={globalFilterValue}
+                  onChange={(e) => setGlobalFilterValue(e.target.value)}
+                  placeholder="Search Trials..."
+                  className="search-input"
+                />
+            </span>
+          </div>
+          <DataTable value={currentCharts} tableStyle={{ minWidth: "80rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer} globalFilterFields={['trialid', 'trialname', 'username']} globalFilter={globalFilterValue}>
             <Column
               header="ID"
               body={(_, { rowIndex }) => indexOfFirstItem + rowIndex + 1}
             />
-            <Column field="trialid" header="Trial ID" />
-            <Column field="trialname" header="Trial Name" />
-            <Column field="trialmatchdate" header="Trial Match Date" />
+            <Column field="trialid" header="Trial ID" sortable/>
+            <Column field="trialname" header="Trial Name" sortable/>
+            <Column field="trialmatchdate" header="Trial Match Date" sortable/>
             <Column
               field="trialcreated"
               header="Trial Uploaded On"
               body={(rowData) => formatDate(rowData.trialcreated)}
+              sortable
             />
-            <Column field="uniquearms" header="Unique Arms" />
-            <Column field="uniquepatients" header="Unique Patients" />
-            <Column field="uniquestudyid" header="Unique Studies" />
-            <Column field="username" header="Uploaded User Name" />
+            <Column field="uniquearms" header="Unique Arms" sortable/>
+            <Column field="uniquepatients" header="Unique Patients" sortable/>
+            <Column field="uniquestudyid" header="Unique Studies" sortable/>
+            <Column field="username" header="Uploaded User Name" sortable/>
             <Column
               header="Delete"
               body={(rowData) => (
