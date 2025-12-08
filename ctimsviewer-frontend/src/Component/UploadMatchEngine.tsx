@@ -3,7 +3,8 @@ import useAxiosDb from "../service/useAxiosDb";
 import { TreeTable } from "primereact/treetable";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { ProgressSpinner } from "primereact/progressspinner"; // Import ProgressSpinner
+import { ProgressSpinner } from "primereact/progressspinner";
+import { InputText } from "primereact/inputtext";
 import "./styles.css";
 
 const UploadMatchEngine = (props: any) => {
@@ -34,6 +35,7 @@ const UploadMatchEngine = (props: any) => {
     const [tableData, setTableData] = useState<any[]>([]);
     const [loadingState, setLoadingState] = useState<{ [key: string]: boolean }>({}); // Track loading state for each row
     const [pageLoading, setPageLoading] = useState<boolean>(false); // Track page loading state
+    const [globalFilterValue, setGlobalFilterValue] = useState("");
 
     useEffect(() => {
         handleValidate();
@@ -152,13 +154,23 @@ const UploadMatchEngine = (props: any) => {
             <br />
             {fetchTrialsLoading && <p>Loading...</p>}
             {fetchTrialsError && <p>Error fetching data: {fetchTrialsError}</p>}
-
+            <div className="table-toolbar">
+                <span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText
+                        value={globalFilterValue}
+                        onChange={(e) => setGlobalFilterValue(e.target.value)}
+                        placeholder="Search Trials..."
+                        className="search-input"
+                    />
+                </span>
+            </div>
             {!fetchTrialsLoading && !fetchTrialsError  && (
-                    <DataTable value={tableData} className="custom-datatable" footer={footer} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
-                        <Column field="data.trial_id" header="Trial ID" />
-                        <Column field="data.nickname" header="Nickname" />
-                        <Column field="data.count" header="Trial Match Count" />
-                        <Column field="data.updated" header="Last Matched in MatchEngine" />
+                    <DataTable value={tableData} className="custom-datatable" footer={footer} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} globalFilterFields={["data.trial_id","data.nickname", ]} globalFilter={globalFilterValue}>
+                        <Column field="data.trial_id" header="Trial ID" sortable/>
+                        <Column field="data.nickname" header="Nickname" sortable/>
+                        <Column field="data.count" header="Trial Match Count" sortable/>
+                        <Column field="data.updated" header="Last Matched in MatchEngine" sortable/>
                         <Column
                             body={actionBodyTemplate}
                             header="Actions"
