@@ -142,6 +142,12 @@ const UploadCsv = (props: any) => {
     },[])
 
     useEffect(()=>{
+        handleTrialIds();
+        getTrialArmIDs();
+        getStudyArmIDs();
+    },[ selectedTab])
+
+    useEffect(()=>{
         getTrialArmIDs();
         getTrialIDs();
         getStudyArmIDs();
