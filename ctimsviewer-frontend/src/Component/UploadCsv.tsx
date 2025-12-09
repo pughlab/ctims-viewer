@@ -120,6 +120,9 @@ const UploadCsv = (props: any) => {
     
     const [selectedPatientStudy, setSelectedPatientStudy] = useState('');
 
+    const roles = props.roles || [];;
+    const hasUploadCsvRole = roles.includes('role_csvupload');
+
     const location = useLocation();
 
 
@@ -873,7 +876,7 @@ const UploadCsv = (props: any) => {
                 </button>
             </div>
             <div className="tab-content">
-                {selectedTab === 'table' && (
+                {selectedTab === 'table' && hasUploadCsvRole && (
                     <div className="table-tab-content">
                         <div className="ImportButtonContainer">
                             <button onClick={handleFileUpload} className="importButton">Upload CSV</button>

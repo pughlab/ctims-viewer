@@ -31,7 +31,7 @@ function App(props) {
         <React.Suspense >
             <Routes>
                 <Route  path="/" name="Home Page" element={<Home />}/>
-                {hasChartsRole && (<Route  path="/charts" name="Main Page" element={<Main accessToken={props.accessToken} />} />)}
+                {hasChartsRole && (<Route  path="/charts" name="Main Page" element={<Main accessToken={props.accessToken} roles={props.roles}/>} />)}
                 {hasMatchEnginelRole && (<Route  path="/matchengine" name="Match Engine" element={<MatchEngine accessToken={props.accessToken} />} />)}
                 {hasLoaderRole && (<Route  path="/loader" name="CTIMS Loader" element={<Loader accessToken={props.accessToken} />} />)}
                 {hasFetcherRole && (<Route path="/fetcher" name="CTIMS Assembler Fetcher"  element={<Fetcher accessToken={props.accessToken}/>} />)}
