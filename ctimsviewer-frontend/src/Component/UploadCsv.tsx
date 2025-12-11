@@ -122,6 +122,7 @@ const UploadCsv = (props: any) => {
 
     const roles = props.roles || [];;
     const hasUploadCsvRole = roles.includes('role_csvupload');
+    const hasPythonChartsRole = roles.includes('role_pythoncharts');
 
     const location = useLocation();
 
@@ -974,14 +975,14 @@ const UploadCsv = (props: any) => {
                                             View Plot
                                         </button>
                                         */}
-                                    <div>
+                                    {hasPythonChartsRole && <div>
                                         {<button className="createCtmlButton" onClick={handleChartValidate} disabled={!(selectedItem)} style={{ height: "2.5rem", alignItems: "center" }} >Create Python Charts</button>}
                                         {imageSrc && createStatus && (((createStatus as string).startsWith("Success"))) && !(csvChartLoading) &&   <Popup trigger={<button className="createCtmlButton" > View Plot </button>} modal nested position="left center">
                                             <img src={imageSrc} alt="Plot" style={{ width: '100%', height:'auto', maxWidth: '1000px', display: 'block', margin: '0 auto' }} />
                                             </Popup>}
                                         {createStatus && (!((createStatus as string).startsWith("Success")) ? <p></p> :  <button className="createCtmlButton" onClick={() => handleDownload()}>Download
                                         </button>)}  
-                                    </div>
+                                    </div>}
                                 </div>
                             </div>
                         </div>
