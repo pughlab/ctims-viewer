@@ -19,7 +19,7 @@ const Main = (props: any) => {
         return (
             <div className="card" >
                 {/*<SharedDataContext.Provider value={{ validationResult: result, setValidationResult: setResult }}>*/}
-                        <UploadCsv accessToken={props.accessToken}/>
+                        <UploadCsv accessToken={props.accessToken} roles={props.roles}/>
                 {/*</SharedDataContext.Provider>*/}
             </div>
         );
@@ -30,7 +30,7 @@ const Main = (props: any) => {
         return (
             <div className="card">
                 {/*<SharedDataContext.Provider value={{ validationResult: result, setValidationResult: setResult }}>*/}
-                        <UploadCsv accessToken=""/>
+                        <UploadCsv accessToken="" roles=""/>
                 {/*</SharedDataContext.Provider>*/}
             </div>
         );
