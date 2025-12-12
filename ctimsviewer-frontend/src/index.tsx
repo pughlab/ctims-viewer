@@ -16,6 +16,7 @@ import "primeflex/primeflex.css";
 import {ReactKeycloakProvider, useKeycloak} from '@react-keycloak/web';
 import Keycloak from 'keycloak-js'
 import {login} from "./service/AuthService"
+import Footer from  "./Component/Footer"
 
 const keycloakIntegration = process.env.REACT_APP_KEYCLOAK_INTEGRATION;
 
@@ -126,6 +127,7 @@ const AppWithKeycloak: React.FC = () => {
                   <Navi roles={ctimsRoles} />
                   <Home />
                   <App accessToken={accessToken || ''} roles={ctimsRoles} />
+                  <Footer/>
                 </div>
           </BrowserRouter>
     );
