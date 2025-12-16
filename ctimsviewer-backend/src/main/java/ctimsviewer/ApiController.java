@@ -1,4 +1,6 @@
 package ctimsviewer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +17,10 @@ public class ApiController {
     private String CTIMS_VIEWER_API_VERSION;
 
 	@GetMapping(path = "/info")
-	public String info() {
-		return CTIMS_VIEWER_API_VERSION.toString();
+	public Map<String, String> info() {
+
+	Map<String, String> response = new HashMap<>();
+    response.put("CTIMS API version", CTIMS_VIEWER_API_VERSION);
+    return response;
 	}
 }
