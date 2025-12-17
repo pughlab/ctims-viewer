@@ -44,7 +44,7 @@ interface ChartData {
   }
 
   const chartComponents: Record<string, React.FC<{ data: any[], study_id: string, onBarClick: (patient: string, study:string) => void }>> = {
-    bar: BarChart,
+    BarChart: BarChart,
     HeatMap: HeatmapChart,
     ReverseBarChart: ReverseBarChart,
     TopBarChart: TopBarChart,
