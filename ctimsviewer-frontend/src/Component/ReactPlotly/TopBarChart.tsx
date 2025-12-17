@@ -4,6 +4,7 @@ import Plot from 'react-plotly.js';
 interface DataItem {
   p: string | number;
   t: string;
+  s: string;
 }
 
 interface TopBarChartProps {
@@ -13,6 +14,19 @@ interface TopBarChartProps {
 }
 
 const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick}) => {
+
+  const getStudyForPatient = ( patientId: string) => {
+    const matchingItem = data.find(
+      (item) => item.p === patientId
+    );
+    if (!matchingItem) return "N/A";
+    try {
+      return matchingItem.s;
+    } catch (error) {
+      console.error("Error parsing combineddata:", error);
+
+    }
+  };
   
   const patientTrialMap = data.reduce((acc, item) => {
     const idStr = String(item.p);
@@ -122,7 +136,9 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick})
         }}
         onClick={(event) => {
           if (event.points.length > 0) {
-            onBarClick(String(event.points[0].x),study_id);
+            const patientValue = String(event.points[0].x);
+            const studyValue = String(getStudyForPatient(patientValue));
+            onBarClick(String(event.points[0].x),studyValue);
           }
         }}
       />
