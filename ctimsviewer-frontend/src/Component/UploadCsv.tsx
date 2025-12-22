@@ -893,7 +893,7 @@ const UploadCsv = (props: any) => {
                 {selectedTab === 'charts' && (
                     <div className="charts-tab-content">
                         <div>
-                            <h3>Select Chart type, Trials, Arms and Studies for Analysis and Visualization . Heatmap,Top Bar Chart, Side Bar chart and Vertical Bar Charts help in analysis of results.</h3>
+                            <h3>Select Chart type, Trials, Arms and Studies for Analysis and Visualization. Chart types include Heatmap, Top Bar Chart, Side Bar chart and Vertical Bar Chart.</h3>
                         </div>
                         <br/>
                         <br/>
