@@ -135,7 +135,7 @@ const UploadMatchEngine = (props: any) => {
                 {isLoading ? (
                     <ProgressSpinner style={{ width: '20px', height: '20px' }} />
                 ) : (
-                    'Fetch Data'
+                    'Fetch Matches'
                 )}
             </button>
         );
@@ -149,7 +149,7 @@ const UploadMatchEngine = (props: any) => {
                 </div>
             )}
 
-            <h3>This page is used to fetch the matched trials from MatchEngine to CTIMS Viewer(The below data is fetched from MatchEngine).</h3>
+            <h3>Trial Matches in Matcher database that can be fetched into Viewer database</h3>
             <br />
             <br />
             {fetchTrialsLoading && <p>Loading...</p>}
