@@ -181,7 +181,7 @@ const RightComponent = (props: any) => {
                 />
             </span>
           </div>
-          <DataTable value={currentCharts} tableStyle={{ minWidth: "80rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer} globalFilterFields={['trialid', 'trialname', 'username']} globalFilter={globalFilterValue}>
+          <DataTable value={charts} tableStyle={{ minWidth: "80rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} footer={footer} globalFilterFields={['trialid', 'trialname', 'username']} globalFilter={globalFilterValue}>
             <Column
               header="ID"
               body={(_, { rowIndex }) => indexOfFirstItem + rowIndex + 1}
