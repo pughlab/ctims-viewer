@@ -62,6 +62,10 @@ private String authReq = getAuthenticationRequirement();
             .cors().and()
                 .authorizeRequests()
                     .antMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/webjars/**",
                         "/api/info"
                     ).permitAll()
                     .anyRequest().access(integrationStatus)
