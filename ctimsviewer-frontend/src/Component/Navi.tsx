@@ -23,7 +23,7 @@ function Navi(props: any) {
                     <Link to="/charts" >Viewer</Link>
                 </h3>)}
                 {hasMatchEnginelRole && (<h3 className={location.pathname === "/matchengine" ? "selected" : ""}>
-                    <Link to="/matchengine" >Match Engine</Link>
+                    <Link to="/matchengine" >Matcher</Link>
                 </h3>)}
                 {hasEditorRole && (<h3 className={location.pathname === "/CtimsEditor" ? "selected" : ""}>
                     <Link to="/CtimsEditor" >Editor</Link>

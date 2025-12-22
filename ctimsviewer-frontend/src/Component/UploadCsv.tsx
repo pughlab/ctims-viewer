@@ -861,13 +861,13 @@ const UploadCsv = (props: any) => {
                     onClick={() => setSelectedTab('table')} 
                     className={selectedTab === 'table' ? 'active' : ''}
                 >
-                    Trials
+                    Trial Matches
                 </button>
                 <button 
                     onClick={() => setSelectedTab('charts')} 
                     className={selectedTab === 'charts' ? 'active' : ''}
                 >
-                    Generate Charts
+                    Charts
                 </button>
                 {false && <button 
                     onClick={() => setSelectedTab('study')} 
@@ -893,7 +893,7 @@ const UploadCsv = (props: any) => {
                 {selectedTab === 'charts' && (
                     <div className="charts-tab-content">
                         <div>
-                            <h3>CTIMS Viewer can be used to generate Charts for analysis of trial matches using Charts component. It generates the Heatmap, Bar Chart, and Vertical Bar Chart.</h3>
+                            <h3>Select Chart type, Trials, Arms and Studies for Analysis and Visualization . Heatmap,Top Bar Chart, Side Bar chart and Vertical Bar Charts help in analysis of results.</h3>
                         </div>
                         <br/>
                         <br/>

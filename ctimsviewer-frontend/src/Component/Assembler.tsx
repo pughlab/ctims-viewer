@@ -177,7 +177,7 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
     return (
         <div>
             <form onSubmit={handleSubmit} className="assembler-form">
-                <h3 className='h3_center' >Enter StudyId to pull from CbioPortal</h3>
+                <h3 className='h3_center' >cBioPortal study Id to assemble into Matcher database</h3>
                 <input
                     type="text"
                     value={studyId}
@@ -189,7 +189,7 @@ const Assembler = (props: { accessToken?: string; keycloakIntegration?: string }
                     {loading ? "Submitting..." : "Submit"}
                 </button>
             </form>
-            <h3>The below table shows the count of Patients that are available to match within the MatchEngine.</h3>
+            <h3>Studies in Matcher database</h3>
             {fetchStudyDataLoading && <p>Fetching Data...</p>}
             {fetchStudyDataResponse && renderTable("Clinical", studyData?.clinical || [])}
             {jobMessage && <p className="job-message">{jobMessage}</p>}
