@@ -117,7 +117,7 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick})
           },
         ]}
         layout={{
-          title: 'Count of Trials for Each Patient ID',
+          title: 'Count of Trial Arms for Each Patient ID',
           xaxis: {
             title: 'Patient ID',
             type: 'category',
@@ -127,7 +127,7 @@ const TopBarChart: React.FC<TopBarChartProps> = ({ data, study_id , onBarClick})
             showticklabels: false,
           },
           yaxis: {
-            title: 'Number of Trials Matched',
+            title: 'Number of Trial Arms Matched',
             dtick: 10,
             range: [0, yAxisMax],
           },
