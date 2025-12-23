@@ -111,7 +111,7 @@ const PatientView = (props: any) => {
                         <InputText
                             value={globalFilterValue}
                             onChange={(e) => setGlobalFilterValue(e.target.value)}
-                            placeholder="Search patients..."
+                            placeholder="Search"
                             className="search-input"
                         />
                     </span>

@@ -176,7 +176,7 @@ const RightComponent = (props: any) => {
                 <InputText
                   value={globalFilterValue}
                   onChange={(e) => setGlobalFilterValue(e.target.value)}
-                  placeholder="Search Trials..."
+                  placeholder="Search"
                   className="search-input"
                 />
             </span>
