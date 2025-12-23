@@ -163,7 +163,7 @@ const RightComponent = (props: any) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
-  const footer = `Total ${currentCharts ? currentCharts.length : 0} rows.`;
+  const footer = `Total ${charts ? charts.length : 0} rows.`;
 
   return (
     <div>
