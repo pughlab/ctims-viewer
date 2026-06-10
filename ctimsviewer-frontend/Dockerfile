@@ -1,26 +1,39 @@
-# Build stage
-FROM node:18-alpine AS build
+# Stage 1: Build the React application
+FROM node:18-alpine AS builder
+
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and yarn.lock to the container
-COPY package.json ./
+# Copy package.json and package-lock.json (or yarn.lock)
+COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies. Using --legacy-peer-deps can help resolve
+# potential version conflicts with dependencies like primereact.
+RUN npm install --legacy-peer-deps
 
-
+# Copy the rest of the application source code
 COPY . .
 
+# Update browserslist database to prevent build errors
 RUN npx update-browserslist-db@latest
 
-# Build the app
-RUN npm run build
+# Build the application for production. This creates an optimized 'build' folder.
+RUN GENERATE_SOURCEMAP=false NODE_OPTIONS=--max-old-space-size=4096 npm run build
 
-# Install the serve package to serve the built app
-RUN npm install -g serve
+# Stage 2: Serve the application with Nginx
+FROM nginx:stable-alpine
 
-# Set the command to serve the built app at port 3030
-CMD serve -s build -l 3030
+# Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy the static files from the 'builder' stage to Nginx's web root directory
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Copy the custom Nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 3030 to allow external access to the application
 EXPOSE 3030
+
+# Start Nginx when the container launches
+CMD ["nginx", "-g", "daemon off;"]
