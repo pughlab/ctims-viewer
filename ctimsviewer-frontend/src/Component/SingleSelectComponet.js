@@ -5,9 +5,9 @@ import './styles.css'; // Import your CSS file for custom styles
 // Define your options
 const options = [
     { value: 'HeatPlot', label: 'HeatPlot' },
-    { value: 'TopBarChart', label: 'TopBarChart' },
-    { value: 'ReverseBarChart', label: 'ReverseBarChart' },
-    { value: 'BarChart', label: 'BarChart' },
+    { value: 'TopBarChart', label: 'TopPatientCountBarChart' },
+    { value: 'ReverseBarChart', label: 'HorizontalBarChart' },
+    { value: 'BarChart', label: 'VerticalBarChart' },
 ];
 
 // Custom option component with radio buttons

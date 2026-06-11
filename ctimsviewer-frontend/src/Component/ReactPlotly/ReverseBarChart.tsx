@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Plot from "react-plotly.js";
+import { Dropdown } from "primereact/dropdown";
 
 interface DataItem {
   t: string;
@@ -29,22 +30,41 @@ const ReverseBarChart: React.FC<ReverseBarChartProps> = ({ data, study_id, onBar
   );
 
   
-  const [isSorted, setIsSorted] = useState(false);
+  const [selectedSortOption, setSelectedSortOption] = useState("unsort");
   const [sortedData, setSortedData] = useState({
     y: trialArmNames,
     x: patientCounts,
   });
 
   
-  const sortData = () => {
-    const sortedIndices = [...Array(trialArmNames.length).keys()].sort(
-      (a, b) => patientCounts[a] - patientCounts[b]
-    );
+  const sortDataByCount = () => {
+    const dataToSort = trialArmNames.map((arm, index) => ({
+      arm,
+      count: patientCounts[index],
+    }));
+
+    dataToSort.sort((a, b) => a.count - b.count);
+
     setSortedData({
-      y: sortedIndices.map((i) => trialArmNames[i]),
-      x: sortedIndices.map((i) => patientCounts[i]),
+      y: dataToSort.map((item) => item.arm),
+      x: dataToSort.map((item) => item.count),
     });
-    setIsSorted(true);
+  };
+
+  const sortDataByTrialId = () => {
+    const dataToSort = trialArmNames.map((arm, index) => ({
+      arm,
+      count: patientCounts[index],
+    }));
+
+    dataToSort.sort((a, b) =>
+      a.arm.localeCompare(b.arm, undefined, { numeric: true, sensitivity: "base" })
+    );
+
+    setSortedData({
+      y: dataToSort.map((item) => item.arm),
+      x: dataToSort.map((item) => item.count),
+    });
   };
 
   
@@ -53,7 +73,6 @@ const ReverseBarChart: React.FC<ReverseBarChartProps> = ({ data, study_id, onBar
       y: trialArmNames,
       x: patientCounts,
     });
-    setIsSorted(false);
   };
   const rowHeight = 25;
   const chartHeight = rowHeight * trialArmNames.length;
@@ -70,13 +89,28 @@ const ReverseBarChart: React.FC<ReverseBarChartProps> = ({ data, study_id, onBar
 
   return (
     <div>
-      <div style={{ marginBottom: "10px" }}>
-        <button onClick={sortData} disabled={isSorted}>
-          Sort
-        </button>
-        <button onClick={unsortData} disabled={!isSorted}>
-          Unsort
-        </button>
+      <div style={{ marginBottom: "10px", display: "flex", alignItems: "center" }}>
+        <label htmlFor="sortDropdown" style={{ marginRight: "10px" }}>Sort By:</label>
+        <Dropdown
+          id="sortDropdown"
+          value={selectedSortOption}
+          options={[
+            { label: "Trial Id", value: "trialId" },
+            { label: "Patient Match Count", value: "patientCount" },
+            { label: "Default", value: "unsort" },
+          ]}
+          onChange={(e) => {
+            setSelectedSortOption(e.value);
+            if (e.value === "trialId") {
+              sortDataByTrialId();
+            } else if (e.value === "patientCount") {
+              sortDataByCount();
+            } else if (e.value === "unsort") {
+              unsortData();
+            }
+          }}
+          placeholder="Select Sorting Option"
+        />
       </div>
       <Plot
         data={[

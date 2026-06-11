@@ -20,10 +20,10 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   const trialArmNames = Array.from(new Set(data.map((item) => item.t)));
   const patientIds = Array.from(new Set(data.map((item) => item.p)));
   const patientIdsAsStrings = patientIds.map(String);
-  const [isSorted, setIsSorted] = useState(false);
+  const [isSorted, setIsSorted] = useState(true);
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [selectedSortOption, setSelectedSortOption] = useState("patientCount");
+  const [selectedSortOption, setSelectedSortOption] = useState("trialId");
   const [sortedData, setSortedData] = useState({
     trialArms: trialArmNames,
     patients: patientIdsAsStrings,
@@ -82,37 +82,34 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     );
   }, [data, sortedData, selectedOptions]);
 
+  useEffect(() => {
+    // Sort by Trial Id on initial load to make it the default view.
+    sortDataByTrialId();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const sortDataByCount = () => {
+    // Sort patients by the number of trial arms they are matched to, in descending order.
     const sortedPatients = [...patientIdsAsStrings].sort(
       (a, b) => armCountByPatient[b] - armCountByPatient[a]
     );
 
+    //Sort trial arms by patient count in descending order (most patients first).
     const sortedTrialArms = [...trialArmNames].sort(
       (a, b) => patientCountByArm[a] - patientCountByArm[b]
     );
     
     setSortedData({
-      trialArms: trialArmNames,
+      trialArms: sortedTrialArms,
       patients: sortedPatients,
     });
     setIsSorted(true);
   };
 
   const sortDataByTrialId = () => {
-    const sortedTrialArms = [...trialArmNames].sort((a, b) => {
-      const getNameAndNumber = (id: string): [string, number] => {
-        const match = id.match(/^([a-zA-Z]+)(\d+)$/);
-        return match ? [match[1], parseInt(match[2], 10)] : [id, 0];
-      };
-  
-      const [nameA, numA] = getNameAndNumber(a);
-      const [nameB, numB] = getNameAndNumber(b);
-  
-      if (nameA === nameB) {
-        return numA - numB; // Sort by number if names are the same
-      }
-      return nameA.localeCompare(nameB); // Sort by name otherwise
-    });
+    const sortedTrialArms = [...trialArmNames].sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
+    );
 
     const sortedPatients = [...patientIdsAsStrings].sort(
       (a, b) => armCountByPatient[b] - armCountByPatient[a]
@@ -126,16 +123,9 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   };
 
   const unsortData = () => {
-    const sortedTrialArms = [...trialArmNames].sort(
-      (a, b) => patientCountByArm[a] - patientCountByArm[b]
-    );
-
-    const sortedPatients = [...patientIdsAsStrings].sort(
-      (a, b) => armCountByPatient[b] - armCountByPatient[a]
-    );
     setSortedData({
-      trialArms: sortedTrialArms,
-      patients: sortedPatients,
+        trialArms: trialArmNames,
+      patients: patientIdsAsStrings,
     });
     setIsSorted(false);
   };
@@ -186,7 +176,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       text: label,
       showarrow: false,
       font: {
-        size: 10,
+        size: 12,
       },
       align: "left" as const, // Explicitly cast to the correct type
     };
@@ -210,7 +200,6 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   };
 
   const handleChange = (selectedList: any) => {
-    console.log("Test123")
     setSelectedOptions(selectedList);
   };
  
@@ -265,7 +254,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             colorscale: [
               [0, "lightgrey"],
               [1 / 2, "rgb(255, 0, 0)"],
-              [1, "rgb(51, 75, 255)"],
+              [1, "rgb(51, 153, 255)"],
             ],
             showscale: false,
             hovertemplate:
@@ -274,7 +263,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
               //`<b>Matched Data:<br></b>%{customdata}<br>` +
               "<extra></extra>",
             xgap,
-            ygap: 10,
+            ygap: 6,
             hoverlabel: {
               bgcolor: "white",
               font: {
@@ -287,9 +276,8 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
         layout={{
           xaxis: { showticklabels: false, type: "category", ticks: "", showgrid: false },
           yaxis: { 
-            tickfont: { size: 10,
-           }, 
-           type: "category", showticklabels: true, automargin: true, showgrid: false },
+            tickfont: { size: 12 }, 
+            type: "category", showticklabels: true, automargin: true, showgrid: false },
           height: 200 + chartHeight,
           width: 200 + Number(chartColumnHeight) + patientIdsAsStrings.length * xgap,
           autosize: false,
