@@ -332,12 +332,13 @@ public class DatabaseServiceImpl implements DatabaseService{
         //System.out.println("Results before converting to string: " + results);
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
-            String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
-            String[] parts = data.split(",", 3);
+            String data = chart.toDetailedString_tpsd().replace("\n", ""); // Remove \n
+            String[] parts = data.split(",", 4);
             Map<String, String> map = new HashMap<>();
             map.put("t", parts[0]);
             map.put("p", parts[1]);
             map.put("s", parts[2]);
+            map.put("d", parts[3]);
             convertedResults.add(map);
         }
 
@@ -351,12 +352,13 @@ public class DatabaseServiceImpl implements DatabaseService{
         List<ClinicalData> results = chartsTableRepository.findPlotlyDataByCreationDate(armList, studyList);
         List<Map<String, String>> convertedResults = new ArrayList<>();
         for (ClinicalData chart : results) {
-            String data = chart.toDetailedString2().replace("\n", ""); // Remove \n
-            String[] parts = data.split(",", 3);
+            String data = chart.toDetailedString_tpsd().replace("\n", ""); // Remove \n
+            String[] parts = data.split(",", 4);
             Map<String, String> map = new HashMap<>();
             map.put("t", parts[0]);
             map.put("p", parts[1]);
             map.put("s", parts[2]);
+            map.put("d", parts[3]);
             convertedResults.add(map);
         }
         return convertedResults;

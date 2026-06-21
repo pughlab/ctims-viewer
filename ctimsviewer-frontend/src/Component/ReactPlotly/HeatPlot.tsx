@@ -8,6 +8,7 @@ interface DataItem {
   t: string;
   p: number;
   s: string;
+  d: string;
 }
 
 interface HeatmapChartProps {
@@ -51,36 +52,81 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     }, {} as Record<string, number>);
   }, [data, patientIdsAsStrings]);
 
+  const cCategories = useMemo(() => Array.from(new Set(data.map((item) => item.d))), [data]);
+  const allSameC = cCategories.length === 1;
+
+  const cIndexMap = useMemo(
+    () =>
+      cCategories.reduce<Record<string, number>>((acc, cValue, idx) => {
+        acc[cValue] = idx + 1;
+        return acc;
+      }, {}),
+    [cCategories]
+  );
+
+  const heatmapColorscale = useMemo(() => {
+    if (allSameC) {
+      return [
+        [0, "lightgrey"],
+        [1, "rgb(51, 153, 255)"],
+      ];
+    }
+
+    const palette = [
+      "rgb(51,153,255)",
+      "rgb(255,127,14)",
+      "rgb(44,160,44)",
+      "rgb(214,39,40)",
+      "rgb(148,103,189)",
+      "rgb(140,86,75)",
+      "rgb(227,119,194)",
+      "rgb(127,127,127)",
+      "rgb(188,189,34)",
+      "rgb(23,190,207)",
+      "rgb(31,119,180)",
+      "rgb(255,187,120)",
+      "rgb(127,255,212)",
+      "rgb(255,105,180)",
+      "rgb(60,179,113)",
+      "rgb(255,165,0)",
+      "rgb(147,112,219)",
+      "rgb(210,105,30)",
+      "rgb(255,99,71)",
+      "rgb(95,158,160)",
+      "rgb(102,205,170)",
+      "rgb(186,85,211)",
+      "rgb(244,164,96)",
+      "rgb(100,149,237)",
+    ];
+
+    const stops = cCategories.map((_, idx) => [
+      (idx + 1) / cCategories.length,
+      palette[idx % palette.length],
+    ] as [number, string]);
+
+    return [[0, "lightgrey"], ...stops];
+  }, [allSameC, cCategories]);
+
   const heatmapMatrixWithColors = useMemo(() => {
     const { trialArms, patients } = sortedData;
   
-    // Step 1: Preprocess `data` into a Map
-    const dataMap = new Map<string, Set<string>>();
+    const dataMap = new Map<string, Map<string, string>>();
     data.forEach((item) => {
       const trialArmId = item.t;
       const patientId = String(item.p);
       if (!dataMap.has(trialArmId)) {
-        dataMap.set(trialArmId, new Set());
+        dataMap.set(trialArmId, new Map());
       }
-      dataMap.get(trialArmId)?.add(patientId);
+      dataMap.get(trialArmId)!.set(patientId, item.c);
     });
   
-    // Step 2: Now build the matrix
     return trialArms.map((trialArm) =>
       patients.map((patientId) => {
-        const isPatientSelected = selectedOptions.includes(patientId);
-        const hasData = dataMap.get(trialArm)?.has(patientId) ?? false;
-  
-        if (isPatientSelected && hasData) {
-          return 1;
-        }
-        if (hasData) {
-          return 2;
-        }
-        return 0;
+        const cValue = dataMap.get(trialArm)?.get(patientId);
+        return cValue ? cIndexMap[cValue] : 0;
       })
     );
-  }, [data, sortedData, selectedOptions]);
+  }, [data, sortedData, cIndexMap]);
 
   useEffect(() => {
     // Sort by Trial Id on initial load to make it the default view.
@@ -251,11 +297,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             x: sortedData.patients,
             y: sortedData.trialArms,
             type: "heatmap",
-            colorscale: [
-              [0, "lightgrey"],
-              [1 / 2, "rgb(255, 0, 0)"],
-              [1, "rgb(51, 153, 255)"],
-            ],
+            colorscale: heatmapColorscale,
             showscale: false,
             hovertemplate:
               `<b>Patient ID:</b> %{x}<br>` +
