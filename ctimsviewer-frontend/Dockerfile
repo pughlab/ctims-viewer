@@ -7,15 +7,18 @@ WORKDIR /app
 # Copy package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
 
-# Install dependencies. Using --legacy-peer-deps can help resolve
-# potential version conflicts with dependencies like primereact.
+# Install dependencies. This is a separate layer to cache dependencies and avoid
+# re-installing them on every code change. Using --legacy-peer-deps can help
+# resolve potential version conflicts with dependencies like primereact.
 RUN npm install --legacy-peer-deps
 
-# Copy the rest of the application source code
-COPY . .
-
 # Update browserslist database to prevent build errors
+# This is part of the dependency setup and should be cached with them.
 RUN npx update-browserslist-db@latest
+
+# Copy the rest of the application source code. Changes to source files will
+# use the cached dependency layer from above.
+COPY . .
 
 # Build the application for production. This creates an optimized 'build' folder.
 RUN GENERATE_SOURCEMAP=false NODE_OPTIONS=--max-old-space-size=4096 npm run build
