@@ -23,7 +23,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   const [isSorted, setIsSorted] = useState(true);
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-  const [selectedSortOption, setSelectedSortOption] = useState("trialId");
+  const [selectedSortOption, setSelectedSortOption] = useState("patientCount");
   const [sortedData, setSortedData] = useState({
     trialArms: trialArmNames,
     patients: patientIdsAsStrings,
@@ -83,8 +83,8 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   }, [data, sortedData, selectedOptions]);
 
   useEffect(() => {
-    // Sort by Trial Id on initial load to make it the default view.
-    sortDataByTrialId();
+    // Sort by patient count on initial load to make it the default view.
+    sortDataByCount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
