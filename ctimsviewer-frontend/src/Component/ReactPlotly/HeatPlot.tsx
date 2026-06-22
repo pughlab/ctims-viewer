@@ -64,7 +64,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     [cCategories]
   );
 
-  const heatmapColorscale = useMemo(() => {
+  const heatmapColorscale = useMemo((): [number, string][] => {
     if (allSameC) {
       return [
         [0, "lightgrey"],
