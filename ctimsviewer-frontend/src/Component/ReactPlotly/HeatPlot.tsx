@@ -107,26 +107,35 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     return [[0, "lightgrey"], ...stops];
   }, [allSameC, cCategories]);
 
-  const heatmapMatrixWithColors = useMemo(() => {
-    const { trialArms, patients } = sortedData;
-  
-    const dataMap = new Map<string, Map<string, string>>();
+  const trialPatientDataMap = useMemo(() => {
+    const map = new Map<string, Map<string, string>>();
     data.forEach((item) => {
       const trialArmId = item.t;
       const patientId = String(item.p);
-      if (!dataMap.has(trialArmId)) {
-        dataMap.set(trialArmId, new Map());
+      if (!map.has(trialArmId)) {
+        map.set(trialArmId, new Map());
       }
-      dataMap.get(trialArmId)!.set(patientId, item.d);
+      map.get(trialArmId)!.set(patientId, item.d);
     });
-  
+    return map;
+  }, [data]);
+
+  const heatmapMatrixWithColors = useMemo(() => {
+    const { trialArms, patients } = sortedData;
     return trialArms.map((trialArm) =>
       patients.map((patientId) => {
-        const cValue = dataMap.get(trialArm)?.get(patientId);
+        const cValue = trialPatientDataMap.get(trialArm)?.get(patientId);
         return cValue ? cIndexMap[cValue] : 0;
       })
     );
-  }, [data, sortedData, cIndexMap]);
+  }, [sortedData, cIndexMap, trialPatientDataMap]);
+
+  const customDataMatrix = useMemo(() => {
+    const { trialArms, patients } = sortedData;
+    return trialArms.map((trialArm) =>
+      patients.map((patientId) => trialPatientDataMap.get(trialArm)?.get(patientId) || "")
+    );
+  }, [sortedData, trialPatientDataMap]);
 
   useEffect(() => {
     // Sort by Trial Id on initial load to make it the default view.
@@ -196,6 +205,19 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       return matchingItem.s;
     } catch (error) {
       console.error("Error parsing combineddata:", error);
+
+    }
+  };
+
+    const getDiagnosisForPoint = (trialArm: string, patientId: string) => {
+    const matchingItem = data.find(
+      (item) => item.t === trialArm && String(item.p) === patientId
+    );
+    if (!matchingItem) return "N/A";
+    try {
+      return matchingItem.d;
+    } catch (error) {
+      console.error("Error in getDiagnosisForPoint finding diagnosis:", error);
 
     }
   };
@@ -296,13 +318,14 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             z: heatmapMatrixWithColors,
             x: sortedData.patients,
             y: sortedData.trialArms,
+            customdata: customDataMatrix,
             type: "heatmap",
             colorscale: heatmapColorscale,
             showscale: false,
             hovertemplate:
               `<b>Patient ID:</b> %{x}<br>` +
               `<b>Trial Arm:</b> %{y}<br>` +
-              //`<b>Matched Data:<br></b>%{customdata}<br>` +
+              `<b>Diagnosis:</b> %{customdata}<br>` +
               "<extra></extra>",
             xgap,
             ygap: 6,
