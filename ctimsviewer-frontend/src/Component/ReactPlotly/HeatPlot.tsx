@@ -117,7 +117,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       if (!dataMap.has(trialArmId)) {
         dataMap.set(trialArmId, new Map());
       }
-      dataMap.get(trialArmId)!.set(patientId, item.c);
+      dataMap.get(trialArmId)!.set(patientId, item.d);
     });
   
     return trialArms.map((trialArm) =>
