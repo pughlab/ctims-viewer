@@ -128,8 +128,10 @@ public class ClinicalData {
     }
 
     public String toDetailedString_tpsd() {
+        String safeDiagnosis = (diagnosis == null) ? "" : diagnosis.replace(",", " ");
         return String.format("\n%s,%s,%s,%s",
-                             trialarmid, patient_id, studyid,diagnosis.replace(",", " ")); // Replace commas in diagnosis to avoid splitting issues
+                             trialarmid, patient_id, studyid, safeDiagnosis);
+                            // Replace commas in diagnosis to avoid splitting issues
     }
    
     public String toDetailedString2() {

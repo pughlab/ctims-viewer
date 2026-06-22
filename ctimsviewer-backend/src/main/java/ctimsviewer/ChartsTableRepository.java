@@ -44,7 +44,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
     @Query("SELECT DISTINCT TrialArmId, patient_id, StudyID FROM ClinicalData WHERE TRIALCREATED IN (:arguments)  AND STUDYID IN (:studylist)")
     List<ClinicalData> findDataByCreationDate(@Param("arguments") List<String> arguments, @Param("studylist") List<String>  studylist);
 
-    @Query("SELECT DISTINCT TrialArmId, patient_id, StudyID FROM ClinicalData WHERE TRIALARMID IN (:armlist)  AND STUDYID IN (:studylist)")
+    @Query("SELECT DISTINCT TrialArmId, patient_id, StudyID, Diagnosis FROM ClinicalData WHERE TRIALARMID IN (:armlist)  AND STUDYID IN (:studylist)")
     List<ClinicalData> findPlotlyDataByCreationDate(@Param("armlist") List<String> armlist,  @Param("studylist") List<String>  studylist);
 
     @Query("SELECT TrialArmId, patient_id, StudyID, TrialId,TrialName, CombinedData FROM ClinicalData WHERE TRIALARMID IN (:armlist)  AND STUDYID IN (:studylist)")
@@ -76,7 +76,7 @@ public interface ChartsTableRepository extends CrudRepository<ChartsTable, Long>
         @Param("gene") String gene
     );
 
-    @Query("SELECT DISTINCT TrialArmId, patient_id, combineddata, StudyID FROM ClinicalData WHERE " +
+    @Query("SELECT DISTINCT TrialArmId, patient_id, combineddata, StudyID, Diagnosis FROM ClinicalData WHERE " +
         "(TRIALCREATED = :TRIALCREATED OR :TRIALCREATED IS NULL) AND " +
         "(TrialId = :trialId OR :trialId IS NULL) AND " +
         "(TrialName = :trialName OR :trialName IS NULL) AND " +
