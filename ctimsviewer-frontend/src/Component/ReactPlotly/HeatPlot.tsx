@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Plot from "react-plotly.js";
+import oncotreeMapping from "./oncotree_mapping_high.json";
 import { MultiSelect } from "primereact/multiselect";
 import { Dropdown } from "primereact/dropdown";
 import "./PlotStyles.css";
@@ -53,17 +54,30 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     }, {} as Record<string, number>);
   }, [data, patientIdsAsStrings]);
 
-  const cCategories = useMemo(() => Array.from(new Set(data.map((item) => item.d))), [data]);
+  const oncoRootKeys = useMemo(() => Object.keys(oncotreeMapping), []);
+
+  const detailToRootMap = useMemo(() => {
+    const m = new Map<string, string>();
+    oncoRootKeys.forEach((root) => {
+      const arr = (oncotreeMapping as Record<string, string[]>)[root] || [];
+      arr.forEach((d) => m.set(d, root));
+    });
+    return m;
+  }, [oncoRootKeys]);
+
+  const cCategories = useMemo(
+    () => Array.from(new Set(data.map((item) => detailToRootMap.get(item.d) || item.d))),
+    [data, detailToRootMap]
+  );
+
   const allSameC = cCategories.length === 1;
 
-  const cIndexMap = useMemo(
-    () =>
-      cCategories.reduce<Record<string, number>>((acc, cValue, idx) => {
-        acc[cValue] = idx + 1;
-        return acc;
-      }, {}),
-    [cCategories]
-  );
+  const cIndexMap = useMemo(() => {
+    return oncoRootKeys.reduce<Record<string, number>>((acc, root, idx) => {
+      acc[root] = idx + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [oncoRootKeys]);
 
   const heatmapColorscale = useMemo((): [number, string][] => {
     if (allSameC) {
@@ -73,40 +87,20 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       ];
     }
 
-    const palette = [
-      "rgb(51,153,255)",
-      "rgb(255,127,14)",
-      "rgb(44,160,44)",
-      "rgb(214,39,40)",
-      "rgb(148,103,189)",
-      "rgb(140,86,75)",
-      "rgb(227,119,194)",
-      "rgb(127,127,127)",
-      "rgb(188,189,34)",
-      "rgb(23,190,207)",
-      "rgb(31,119,180)",
-      "rgb(255,187,120)",
-      "rgb(127,255,212)",
-      "rgb(255,105,180)",
-      "rgb(60,179,113)",
-      "rgb(255,165,0)",
-      "rgb(147,112,219)",
-      "rgb(210,105,30)",
-      "rgb(255,99,71)",
-      "rgb(95,158,160)",
-      "rgb(102,205,170)",
-      "rgb(186,85,211)",
-      "rgb(244,164,96)",
-      "rgb(100,149,237)",
-    ];
+    // generate a palette sized to the number of oncotree root keys
+    const numRoots = oncoRootKeys.length;
+    const palette: string[] = Array.from({ length: numRoots }).map((_, idx) => {
+      const hue = Math.round((idx * 360) / Math.max(1, numRoots));
+      return `hsl(${hue},70%,50%)`;
+    });
 
-    const stops = cCategories.map((_, idx) => [
-      (idx + 1) / cCategories.length,
+    const stops = oncoRootKeys.map((_, idx) => [
+      (idx + 1) / numRoots,
       palette[idx % palette.length],
     ] as [number, string]);
 
     return [[0, "lightgrey"], ...stops];
-  }, [allSameC, cCategories]);
+  }, [allSameC, cCategories, oncoRootKeys]);
 
   const trialPatientDataMap = useMemo(() => {
     const map = new Map<string, Map<string, string>>();
@@ -121,15 +115,29 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     return map;
   }, [data]);
 
+  const trialPatientRootMap = useMemo(() => {
+    const map = new Map<string, Map<string, string>>();
+    data.forEach((item) => {
+      const trialArmId = item.t;
+      const patientId = String(item.p);
+      if (!map.has(trialArmId)) {
+        map.set(trialArmId, new Map());
+      }
+      const root = detailToRootMap.get(item.d) || item.d;
+      map.get(trialArmId)!.set(patientId, root);
+    });
+    return map;
+  }, [data, detailToRootMap]);
+
   const heatmapMatrixWithColors = useMemo(() => {
     const { trialArms, patients } = sortedData;
     return trialArms.map((trialArm) =>
       patients.map((patientId) => {
-        const cValue = trialPatientDataMap.get(trialArm)?.get(patientId);
+        const cValue = trialPatientRootMap.get(trialArm)?.get(patientId);
         return cValue ? cIndexMap[cValue] : 0;
       })
     );
-  }, [sortedData, cIndexMap, trialPatientDataMap]);
+  }, [sortedData, cIndexMap, trialPatientRootMap]);
 
   const customDataMatrix = useMemo(() => {
     const { trialArms, patients } = sortedData;
