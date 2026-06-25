@@ -25,6 +25,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [selectedSortOption, setSelectedSortOption] = useState("trialId");
+  const [selectedXAxisSortOption, setSelectedXAxisSortOption] = useState("matchCount");
   const [sortedData, setSortedData] = useState({
     trialArms: trialArmNames,
     patients: patientIdsAsStrings,
@@ -185,6 +186,28 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     setIsSorted(false);
   };
 
+  const sortXAxisByMatchCount = () => {
+    const sortedPatients = [...sortedData.patients].sort(
+      (a, b) => armCountByPatient[b] - armCountByPatient[a]
+    );
+    setSortedData({
+      trialArms: sortedData.trialArms,
+      patients: sortedPatients,
+    });
+  };
+
+  const sortXAxisByDiagnosis = () => {
+    const sortedPatients = [...sortedData.patients].sort((a, b) => {
+      const diagnosisA = trialPatientDataMap.get(sortedData.trialArms[0])?.get(a) || "";
+      const diagnosisB = trialPatientDataMap.get(sortedData.trialArms[0])?.get(b) || "";
+      return diagnosisA.localeCompare(diagnosisB);
+    });
+    setSortedData({
+      trialArms: sortedData.trialArms,
+      patients: sortedPatients,
+    });
+  };
+
   const handleClick = (event: any) => {
     if (event.points.length > 0) {
       const patientValue = event.points[0].x;
@@ -286,7 +309,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
           onChange={(e) => handleChange(e.value)}
         />
         <div className="sort-dropdown-container">
-          <label htmlFor="sortDropdown">Sort By:</label>
+          <label htmlFor="sortDropdown">Sort Y-Axis By:</label>
           <Dropdown
             id="sortDropdown"
             className="w-full md:w-8rem"
@@ -307,6 +330,27 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
               }
             }}
             placeholder="Select Sorting Option"
+          />
+        </div>
+        <div className="sort-dropdown-container">
+          <label htmlFor="xAxisSortDropdown">Sort X-Axis By:</label>
+          <Dropdown
+            id="xAxisSortDropdown"
+            className="w-full md:w-8rem"
+            value={selectedXAxisSortOption}
+            options={[
+              { label: "Match Count", value: "matchCount" },
+              { label: "Diagnosis", value: "diagnosis" },
+            ]}
+            onChange={(e) => {
+              setSelectedXAxisSortOption(e.value);
+              if (e.value === "matchCount") {
+                sortXAxisByMatchCount();
+              } else if (e.value === "diagnosis") {
+                sortXAxisByDiagnosis();
+              }
+            }}
+            placeholder="Select X-Axis Sorting Option"
           />
         </div>
       </div>
