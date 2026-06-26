@@ -1,0 +1,131 @@
+[
+  {
+    "oncotree_rootnode": "Adrenal Gland",
+    "color": "#FF8533"
+  },
+  {
+    "oncotree_rootnode": "Ampulla of Vater",
+    "color": "#0D47A1"
+  },
+  {
+    "oncotree_rootnode": "Biliary Tract",
+    "color": "#2979FF"
+  },
+  {
+    "oncotree_rootnode": "Bladder/Urinary Tract",
+    "color": "#7E57C2"
+  },
+  {
+    "oncotree_rootnode": "Bone",
+    "color": "#06D6A0"
+  },
+  {
+    "oncotree_rootnode": "Bowel",
+    "color": "#E91E63"
+  },
+  {
+    "oncotree_rootnode": "Breast",
+    "color": "#00E676"
+  },
+  {
+    "oncotree_rootnode": "Cervix",
+    "color": "#FF007F"
+  },
+  {
+    "oncotree_rootnode": "CNS/Brain",
+    "color": "#AB47BC"
+  },
+  {
+    "oncotree_rootnode": "Esophagus/Stomach",
+    "color": "#3F51B5"
+  },
+  {
+    "oncotree_rootnode": "Eye",
+    "color": "#C62828"
+  },
+  {
+    "oncotree_rootnode": "Head and Neck",
+    "color": "#FF5722"
+  },
+  {
+    "oncotree_rootnode": "Kidney",
+    "color": "#00E5FF"
+  },
+  {
+    "oncotree_rootnode": "Liver",
+    "color": "#FF4081"
+  },
+  {
+    "oncotree_rootnode": "Lung",
+    "color": "#FFEB3B"
+  },
+  {
+    "oncotree_rootnode": "Lymphoid",
+    "color": "#4A148C"
+  },
+  {
+    "oncotree_rootnode": "Myeloid",
+    "color": "#FFC300"
+  },
+  {
+    "oncotree_rootnode": "Other",
+    "color": "#B5179E"
+  },
+  {
+    "oncotree_rootnode": "Ovary/Fallopian Tube",
+    "color": "#107C10"
+  },
+  {
+    "oncotree_rootnode": "Pancreas",
+    "color": "#FF6B6B"
+  },
+  {
+    "oncotree_rootnode": "Penis",
+    "color": "#8E24AA"
+  },
+  {
+    "oncotree_rootnode": "Peripheral Nervous System",
+    "color": "#1B5E20"
+  },
+  {
+    "oncotree_rootnode": "Peritoneum",
+    "color": "#76D7C4"
+  },
+  {
+    "oncotree_rootnode": "Prostate",
+    "color": "#4FC3F7"
+  },
+  {
+    "oncotree_rootnode": "Skin",
+    "color": "#008080"
+  },
+  {
+    "oncotree_rootnode": "Soft Tissue",
+    "color": "#E07A5F"
+  },
+  {
+    "oncotree_rootnode": "Testis",
+    "color": "#606C38"
+  },
+  {
+    "oncotree_rootnode": "Thymus",
+    "color": "#D4A373"
+  },
+  {
+    "oncotree_rootnode": "Thyroid",
+    "color": "#FF3333"
+  },
+  {
+    "oncotree_rootnode": "Uterus",
+    "color": "#880E4F"
+  },
+  {
+    "oncotree_rootnode": "Vulva/Vagina",
+    "color": "#1565C0"
+  }
+  ,
+  {
+    "oncotree_rootnode": "Unknown",
+    "color": "#000000"
+  }
+]

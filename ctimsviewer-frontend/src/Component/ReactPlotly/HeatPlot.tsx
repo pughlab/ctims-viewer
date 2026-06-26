@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Plot from "react-plotly.js";
 import oncotreeMapping from "./oncotree_mapping_high.json";
+import oncotreeHighColors from "./oncotree_high_colors.json";
 import { MultiSelect } from "primereact/multiselect";
 import { Dropdown } from "primereact/dropdown";
 import "./PlotStyles.css";
@@ -54,8 +55,10 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     }, {} as Record<string, number>);
   }, [data, patientIdsAsStrings]);
 
+  // Root-level oncotree categories extracted from the mapping file.
   const oncoRootKeys = useMemo(() => Object.keys(oncotreeMapping), []);
 
+  // Map each detailed diagnosis name to its high-level root category.
   const detailToRootMap = useMemo(() => {
     const m = new Map<string, string>();
     oncoRootKeys.forEach((root) => {
@@ -65,20 +68,56 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     return m;
   }, [oncoRootKeys]);
 
+  const unknownRootKey = "Unknown";
+
+  // The actual root categories present in the current data set.
+  // Any diagnosis not found in oncotree_mapping_high.json is mapped to the
+  // special Unknown category so it can receive the Unknown color from the
+  // oncotree_high_colors.json palette.
   const cCategories = useMemo(
-    () => Array.from(new Set(data.map((item) => detailToRootMap.get(item.d) || item.d))),
+    () => Array.from(
+      new Set(data.map((item) => detailToRootMap.get(item.d) ?? unknownRootKey))
+    ),
     [data, detailToRootMap]
   );
 
   const allSameC = cCategories.length === 1;
 
+  const effectiveRootKeys = useMemo(() => {
+    const keys = [...oncoRootKeys];
+    if (cCategories.includes(unknownRootKey) && !keys.includes(unknownRootKey)) {
+      keys.push(unknownRootKey);
+    }
+    return keys;
+  }, [oncoRootKeys, cCategories]);
+
+  // Assign each root category a discrete integer value used in the z matrix.
+  // Plotly maps numeric z values to colors in the colorscale, so the values
+  // must be stable integers for each root category.
   const cIndexMap = useMemo(() => {
-    return oncoRootKeys.reduce<Record<string, number>>((acc, root, idx) => {
+    return effectiveRootKeys.reduce<Record<string, number>>((acc, root, idx) => {
       acc[root] = idx + 1;
       return acc;
     }, {} as Record<string, number>);
-  }, [oncoRootKeys]);
+  }, [effectiveRootKeys]);
 
+  // Build a lookup from root category name to the color value defined in
+  // oncotree_high_colors.json. This keeps the actual color palette external
+  // and easy to update without changing the heatmap logic.
+  const oncoRootColorMap = useMemo(() => {
+    return (oncotreeHighColors as Array<{ oncotree_rootnode: string; color: string }>).reduce(
+      (acc, item) => {
+        acc[item.oncotree_rootnode] = item.color;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+  }, []);
+
+  // Generate the Plotly discrete colorscale stops for the heatmap.
+  // Stop 0 is reserved for missing values and uses light grey.
+  // Each subsequent stop is tied to a root category and uses the color
+  // defined in oncotree_high_colors.json.
   const heatmapColorscale = useMemo((): [number, string][] => {
     if (allSameC) {
       return [
@@ -87,20 +126,18 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       ];
     }
 
-    // generate a palette sized to the number of oncotree root keys
-    const numRoots = oncoRootKeys.length;
-    const palette: string[] = Array.from({ length: numRoots }).map((_, idx) => {
-      const hue = Math.round((idx * 360) / Math.max(1, numRoots));
-      return `hsl(${hue},70%,50%)`;
-    });
+    const numRoots = effectiveRootKeys.length;
 
-    const stops = oncoRootKeys.map((_, idx) => [
+    // Build one stop per root category in the same order as effectiveRootKeys.
+    // The stop positions are spread evenly across (0,1], because Plotly uses
+    // the first value for z=0 and later values for z=1..N.
+    const stops = effectiveRootKeys.map((root, idx) => [
       (idx + 1) / numRoots,
-      palette[idx % palette.length],
+      oncoRootColorMap[root],
     ] as [number, string]);
 
     return [[0, "lightgrey"], ...stops];
-  }, [allSameC, cCategories, oncoRootKeys]);
+  }, [allSameC, cCategories, effectiveRootKeys, oncoRootColorMap]);
 
   const trialPatientDataMap = useMemo(() => {
     const map = new Map<string, Map<string, string>>();
@@ -123,7 +160,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       if (!map.has(trialArmId)) {
         map.set(trialArmId, new Map());
       }
-      const root = detailToRootMap.get(item.d) || item.d;
+      const root = detailToRootMap.get(item.d) ?? unknownRootKey;
       map.get(trialArmId)!.set(patientId, root);
     });
     return map;
@@ -175,13 +212,9 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
     );
 
-    const sortedPatients = [...patientIdsAsStrings].sort(
-      (a, b) => armCountByPatient[b] - armCountByPatient[a]
-    );
-  
     setSortedData({
       trialArms: sortedTrialArms,
-      patients: sortedPatients,
+      patients: sortedData.patients,
     });
     setIsSorted(true);
   };
@@ -204,11 +237,39 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     });
   };
 
+  const getPatientDiagnosis = (patientId: string) => {
+    const matchingItem = data.find((item) => String(item.p) === patientId);
+    if (!matchingItem) return "";
+    return matchingItem.d;
+  };
+
+  const getPatientDiagnosisType = (patientId: string) => {
+    const diagnosis = getPatientDiagnosis(patientId);
+    return detailToRootMap.get(diagnosis) || diagnosis;
+  };
+
   const sortXAxisByDiagnosis = () => {
     const sortedPatients = [...sortedData.patients].sort((a, b) => {
-      const diagnosisA = trialPatientDataMap.get(sortedData.trialArms[0])?.get(a) || "";
-      const diagnosisB = trialPatientDataMap.get(sortedData.trialArms[0])?.get(b) || "";
+      const diagnosisA = getPatientDiagnosis(a);
+      const diagnosisB = getPatientDiagnosis(b);
       return diagnosisA.localeCompare(diagnosisB);
+    });
+    setSortedData({
+      trialArms: sortedData.trialArms,
+      patients: sortedPatients,
+    });
+  };
+
+  const sortXAxisByDiagnosisType = () => {
+    const sortedPatients = [...sortedData.patients].sort((a, b) => {
+      const rootA = getPatientDiagnosisType(a);
+      const rootB = getPatientDiagnosisType(b);
+      const indexA = cIndexMap[rootA] ?? Number.MAX_SAFE_INTEGER;
+      const indexB = cIndexMap[rootB] ?? Number.MAX_SAFE_INTEGER;
+      if (indexA !== indexB) {
+        return indexA - indexB;
+      }
+      return rootA.localeCompare(rootB);
     });
     setSortedData({
       trialArms: sortedData.trialArms,
@@ -349,6 +410,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             options={[
               { label: "Match Count", value: "matchCount" },
               { label: "Diagnosis", value: "diagnosis" },
+              { label: "DiagnosisType", value: "diagnosisType" },
             ]}
             onChange={(e) => {
               setSelectedXAxisSortOption(e.value);
@@ -356,6 +418,8 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
                 sortXAxisByMatchCount();
               } else if (e.value === "diagnosis") {
                 sortXAxisByDiagnosis();
+              } else if (e.value === "diagnosisType") {
+                sortXAxisByDiagnosisType();
               }
             }}
             placeholder="Select X-Axis Sorting Option"
