@@ -20,6 +20,7 @@ interface HeatmapChartProps {
 }
 
 const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick }) => {
+  
   const trialArmNames = Array.from(new Set(data.map((item) => item.t)));
   const patientIds = Array.from(new Set(data.map((item) => item.p)));
   const patientIdsAsStrings = patientIds.map(String);
@@ -56,7 +57,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   }, [data, patientIdsAsStrings]);
 
   // Root-level oncotree categories extracted from the mapping file.
-  const oncoRootKeys = useMemo(() => Object.keys(oncotreeMapping), []);
+  const oncoRootKeys = useMemo(() => Object.keys(oncotreeMapping).sort(), []);
 
   // Map each detailed diagnosis name to its high-level root category.
   const detailToRootMap = useMemo(() => {
@@ -77,7 +78,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   const cCategories = useMemo(
     () => Array.from(
       new Set(data.map((item) => detailToRootMap.get(item.d) ?? unknownRootKey))
-    ),
+    ).sort(),
     [data, detailToRootMap]
   );
 
@@ -128,12 +129,9 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
 
     const numRoots = effectiveRootKeys.length;
 
-    // Build one stop per root category in the same order as effectiveRootKeys.
-    // The stop positions are spread evenly across (0,1], because Plotly uses
-    // the first value for z=0 and later values for z=1..N.
     const stops = effectiveRootKeys.map((root, idx) => [
       (idx + 1) / numRoots,
-      oncoRootColorMap[root],
+      oncoRootColorMap[root] || "#000000",
     ] as [number, string]);
 
     return [[0, "lightgrey"], ...stops];
@@ -428,7 +426,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
       </div>
 
       <div className="chart-container">
-      <Plot
+        <Plot
         data={[
           {
             z: heatmapMatrixWithColors,
@@ -438,6 +436,8 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             type: "heatmap",
             colorscale: heatmapColorscale,
             showscale: false,
+            zmin: 0,
+            zmax: effectiveRootKeys.length,
             hovertemplate:
               `<b>Patient ID:</b> %{x}<br>` +
               `<b>Trial Arm:</b> %{y}<br>` +
@@ -473,8 +473,19 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             onBarClick(patientValue,studyValue);
           }
         }}
-      />
-      </div>
+        />
+      {/* Legend (rendered outside the Plotly canvas). Plotly's built-in
+          export button will capture only the Plotly graph; the legend here
+          remains visible in the page below the plot for user reference. */}
+      <div className="heatplot-legend" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
+        {effectiveRootKeys.map((root) => (
+          <div key={root} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ width: 16, height: 16, background: oncoRootColorMap[root], border: "1px solid #ccc" }} />
+            <div style={{ fontSize: 12 }}>{root}</div>
+          </div>
+        ))}
+      </div>      
+     </div>
     </div>
   );
 };
