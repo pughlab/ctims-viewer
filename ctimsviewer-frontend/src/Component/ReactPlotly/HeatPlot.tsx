@@ -82,8 +82,6 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     [data, detailToRootMap]
   );
 
-  const allSameC = cCategories.length === 1;
-
   const effectiveRootKeys = useMemo(() => {
     const keys = [...oncoRootKeys];
     if (cCategories.includes(unknownRootKey) && !keys.includes(unknownRootKey)) {
@@ -120,13 +118,6 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
   // Each subsequent stop is tied to a root category and uses the color
   // defined in oncotree_high_colors.json.
   const heatmapColorscale = useMemo((): [number, string][] => {
-    if (allSameC) {
-      return [
-        [0, "lightgrey"],
-        [1, "rgb(51, 153, 255)"],
-      ];
-    }
-
     const numRoots = effectiveRootKeys.length;
 
     const stops = effectiveRootKeys.map((root, idx) => [
@@ -135,7 +126,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     ] as [number, string]);
 
     return [[0, "lightgrey"], ...stops];
-  }, [allSameC, cCategories, effectiveRootKeys, oncoRootColorMap]);
+  }, [effectiveRootKeys, oncoRootColorMap]);
 
   const trialPatientDataMap = useMemo(() => {
     const map = new Map<string, Map<string, string>>();
@@ -459,8 +450,8 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
           yaxis: { 
             tickfont: { size: 12 }, 
             type: "category", showticklabels: true, automargin: true, showgrid: false },
-          height: 200 + chartHeight,
-          width: 200 + Number(chartColumnHeight) + patientIdsAsStrings.length * xgap,
+          height: Math.max(480, 200 + chartHeight),
+          width: Math.max(640, 200 + Number(chartColumnHeight) + patientIdsAsStrings.length * xgap),
           autosize: false,
           plot_bgcolor: "white",
           paper_bgcolor: "white",
