@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Plot from "react-plotly.js";
 import oncotreeMapping from "./oncotree_mapping_high.json";
 import oncotreeHighColors from "./oncotree_high_colors.json";
@@ -33,6 +33,7 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     trialArms: trialArmNames,
     patients: patientIdsAsStrings,
   });
+  const plotRef = useRef<any>(null);
 
 
 
@@ -348,6 +349,82 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
     }
   };
 
+  const downloadHeatmapPNG = async () => {
+    const plotly = (window as any).Plotly;
+    const graphDiv = plotRef.current;
+
+    if (!plotly || !graphDiv) {
+      console.warn("Plotly or graph div not available for export.");
+      return;
+    }
+
+    try {
+      const width = Math.max(640, 200 + Number(chartColumnHeight) + patientIdsAsStrings.length * xgap);
+      const height = Math.max(480, 200 + chartHeight);
+      const pngDataUrl = await plotly.toImage(graphDiv, {
+        format: "png",
+        width,
+        height,
+      });
+
+      const image = new Image();
+      image.src = pngDataUrl;
+      await new Promise<void>((resolve, reject) => {
+        image.onload = () => resolve();
+        image.onerror = (err) => reject(err);
+      });
+
+      const legendHeight = 40 + Math.ceil(effectiveRootKeys.length / 5) * 24;
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height + legendHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        console.warn("Unable to create canvas context for export.");
+        return;
+      }
+
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, width, height);
+
+      ctx.font = "12px Arial, sans-serif";
+      ctx.fillStyle = "black";
+      ctx.textBaseline = "middle";
+
+      const markerSize = 12;
+      const gap = 10;
+      const itemPadding = 10;
+      let x = 8;
+      let y = height + 20;
+
+      effectiveRootKeys.forEach((root, idx) => {
+        const label = String(root);
+        const textWidth = ctx.measureText(label).width;
+        const itemWidth = markerSize + 6 + textWidth + itemPadding;
+
+        if (x + itemWidth > width - 8) {
+          x = 8;
+          y += 24;
+        }
+
+        ctx.fillStyle = oncoRootColorMap[root] || "#000000";
+        ctx.fillRect(x, y - markerSize / 2, markerSize, markerSize);
+        ctx.fillStyle = "black";
+        ctx.fillText(label, x + markerSize + 6, y);
+
+        x += itemWidth;
+      });
+
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "heatmap-with-legend.png";
+      link.click();
+    } catch (error) {
+      console.error("Failed to download heatmap PNG:", error);
+    }
+  };
+
   const handleChange = (selectedList: any) => {
     setSelectedOptions(selectedList);
   };
@@ -445,6 +522,12 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
             },
           },
         ]}
+        onInitialized={(_figure, graphDiv) => {
+          plotRef.current = graphDiv;
+        }}
+        onUpdate={(_figure, graphDiv) => {
+          plotRef.current = graphDiv;
+        }}
         layout={{
           xaxis: { showticklabels: false, type: "category", ticks: "", showgrid: false },
           yaxis: { 
@@ -465,13 +548,18 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({ data, study_id, onBarClick 
           }
         }}
         />
+        <div style={{ marginTop: 10, textAlign: "center" }}>
+          <button type="button" className="download-heatmap-button" onClick={downloadHeatmapPNG}>
+            Download Heatmap PNG
+          </button>
+        </div>
       {/* Legend (rendered outside the Plotly canvas). Plotly's built-in
           export button will capture only the Plotly graph; the legend here
           remains visible in the page below the plot for user reference. */}
       <div className="heatplot-legend" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
         {effectiveRootKeys.map((root) => (
           <div key={root} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 16, height: 16, background: oncoRootColorMap[root], border: "1px solid #ccc" }} />
+            <div style={{ width: 16, height: 16, background: oncoRootColorMap[root], border: "1px solid #ffffff" }} />
             <div style={{ fontSize: 12 }}>{root}</div>
           </div>
         ))}
